@@ -1,0 +1,197 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  transition: all var(--transition-medium);
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--card-shadow);
+  border-color: var(--accent-gold);
+}
+
+/* Image section container */
+.imageContainer {
+  position: relative;
+  width: 100%;
+  padding-bottom: 100%; /* Square aspect ratio 1:1 */
+  overflow: hidden;
+  background-color: var(--bg-secondary);
+  cursor: pointer;
+}
+
+.productImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity var(--transition-medium);
+}
+
+.hoverImage {
+  opacity: 0;
+}
+
+/* Hover effect: swap images */
+.card:hover .primaryImage {
+  opacity: 0;
+}
+
+.card:hover .hoverImage {
+  opacity: 1;
+}
+
+/* Badges overlay */
+.badgeContainer {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.badge {
+  padding: 4px 10px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+.badgeNew {
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+}
+
+.badgeSale {
+  background-color: var(--error);
+  color: white;
+}
+
+.badgeBestseller {
+  background-color: var(--accent-gold);
+  color: #1C1B19;
+}
+
+/* Action button bar overlay (centered or at the bottom of the card image) */
+.actionOverlay {
+  position: absolute;
+  bottom: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 5;
+  transition: bottom var(--transition-medium);
+}
+
+.card:hover .actionOverlay {
+  bottom: 20px;
+}
+
+.actionBtn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: all var(--transition-fast);
+}
+
+.actionBtn:hover {
+  background-color: var(--accent-gold);
+  color: #1C1B19;
+  border-color: var(--accent-gold);
+}
+
+.actionBtnActive {
+  background-color: var(--accent-gold);
+  color: #1C1B19;
+  border-color: var(--accent-gold);
+}
+
+/* Content Details styling */
+.details {
+  padding: 1.5rem;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.categoryName {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-light);
+  margin-bottom: 0.4rem;
+}
+
+.productName {
+  font-family: var(--font-serif);
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--text-primary);
+  margin-bottom: 0.6rem;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 2.6em; /* Allow up to 2 lines of height */
+}
+
+.ratingContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 0.75rem;
+}
+
+.stars {
+  display: flex;
+  color: var(--accent-gold);
+}
+
+.reviewCount {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.priceContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.price {
+  font-weight: 600;
+  color: var(--accent-gold);
+  font-size: 1.1rem;
+}
+
+.originalPrice {
+  color: var(--text-light);
+  text-decoration: line-through;
+  font-size: 0.9rem;
+}

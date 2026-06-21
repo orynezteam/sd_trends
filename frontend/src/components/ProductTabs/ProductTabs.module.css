@@ -1,0 +1,174 @@
+.section {
+  padding: 2.5rem 0;
+  background-color: var(--bg-surface);
+  transition: background-color var(--transition-medium);
+}
+
+.tabsContainer {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 3rem;
+}
+
+@media (max-width: 768px) {
+  .tabsContainer {
+    gap: 1.5rem;
+  }
+}
+
+.tabButton {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.95rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  padding: 1rem 0;
+  position: relative;
+}
+
+.tabButton:hover {
+  color: var(--text-primary);
+}
+
+.tabActive {
+  color: var(--accent-gold);
+  font-weight: 600;
+}
+
+.tabActive::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--accent-gold);
+}
+
+/* Category Filter Bar */
+.filterBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--bg-primary);
+  border-radius: 4px;
+}
+
+.activeFilters {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+}
+
+.filterBadge {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  padding: 0.35rem 0.75rem;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+}
+
+.clearFilterBtn {
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+}
+
+.clearFilterBtn:hover {
+  color: var(--error);
+}
+
+.resultCount {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Product Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+/* Loading Skeleton */
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+@media (max-width: 1200px) {
+  .skeletonGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 992px) {
+  .skeletonGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .skeletonGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.skeletonCard {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  height: 420px;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.skeletonCard::after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: -150px;
+  top: 0;
+  height: 100%;
+  width: 150px;
+  background: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%);
+  animation: shimmer 1.5s infinite;
+}
+
+[data-theme="dark"] .skeletonCard::after {
+  background: linear-gradient(to right, transparent 0%, rgba(255,255,255,0.02) 50%, transparent 100%);
+}
+
+@keyframes shimmer {
+  from { left: -150px; }
+  to { left: 100%; }
+}

@@ -1,0 +1,46 @@
+# Dependency directories
+node_modules/
+frontend/node_modules/
+backend/venv/
+backend/ENV/
+backend/env/
+
+# Next.js build outputs
+.next/
+frontend/.next/
+out/
+frontend/out/
+build/
+frontend/build/
+
+# Python compiled files
+__pycache__/
+backend/__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+backend/.Python
+
+# Local data & environment files
+.env
+.env*.local
+frontend/.env*.local
+backend/data/newsletter.json
+backend/data/contacts.json
+backend/venv/
+
+# IDE files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
