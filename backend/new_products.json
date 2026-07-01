@@ -1,0 +1,417 @@
+[
+  {
+    "id": "ring-solitaire",
+    "name": "Real Diamond Jewellery Gold Diamond Ring",
+    "category": "rings",
+    "price": 300,
+    "originalPrice": 660,
+    "priceRange": "$300 - $660",
+    "isNew": true,
+    "isBestSeller": true,
+    "isFeatured": true,
+    "rating": 4.0,
+    "reviewCount": 42,
+    "images": [
+      "/images/products/ring_solitaire_1.png",
+      "/images/products/ring_solitaire_2.png"
+    ],
+    "description": "An exquisite round brilliant cut diamond claw-set in an elegant yellow gold band. A timeless symbol of your commitment.",
+    "details": {
+      "metal": "18k Yellow Gold",
+      "purity": "91.6% Pure Gold",
+      "gemstone": "Natural Diamond (VVS1, Color G)",
+      "weight": "3.5 grams",
+      "size": "Standard Size 7 (Resizable)"
+    },
+    "stock": 5
+  },
+  {
+    "id": "ring-emerald",
+    "name": "The Sinead Ring 18kt Diamond Yellow Gold Ring",
+    "category": "rings",
+    "price": 250,
+    "originalPrice": 256,
+    "priceRange": "$250 - $256",
+    "isNew": true,
+    "isBestSeller": true,
+    "isFeatured": true,
+    "rating": 5.0,
+    "reviewCount": 18,
+    "images": [
+      "/images/products/ring_emerald_1.png",
+      "/images/products/ring_emerald_2.png"
+    ],
+    "description": "Inspired by royal vintage aesthetics, this beautiful floral-shaped ring features a cluster of diamonds on an 18kt yellow gold leaf band.",
+    "details": {
+      "metal": "18kt Yellow Gold",
+      "purity": "75% Pure Gold",
+      "gemstone": "Natural Diamonds (0.8 ct)",
+      "weight": "4.8 grams",
+      "size": "Standard Size 6 (Non-resizable)"
+    },
+    "stock": 3
+  },
+  {
+    "id": "ring-rose-gold",
+    "name": "Erina Solitaire Ring Kisna White Gold Ring",
+    "category": "rings",
+    "price": 280,
+    "originalPrice": 295,
+    "customBadge": "-5%",
+    "timer": "85d : 10h : 29m : 18s",
+    "isNew": true,
+    "isBestSeller": false,
+    "isFeatured": true,
+    "rating": 4.0,
+    "reviewCount": 29,
+    "images": [
+      "/images/products/ring_rose_1.png",
+      "/images/products/ring_rose_2.png"
+    ],
+    "description": "A striking halo diamond stud setting on a split white gold shank. Modern luxury meets classical diamond jewelry.",
+    "details": {
+      "metal": "14k White Gold",
+      "purity": "58.5% Pure Gold",
+      "gemstone": "Diamonds (0.45 ct)",
+      "weight": "2.9 grams",
+      "size": "Standard Size 7 (Resizable)"
+    },
+    "stock": 12
+  },
+  {
+    "id": "ring-casual-thomas",
+    "name": "Casual Thomas Diamond Ring Yellow Gold",
+    "category": "rings",
+    "price": 140,
+    "originalPrice": 270,
+    "priceRange": "$140 - $270",
+    "customBadge": "-5%",
+    "isNew": true,
+    "isBestSeller": false,
+    "isFeatured": true,
+    "rating": 5.0,
+    "reviewCount": 14,
+    "images": [
+      "/images/products/ring_casual_1.png",
+      "/images/products/ring_casual_2.png"
+    ],
+    "description": "A clean square-cluster diamond ring in solid gold for casual and everyday luxury.",
+    "details": {
+      "metal": "18k Yellow Gold",
+      "purity": "75% Pure Gold",
+      "gemstone": "Natural Diamonds (0.3 ct)",
+      "weight": "2.5 grams",
+      "size": "Standard Size 7 (Resizable)"
+    },
+    "stock": 8
+  },
+  {
+    "id": "necklace-duchess",
+    "name": "Duchess Diamond Tiara Necklace",
+    "category": "necklaces",
+    "price": 4500,
+    "originalPrice": 5500,
+    "isNew": true,
+    "isBestSeller": true,
+    "isFeatured": true,
+    "rating": 5.0,
+    "reviewCount": 8,
+    "images": [
+      "/images/products/necklace_duchess_1.png",
+      "/images/products/necklace_duchess_2.png"
+    ],
+    "description": "A magnificent statement piece with a pear-cut diamond pendant dropping from a royal tiara-inspired cluster of marquise and brilliant diamonds, cast in 18k white gold.",
+    "details": {
+      "metal": "18k White Gold",
+      "purity": "75% Pure Gold with Rhodium plating",
+      "gemstone": "Pear and Round Brilliant Diamonds (3.5 ct)",
+      "weight": "12.4 grams",
+      "length": "18 inches"
+    },
+    "stock": 2
+  },
+  {
+    "id": "necklace-pearl",
+    "name": "Classic South Sea Pearl Choker",
+    "category": "necklaces",
+    "price": 1250,
+    "originalPrice": 1250,
+    "isNew": false,
+    "isBestSeller": true,
+    "isFeatured": false,
+    "rating": 4.8,
+    "reviewCount": 22,
+    "images": [
+      "/images/products/necklace_pearl_1.png",
+      "/images/products/necklace_pearl_2.png"
+    ],
+    "description": "Lustrous round South Sea cultured pearls individually knotted and secured with an elegant 18k yellow gold filigree clasp.",
+    "details": {
+      "metal": "18k Yellow Gold Clasp",
+      "purity": "91.6% Pure Gold (clasp)",
+      "gemstone": "A++ Grade White South Sea Pearls (10-12mm)",
+      "weight": "32.0 grams",
+      "length": "16 inches"
+    },
+    "stock": 7
+  },
+  {
+    "id": "necklace-sapphire",
+    "name": "Teardrop Royal Sapphire Pendant",
+    "category": "necklaces",
+    "price": 750,
+    "originalPrice": 850,
+    "isNew": true,
+    "isBestSeller": false,
+    "isFeatured": true,
+    "rating": 4.6,
+    "reviewCount": 15,
+    "images": [
+      "/images/products/necklace_sapphire_1.png",
+      "/images/products/necklace_sapphire_2.png"
+    ],
+    "description": "A deep blue teardrop sapphire sits inside a halo of round brilliant diamonds, suspended from a delicate 14k white gold cable chain.",
+    "details": {
+      "metal": "14k White Gold",
+      "purity": "58.5% Pure Gold",
+      "gemstone": "Natural Blue Sapphire (0.8 ct) & Diamonds (0.2 ct)",
+      "weight": "3.1 grams",
+      "length": "18 inches"
+    },
+    "stock": 15
+  },
+  {
+    "id": "earrings-halo",
+    "name": "Diamond Halo Stud Earrings",
+    "category": "earrings",
+    "price": 1150,
+    "originalPrice": 1350,
+    "isNew": false,
+    "isBestSeller": true,
+    "isFeatured": true,
+    "rating": 4.9,
+    "reviewCount": 33,
+    "images": [
+      "/images/products/earrings_halo_1.png",
+      "/images/products/earrings_halo_2.png"
+    ],
+    "description": "Timeless platinum stud earrings featuring two brilliant-cut center diamonds surrounded by a halo of micro-pave diamonds.",
+    "details": {
+      "metal": "Platinum 950",
+      "purity": "95% Pure Platinum",
+      "gemstone": "Natural White Diamonds (1.2 ct total wt)",
+      "weight": "2.2 grams",
+      "closure": "Secure Screw Back"
+    },
+    "stock": 9
+  },
+  {
+    "id": "earrings-hoops",
+    "name": "Gold Twist Hoop Earrings",
+    "category": "earrings",
+    "price": 450,
+    "originalPrice": 450,
+    "isNew": true,
+    "isBestSeller": false,
+    "isFeatured": false,
+    "rating": 4.7,
+    "reviewCount": 51,
+    "images": [
+      "/images/products/earrings_hoop_1.png",
+      "/images/products/earrings_hoop_2.png"
+    ],
+    "description": "Chic, everyday hoop earrings styled with a double-helix twist pattern in polished 18k yellow gold. Lightweight yet statement-making.",
+    "details": {
+      "metal": "18k Yellow Gold",
+      "purity": "75% Pure Gold",
+      "gemstone": "None",
+      "weight": "4.5 grams",
+      "diameter": "25mm"
+    },
+    "stock": 25
+  },
+  {
+    "id": "earrings-ruby",
+    "name": "Cascading Oval Ruby Drop Earrings",
+    "category": "earrings",
+    "price": 1850,
+    "originalPrice": 2100,
+    "isNew": false,
+    "isBestSeller": false,
+    "isFeatured": true,
+    "rating": 4.8,
+    "reviewCount": 11,
+    "images": [
+      "/images/products/earrings_ruby_1.png",
+      "/images/products/earrings_ruby_2.png"
+    ],
+    "description": "Stunning drop earrings designed with three cascading oval-cut Burmese rubies connected by diamond floral connectors, cast in 18k yellow gold.",
+    "details": {
+      "metal": "18k Yellow Gold",
+      "purity": "75% Pure Gold",
+      "gemstone": "Natural Burmese Rubies (2.4 ct) & Diamonds (0.5 ct)",
+      "weight": "6.8 grams",
+      "length": "1.2 inches"
+    },
+    "stock": 4
+  },
+  {
+    "id": "bracelet-tennis",
+    "name": "Luxury Diamond Tennis Bracelet",
+    "category": "bracelets",
+    "price": 3800,
+    "originalPrice": 4200,
+    "isNew": true,
+    "isBestSeller": true,
+    "isFeatured": true,
+    "rating": 5.0,
+    "reviewCount": 19,
+    "images": [
+      "/images/products/bracelet_tennis_1.png",
+      "/images/products/bracelet_tennis_2.png"
+    ],
+    "description": "A classic continuous line of individually claw-set round brilliant diamonds totaling 5 carats, set in a flexible 18k white gold bracelet.",
+    "details": {
+      "metal": "18k White Gold",
+      "purity": "75% Pure Gold",
+      "gemstone": "Natural White Diamonds (5.0 ct total wt)",
+      "weight": "14.2 grams",
+      "length": "7 inches"
+    },
+    "stock": 3
+  },
+  {
+    "id": "bracelet-herringbone",
+    "name": "Gold Herringbone Chain Bracelet",
+    "category": "bracelets",
+    "price": 350,
+    "originalPrice": 399,
+    "isNew": true,
+    "isBestSeller": false,
+    "isFeatured": false,
+    "rating": 4.5,
+    "reviewCount": 38,
+    "images": [
+      "/images/products/bracelet_flat_1.png",
+      "/images/products/bracelet_flat_2.png"
+    ],
+    "description": "A sleek, flat herringbone chain bracelet in solid 14k yellow gold that reflects the light brilliantly with every movement.",
+    "details": {
+      "metal": "14k Yellow Gold",
+      "purity": "58.5% Pure Gold",
+      "gemstone": "None",
+      "weight": "3.8 grams",
+      "width": "4mm"
+    },
+    "stock": 30
+  },
+  {
+    "id": "bracelet-sapphire",
+    "name": "Sapphire & Diamond Cuff Bracelet",
+    "category": "bracelets",
+    "price": 650,
+    "originalPrice": 650,
+    "isNew": false,
+    "isBestSeller": false,
+    "isFeatured": true,
+    "rating": 4.7,
+    "reviewCount": 14,
+    "images": [
+      "/images/products/bracelet_cuff_1.png",
+      "/images/products/bracelet_cuff_2.png"
+    ],
+    "description": "An open cuff bracelet in sterling silver, featuring teardrop-cut blue sapphires at each end flanked by small pave diamond accents.",
+    "details": {
+      "metal": "Sterling Silver 925",
+      "purity": "92.5% Pure Silver",
+      "gemstone": "Blue Sapphires (1.1 ct) & Diamonds (0.1 ct)",
+      "weight": "9.5 grams",
+      "diameter": "Resizable Open Cuff"
+    },
+    "stock": 14
+  },
+  {
+    "id": "featured-ring-1",
+    "name": "The Sinead Ring 18kt Diamond Yellow Gold Ring",
+    "category": "rings",
+    "price": 250,
+    "originalPrice": 256,
+    "rating": 4.0,
+    "reviewCount": 18,
+    "images": [
+      "/images/featured_ring_1.png"
+    ],
+    "description": "A beautiful gold swirl cluster diamond ring styled in 18kt gold, featuring round brilliant-cut diamonds.",
+    "details": {
+      "metal": "18kt Yellow Gold",
+      "purity": "75% Pure Gold",
+      "gemstone": "Natural Diamonds (0.8 ct)",
+      "weight": "4.8 grams",
+      "size": "Standard Size 6 (Non-resizable)"
+    },
+    "stock": 4
+  },
+  {
+    "id": "featured-earring-1",
+    "name": "Beautiful Diamond Ximena Earring Rose Gold",
+    "category": "earrings",
+    "price": 140,
+    "originalPrice": 230,
+    "rating": 4.0,
+    "reviewCount": 12,
+    "images": [
+      "/images/featured_earring_1.png"
+    ],
+    "description": "Dangling tear-drop emerald earrings framed by brilliant diamonds, cast in rose gold.",
+    "details": {
+      "metal": "14kt Rose Gold",
+      "purity": "58.5% Pure Gold",
+      "gemstone": "Emeralds & Diamonds (0.65 ct)",
+      "weight": "3.2 grams",
+      "closure": "Push Back"
+    },
+    "stock": 9
+  },
+  {
+    "id": "featured-earring-2",
+    "name": "Beautiful Diamond Stud Eulla Earring Rose Gold",
+    "category": "earrings",
+    "price": 210,
+    "originalPrice": 300,
+    "rating": 4.0,
+    "reviewCount": 24,
+    "images": [
+      "/images/featured_earring_2.png"
+    ],
+    "description": "Leaf-patterned stud earrings featuring brilliant-cut diamonds cluster set in rose gold.",
+    "details": {
+      "metal": "14kt Rose Gold",
+      "purity": "58.5% Pure Gold",
+      "gemstone": "Brilliant-cut Diamonds (0.75 ct)",
+      "weight": "3.8 grams",
+      "closure": "Secure Screw Back"
+    },
+    "stock": 6
+  },
+  {
+    "id": "featured-bangle-1",
+    "name": "Beautiful Diamond Gold Bangle",
+    "category": "bracelets",
+    "price": 190,
+    "originalPrice": 210,
+    "rating": 4.0,
+    "reviewCount": 16,
+    "images": [
+      "/images/featured_bangle_1.png"
+    ],
+    "description": "A luxury gold diamond bangle styled with three rows of princess cut diamonds.",
+    "details": {
+      "metal": "18kt Yellow Gold",
+      "purity": "75% Pure Gold",
+      "gemstone": "Princess Cut Diamonds (0.5 ct)",
+      "weight": "8.5 grams",
+      "size": "2.4 inches (Standard)"
+    },
+    "stock": 3
+  }
+]

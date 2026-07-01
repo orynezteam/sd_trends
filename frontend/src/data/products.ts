@@ -371,8 +371,7 @@ export const PRODUCTS: Product[] = [
     "rating": 4.0,
     "reviewCount": 18,
     "images": [
-      "/images/featured_ring_1.png",
-      "/images/products/ring_emerald_2.png"
+      "/images/featured_ring_1.png"
     ],
     "description": "A beautiful gold swirl cluster diamond ring styled in 18kt gold, featuring round brilliant-cut diamonds.",
     "details": {
@@ -393,8 +392,7 @@ export const PRODUCTS: Product[] = [
     "rating": 4.0,
     "reviewCount": 12,
     "images": [
-      "/images/featured_earring_1.png",
-      "/images/featured_earring_1_purewhite.png"
+      "/images/featured_earring_1.png"
     ],
     "description": "Dangling tear-drop emerald earrings framed by brilliant diamonds, cast in rose gold.",
     "details": {
@@ -415,8 +413,7 @@ export const PRODUCTS: Product[] = [
     "rating": 4.0,
     "reviewCount": 24,
     "images": [
-      "/images/featured_earring_2.png",
-      "/images/featured_earring_2_purewhite.png"
+      "/images/featured_earring_2.png"
     ],
     "description": "Leaf-patterned stud earrings featuring brilliant-cut diamonds cluster set in rose gold.",
     "details": {
@@ -437,8 +434,7 @@ export const PRODUCTS: Product[] = [
     "rating": 4.0,
     "reviewCount": 16,
     "images": [
-      "/images/featured_bangle_1.png",
-      "/images/featured_bangle_1_highres.png"
+      "/images/featured_bangle_1.png"
     ],
     "description": "A luxury gold diamond bangle styled with three rows of princess cut diamonds.",
     "details": {

@@ -1,11 +1,11 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import QuickView from '../../components/QuickView/QuickView';
-import { ChevronRight } from 'lucide-react';
+import { ChevronRight, Clock } from 'lucide-react';
 import styles from './top-deals.module.css';
 
 interface DealCategory {
@@ -14,50 +14,60 @@ interface DealCategory {
   link: string;
 }
 
-const DEALS_CATEGORIES: DealCategory[] = [
-  {
-    name: 'Diamond Ring',
-    imageUrl: '/images/featured_ring_1.png',
-    link: '/shop?subcategory=Diamond Rings'
-  },
-  {
-    name: 'Hoops Earring',
-    imageUrl: '/images/products/earrings_hoop_1.png',
-    link: '/shop?subcategory=Hoops Earring'
-  },
-  {
-    name: 'Studs Earring',
-    imageUrl: '/images/featured_earring_1.png',
-    link: '/shop?subcategory=Mamuli Earring'
-  },
-  {
-    name: 'Antique Bangle',
-    imageUrl: '/images/featured_bangle_1.png',
-    link: '/shop?subcategory=Antique Bangle'
-  },
-  {
-    name: 'Drops Earring',
-    imageUrl: '/images/category_drops_earring.png',
-    link: '/shop?subcategory=Drops Earring'
-  },
-  {
-    name: 'Gold Rings',
-    imageUrl: '/images/category_rose_gold_rings.png',
-    link: '/shop?subcategory=Gold Rings'
-  },
-  {
-    name: 'Choker',
-    imageUrl: '/images/category_flower_necklace.png',
-    link: '/shop?subcategory=Choker'
-  },
-  {
-    name: 'Rose Gold Ring',
-    imageUrl: '/images/category_cocktail_rings.png',
-    link: '/shop?subcategory=Rose Gold Rings'
-  }
-];
-
 export default function TopDealsPage() {
+  const [categories, setCategories] = useState<DealCategory[]>([]);
+  const [timeLeft, setTimeLeft] = useState<string>('');
+  const [targetDate, setTargetDate] = useState<Date | null>(null);
+  
+  useEffect(() => {
+    // Fetch top deals configuration
+    const fetchConfig = async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/settings/top-deals');
+        if (res.ok) {
+          const data = await res.json();
+          setCategories(data.categories || []);
+          if (data.timer) {
+            setTargetDate(new Date(data.timer));
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load top deals config', err);
+      }
+    };
+    fetchConfig();
+  }, []);
+
+  useEffect(() => {
+    if (!targetDate) {
+      setTimeLeft('');
+      return;
+    }
+    
+    const calculateTimeLeft = () => {
+      const difference = targetDate.getTime() - new Date().getTime();
+      if (difference > 0) {
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((difference / 1000 / 60) % 60);
+        const seconds = Math.floor((difference / 1000) % 60);
+        
+        return `${days}d : ${hours}h : ${minutes}m : ${seconds}s`;
+      }
+      return 'Deal Expired';
+    };
+
+    // Initial setting
+    setTimeLeft(calculateTimeLeft());
+    
+    // Update every second
+    const timerId = setInterval(() => {
+      setTimeLeft(calculateTimeLeft());
+    }, 1000);
+    
+    return () => clearInterval(timerId);
+  }, [targetDate]);
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       {/* Header component */}
@@ -76,6 +86,25 @@ export default function TopDealsPage() {
                 <span className={styles.activeCrumb}>Top Deals</span>
               </nav>
               <h1 className={styles.bannerTitle}>Top Deals</h1>
+              
+              {/* Dynamic Countdown Timer */}
+              {timeLeft && (
+                <div style={{ 
+                  marginTop: '1.5rem', 
+                  display: 'inline-flex', 
+                  alignItems: 'center', 
+                  gap: '0.75rem',
+                  background: 'rgba(0, 0, 0, 0.6)',
+                  padding: '0.75rem 1.5rem',
+                  borderRadius: '30px',
+                  border: '1px solid rgba(255, 255, 255, 0.2)'
+                }}>
+                  <Clock size={20} color="#fff" />
+                  <span style={{ color: '#fff', fontSize: '1.2rem', fontWeight: 600, letterSpacing: '1px' }}>
+                    Ends In: {timeLeft}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -88,35 +117,43 @@ export default function TopDealsPage() {
             </div>
             
             <div className={styles.grid}>
-              {DEALS_CATEGORIES.map((category, idx) => (
+              {categories.map((category, idx) => (
                 <Link 
                   href={category.link} 
                   key={`${category.name}-${idx}`} 
                   className={styles.card}
                 >
                   <div className={styles.imageWrapper}>
+                    {timeLeft && (
+                      <div className={styles.cardTimer}>
+                        <Clock size={14} color="var(--accent-gold)" />
+                        <span className={styles.timerText}>{timeLeft}</span>
+                      </div>
+                    )}
                     <img 
                       src={category.imageUrl} 
                       alt={category.name} 
-                      className={styles.cardImage} 
+                      className={styles.image}
                     />
                   </div>
-                  <div className={styles.info}>
-                    <h3 className={styles.label}>{category.name}</h3>
-                    <span className={styles.exploreLink}>Explore Collection</span>
+                  <div className={styles.cardContent}>
+                    <h3 className={styles.cardTitle}>{category.name}</h3>
+                    <div className={styles.shopNowBtn}>Shop Deal</div>
                   </div>
                 </Link>
               ))}
+              
+              {categories.length === 0 && (
+                <div style={{ padding: '3rem', textAlign: 'center', gridColumn: '1 / -1', color: '#666' }}>
+                  No top deals categories configured yet.
+                </div>
+              )}
             </div>
           </div>
         </section>
-
       </main>
 
-      {/* Footer component */}
       <Footer />
-
-      {/* Floating detail view dialog */}
       <QuickView />
     </div>
   );

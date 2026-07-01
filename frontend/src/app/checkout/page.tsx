@@ -290,7 +290,7 @@ export default function CheckoutPage() {
                           </div>
                           <span className={styles.itemName}>{item.product.name}</span>
                         </div>
-                        <span className={styles.itemPrice}>${item.product.price * item.quantity}</span>
+                        <span className={styles.itemPrice}>₹{item.product.price * item.quantity}</span>
                       </div>
                     ))}
                   </div>
@@ -298,7 +298,7 @@ export default function CheckoutPage() {
                   {/* Subtotal Row */}
                   <div className={styles.summaryRow}>
                     <span>Subtotal</span>
-                    <span style={{ fontWeight: 600 }}>${cartSubtotal}</span>
+                    <span style={{ fontWeight: 600 }}>₹{cartSubtotal}</span>
                   </div>
 
                   {/* Shipping Section */}
@@ -323,7 +323,7 @@ export default function CheckoutPage() {
                           checked={shippingOption === 'pickup'}
                           onChange={() => setShippingOption('pickup')}
                         />
-                        <span>Local pickup: $5</span>
+                        <span>Local pickup: ₹5</span>
                       </label>
                       <label className={styles.shippingOption}>
                         <input 
@@ -333,7 +333,7 @@ export default function CheckoutPage() {
                           checked={shippingOption === 'flat'}
                           onChange={() => setShippingOption('flat')}
                         />
-                        <span>Flat rate: $10</span>
+                        <span>Flat rate: ₹10</span>
                       </label>
                     </div>
                   </div>
@@ -341,7 +341,7 @@ export default function CheckoutPage() {
                   {/* Total price Row */}
                   <div className={styles.totalPriceRow}>
                     <span>Total</span>
-                    <span className={styles.totalPrice}>${cartTotal}</span>
+                    <span className={styles.totalPrice}>₹{cartTotal}</span>
                   </div>
 
                   {/* Payment Gateway Selections */}

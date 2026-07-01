@@ -181,6 +181,22 @@
   left: 0;
 }
 
+.adminPanelLink {
+  color: var(--accent-gold);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color var(--transition-fast);
+}
+
+.adminPanelLink:hover {
+  color: var(--accent-gold-hover);
+}
+
+.topbarLink {
+  color: var(--text-light);
+  transition: transform var(--transition-fast);
+}
+
 .chevron {
   color: var(--text-light);
   transition: transform var(--transition-fast);

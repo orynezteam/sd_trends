@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import Header from '../../components/Header/Header';
@@ -9,33 +9,31 @@ import styles from './faqs.module.css';
 
 export default function FAQs() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [faqData, setFaqData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchFaqs();
+  }, []);
+
+  const fetchFaqs = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/faqs');
+      if (res.ok) {
+        const data = await res.json();
+        // Only show active FAQs
+        setFaqData(data.filter((f: any) => f.is_active));
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleIndex = (index: number) => {
     setOpenIndex((prev) => (prev === index ? null : index));
   };
-
-  const faqData = [
-    {
-      question: "How can you help?",
-      answer: "We offer bespoke design services for engagement rings and fine jewelry. You can collaborate with our master gemologists to select custom diamonds, metals, and settings to create your perfect piece."
-    },
-    {
-      question: "What is a return policy?",
-      answer: "We offer a 30-day complimentary return or exchange window for all unworn jewelry items in their original packaging, accompanied by their certification. Please note that custom-designed pieces and engraved items are final sale."
-    },
-    {
-      question: "What payment methods do you accept?",
-      answer: "We accept all major credit cards (Visa, MasterCard, Express), PayPal, Apple Pay, Google Pay, and bank wire transfers. We also offer flexible financing options through Affirm."
-    },
-    {
-      question: "Do you sell gift cards?",
-      answer: "Yes, we offer both digital and physical gift cards ranging from $50 to $2,000. Digital gift cards are delivered immediately via email, while physical cards are shipped in our signature gift box."
-    },
-    {
-      question: "Are your diamonds ethically sourced?",
-      answer: "Absolutely. All SD Trends diamonds are 100% ethically sourced in strict compliance with the Kimberley Process, ensuring they are conflict-free. We provide GIA or IGI certifications with all solitaire pieces."
-    }
-  ];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
@@ -76,27 +74,33 @@ export default function FAQs() {
 
               {/* Right Column: FAQ List */}
               <div className={styles.rightColumn}>
-                {faqData.map((faq, index) => {
-                  const isOpen = openIndex === index;
-                  return (
-                    <div key={index} className={styles.faqItem}>
-                      <button 
-                        className={styles.faqQuestionButton}
-                        onClick={() => toggleIndex(index)}
-                        aria-expanded={isOpen}
-                      >
-                        <h3 className={styles.faqQuestion}>{faq.question}</h3>
-                        <span className={styles.faqIcon}>
-                          {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-                        </span>
-                      </button>
-                      
-                      <div className={`${styles.faqAnswerWrapper} ${isOpen ? styles.answerOpen : ''}`}>
-                        <p className={styles.faqAnswer}>{faq.answer}</p>
+                {loading ? (
+                  <p className={styles.description}>Loading FAQs...</p>
+                ) : faqData.length === 0 ? (
+                  <p className={styles.description}>No FAQs available at this time.</p>
+                ) : (
+                  faqData.map((faq, index) => {
+                    const isOpen = openIndex === index;
+                    return (
+                      <div key={faq.id} className={styles.faqItem}>
+                        <button 
+                          className={styles.faqQuestionButton}
+                          onClick={() => toggleIndex(index)}
+                          aria-expanded={isOpen}
+                        >
+                          <h3 className={styles.faqQuestion}>{faq.question}</h3>
+                          <span className={styles.faqIcon}>
+                            {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                          </span>
+                        </button>
+                        
+                        <div className={`${styles.faqAnswerWrapper} ${isOpen ? styles.answerOpen : ''}`}>
+                          <p className={styles.faqAnswer}>{faq.answer}</p>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })
+                )}
               </div>
 
             </div>

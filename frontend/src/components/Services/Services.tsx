@@ -4,32 +4,29 @@ import React from 'react';
 import { Truck, PiggyBank, Percent, Headphones } from 'lucide-react';
 import styles from './Services.module.css';
 
-const SERVICES = [
-  {
-    icon: <Truck size={36} strokeWidth={1.5} />,
-    title: "Worldwide Shipping",
-    desc: "For all Orders Over $100"
-  },
-  {
-    icon: <PiggyBank size={36} strokeWidth={1.5} />,
-    title: "Money Back Guarantee",
-    desc: "Guarante With In 30 Days"
-  },
-  {
-    icon: <Percent size={36} strokeWidth={1.5} />,
-    title: "Offers And Discounts",
-    desc: "Back Returns In 7 Days"
-  },
-  {
-    icon: <Headphones size={36} strokeWidth={1.5} />,
-    title: "24/7 Support Services",
-    desc: "Contact us Anytime"
-  }
-];
+import * as Icons from 'lucide-react';
 
 export default function Services() {
+  const [services, setServices] = React.useState<any[]>([]);
   const [scrollProgress, setScrollProgress] = React.useState(0);
   const gridRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    fetch('http://localhost:5000/api/content/services')
+      .then(res => res.json())
+      .then(data => {
+        if (data && Array.isArray(data)) {
+          setServices(data);
+        }
+      })
+      .catch(err => console.error("Failed to load services:", err));
+  }, []);
+
+  const renderIcon = (iconName: string) => {
+    const IconComponent = Icons[iconName as keyof typeof Icons] as React.ElementType;
+    if (!IconComponent) return <Icons.HelpCircle size={36} strokeWidth={1.5} />;
+    return <IconComponent size={36} strokeWidth={1.5} />;
+  };
 
   const handleScroll = () => {
     if (gridRef.current) {
@@ -48,12 +45,12 @@ export default function Services() {
           onScroll={handleScroll}
           className={styles.grid}
         >
-          {SERVICES.map((srv, idx) => (
-            <div key={idx} className={styles.item}>
-              <div className={styles.iconWrapper}>{srv.icon}</div>
+          {services.map((srv, idx) => (
+            <div key={srv.id || idx} className={styles.item}>
+              <div className={styles.iconWrapper}>{renderIcon(srv.icon_name)}</div>
               <div className={styles.info}>
                 <h4 className={styles.title}>{srv.title}</h4>
-                <p className={styles.desc}>{srv.desc}</p>
+                <p className={styles.desc}>{srv.description}</p>
               </div>
             </div>
           ))}

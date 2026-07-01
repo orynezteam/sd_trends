@@ -16,18 +16,29 @@ export default function Header() {
     theme,
     toggleTheme,
     removeFromCart,
-    openQuickView
+    openQuickView,
+    user
   } = useStore();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
   const [showCartDropdown, setShowCartDropdown] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
+  const [promo, setPromo] = useState<any>(null);
 
   const searchRef = useRef(null);
   const cartRef = useRef(null);
+
+  // Fetch Category Hierarchy
+  useEffect(() => {
+    fetch('http://localhost:5000/api/content/categories/hierarchy')
+      .then(res => res.json())
+      .then(data => setCategories(data))
+      .catch(err => console.error(err));
+  }, []);
 
   // Debounced/Live search fetch from Flask Backend
   useEffect(() => {
@@ -65,6 +76,18 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Fetch Promo Banner
+  useEffect(() => {
+    fetch('http://localhost:5000/api/content/promo')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.is_active) {
+          setPromo(data);
+        }
+      })
+      .catch(err => console.error("Failed to load promo:", err));
+  }, []);
+
   // Calculate cart metrics
   const cartTotalItems = cart.reduce((total, item) => total + item.quantity, 0);
   const cartTotalPrice = cart.reduce((total, item) => total + (item.product.price * item.quantity), 0);
@@ -76,9 +99,26 @@ export default function Header() {
         <div className="container">
           <div className={styles.topbarContent}>
             <div className={styles.topbarLeft}>
-              Free shipping world wide for all orders over $199 <Link href="/shop" className={styles.shopNowLink}>Shop Now</Link>
+              {promo ? (
+                <>
+                  {promo.text}{' '}
+                  {promo.link_text && (
+                    <Link href={promo.link_url || '#'} className={styles.shopNowLink}>
+                      {promo.link_text}
+                    </Link>
+                  )}
+                </>
+              ) : (
+                <span>Welcome to SD Trends</span>
+              )}
             </div>
             <div className={styles.topbarRight}>
+              {user?.is_admin && (
+                <>
+                  <Link href="/admin" className={styles.adminPanelLink}>Admin Panel</Link>
+                  <span className={styles.divider}>|</span>
+                </>
+              )}
               <Link href="#track-order" className={styles.topbarLink}>Track Order</Link>
               <span className={styles.divider}>|</span>
               <Link href="/contact-us" className={`${styles.topbarLink} ${pathname === '/contact-us' ? styles.activeTopbarLink : ''}`}>Contact Us</Link>
@@ -128,60 +168,20 @@ export default function Header() {
                 {/* Mega Dropdown menu */}
                 <div className={styles.megaDropdown}>
                   <div className={styles.megaDropdownContainer}>
-                    <div className={styles.megaColumn}>
-                      <h3 className={styles.megaTitle}>Rings</h3>
-                      <ul className={styles.megaList}>
-                        <li><Link href="/shop?subcategory=Diamond Rings">Diamond Rings</Link></li>
-                        <li><Link href="/shop?subcategory=Rose Gold Rings">Rose Gold Rings</Link></li>
-                        <li><Link href="/shop?subcategory=Gold Rings">Gold Rings</Link></li>
-                        <li><Link href="/shop?subcategory=Cocktail Rings">Cocktail Rings</Link></li>
-                      </ul>
-                    </div>
-                    <div className={styles.megaColumn}>
-                      <h3 className={styles.megaTitle}>Anklet</h3>
-                      <ul className={styles.megaList}>
-                        <li><Link href="/shop?subcategory=Ankle Bracelets">Ankle Bracelets</Link></li>
-                        <li><Link href="/shop?subcategory=Beaded Ankle">Beaded Ankle</Link></li>
-                        <li><Link href="/shop?subcategory=Braided Ankle">Braided Ankle</Link></li>
-                        <li><Link href="/shop?subcategory=Charmed Ankle">Charmed Ankle</Link></li>
-                      </ul>
-                    </div>
-                    <div className={styles.megaColumn}>
-                      <h3 className={styles.megaTitle}>Bracelets</h3>
-                      <ul className={styles.megaList}>
-                        <li><Link href="/shop?subcategory=Antique Bangle">Antique Bangle</Link></li>
-                        <li><Link href="/shop?subcategory=Beaded Bracelets">Beaded Bracelets</Link></li>
-                        <li><Link href="/shop?subcategory=Charm Bracelet">Charm Bracelet</Link></li>
-                        <li><Link href="/shop?subcategory=Tennis Bracelets">Tennis Bracelets</Link></li>
-                      </ul>
-                    </div>
-                    <div className={styles.megaColumn}>
-                      <h3 className={styles.megaTitle}>Earring</h3>
-                      <ul className={styles.megaList}>
-                        <li><Link href="/shop?subcategory=Dangles Earring">Dangles Earring</Link></li>
-                        <li><Link href="/shop?subcategory=Drops Earring">Drops Earring</Link></li>
-                        <li><Link href="/shop?subcategory=Hoops Earring">Hoops Earring</Link></li>
-                        <li><Link href="/shop?subcategory=Mamuli Earring">Mamuli Earring</Link></li>
-                      </ul>
-                    </div>
-                    <div className={styles.megaColumn}>
-                      <h3 className={styles.megaTitle}>Brooches</h3>
-                      <ul className={styles.megaList}>
-                        <li><Link href="/shop?subcategory=Animal Brooche">Animal Brooche</Link></li>
-                        <li><Link href="/shop?subcategory=Floral Brooche">Floral Brooche</Link></li>
-                        <li><Link href="/shop?subcategory=Modern Brooche">Modern Brooche</Link></li>
-                        <li><Link href="/shop?subcategory=Vintage Brooche">Vintage Brooche</Link></li>
-                      </ul>
-                    </div>
-                    <div className={styles.megaColumn}>
-                      <h3 className={styles.megaTitle}>Necklaces</h3>
-                      <ul className={styles.megaList}>
-                        <li><Link href="/shop?subcategory=Choker">Choker</Link></li>
-                        <li><Link href="/shop?subcategory=Butterfly Pendant">Butterfly Pendant</Link></li>
-                        <li><Link href="/shop?subcategory=Flower Necklace">Flower Necklace</Link></li>
-                        <li><Link href="/shop?subcategory=Princess Necklace">Princess Necklace</Link></li>
-                      </ul>
-                    </div>
+                    {categories.map((cat, idx) => (
+                      <div key={cat.id} className={styles.megaColumn}>
+                        <h3 className={styles.megaTitle}>{cat.name}</h3>
+                        <ul className={styles.megaList}>
+                          {cat.subcategories.map((sub: any) => (
+                            <li key={sub.id}>
+                              <Link href={`/shop?subcategory=${encodeURIComponent(sub.name)}`}>
+                                {sub.name}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </li>
@@ -242,7 +242,7 @@ export default function Header() {
                             />
                             <div className={styles.resultInfo}>
                               <div className={styles.resultName}>{product.name}</div>
-                              <div className={styles.resultPrice}>${product.price}</div>
+                              <div className={styles.resultPrice}>₹{product.price}</div>
                             </div>
                           </div>
                         ))
@@ -256,7 +256,7 @@ export default function Header() {
             </div>
 
             {/* User Account Icon */}
-            <Link href="#account" className={styles.actionButton} aria-label="Account">
+            <Link href="/profile" className={styles.actionButton} aria-label="Account">
               <User size={20} />
             </Link>
 
@@ -299,8 +299,7 @@ export default function Header() {
                             <div className={styles.cartItemMeta}>
                               Qty: {item.quantity} | {item.metal.split(' ')[0]}
                             </div>
-                            <div className={styles.cartItemPrice}>
-                              ${item.product.price * item.quantity}
+                            <div className={styles.cartItemPrice}>₹{item.product.price * item.quantity}
                             </div>
                           </div>
                           <button 
@@ -321,7 +320,7 @@ export default function Header() {
                     <>
                       <div className={styles.cartTotal}>
                         <span>Total:</span>
-                        <span>${cartTotalPrice}</span>
+                        <span>₹{cartTotalPrice}</span>
                       </div>
                       <Link 
                         href="/checkout"
@@ -373,76 +372,21 @@ export default function Header() {
 
           {mobileCategoriesOpen && (
             <div className={styles.mobileCategoriesDropdown}>
-              {[
-                {
-                  title: "Rings",
-                  items: [
-                    { label: "Diamond Rings", href: "/shop?subcategory=Diamond Rings" },
-                    { label: "Rose Gold Rings", href: "/shop?subcategory=Rose Gold Rings" },
-                    { label: "Gold Rings", href: "/shop?subcategory=Gold Rings" },
-                    { label: "Cocktail Rings", href: "/shop?subcategory=Cocktail Rings" }
-                  ]
-                },
-                {
-                  title: "Anklet",
-                  items: [
-                    { label: "Ankle Bracelets", href: "/shop?subcategory=Ankle Bracelets" },
-                    { label: "Beaded Ankle", href: "/shop?subcategory=Beaded Ankle" },
-                    { label: "Braided Ankle", href: "/shop?subcategory=Braided Ankle" },
-                    { label: "Charmed Ankle", href: "/shop?subcategory=Charmed Ankle" }
-                  ]
-                },
-                {
-                  title: "Bracelets",
-                  items: [
-                    { label: "Antique Bangle", href: "/shop?subcategory=Antique Bangle" },
-                    { label: "Beaded Bracelets", href: "/shop?subcategory=Beaded Bracelets" },
-                    { label: "Charm Bracelet", href: "/shop?subcategory=Charm Bracelet" },
-                    { label: "Tennis Bracelets", href: "/shop?subcategory=Tennis Bracelets" }
-                  ]
-                },
-                {
-                  title: "Earring",
-                  items: [
-                    { label: "Dangles Earring", href: "/shop?subcategory=Dangles Earring" },
-                    { label: "Drops Earring", href: "/shop?subcategory=Drops Earring" },
-                    { label: "Hoops Earring", href: "/shop?subcategory=Hoops Earring" },
-                    { label: "Mamuli Earring", href: "/shop?subcategory=Mamuli Earring" }
-                  ]
-                },
-                {
-                  title: "Brooches",
-                  items: [
-                    { label: "Animal Brooche", href: "/shop?subcategory=Animal Brooche" },
-                    { label: "Floral Brooche", href: "/shop?subcategory=Floral Brooche" },
-                    { label: "Modern Brooche", href: "/shop?subcategory=Modern Brooche" },
-                    { label: "Vintage Brooche", href: "/shop?subcategory=Vintage Brooche" }
-                  ]
-                },
-                {
-                  title: "Necklaces",
-                  items: [
-                    { label: "Choker", href: "/shop?subcategory=Choker" },
-                    { label: "Butterfly Pendant", href: "/shop?subcategory=Butterfly Pendant" },
-                    { label: "Flower Necklace", href: "/shop?subcategory=Flower Necklace" },
-                    { label: "Princess Necklace", href: "/shop?subcategory=Princess Necklace" }
-                  ]
-                }
-              ].map((cat, idx) => (
-                <div key={idx} className={styles.mobileCategoryGroup}>
-                  <h4 className={styles.mobileCategoryTitle}>{cat.title}</h4>
+              {categories.map((cat, idx) => (
+                <div key={cat.id} className={styles.mobileCategoryGroup}>
+                  <h4 className={styles.mobileCategoryTitle}>{cat.name}</h4>
                   <ul className={styles.mobileCategoryList}>
-                    {cat.items.map((item, itemIdx) => (
-                      <li key={itemIdx}>
+                    {cat.subcategories.map((sub: any) => (
+                      <li key={sub.id}>
                         <Link 
-                          href={item.href}
+                          href={`/shop?subcategory=${encodeURIComponent(sub.name)}`}
                           onClick={() => {
                             setMobileMenuOpen(false);
                             setMobileCategoriesOpen(false);
                           }}
                           className={styles.mobileCategoryLink}
                         >
-                          {item.label}
+                          {sub.name}
                         </Link>
                       </li>
                     ))}

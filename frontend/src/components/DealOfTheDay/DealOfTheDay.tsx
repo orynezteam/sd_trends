@@ -88,8 +88,8 @@ export default function DealOfTheDay() {
             <h2 className={styles.dealTitle}>{DEAL_PRODUCT.name}</h2>
             
             <div className={styles.priceContainer}>
-              <span className={styles.price}>${DEAL_PRODUCT.price}</span>
-              <span className={styles.originalPrice}>${DEAL_PRODUCT.originalPrice}</span>
+              <span className={styles.price}>₹{DEAL_PRODUCT.price}</span>
+              <span className={styles.originalPrice}>₹{DEAL_PRODUCT.originalPrice}</span>
             </div>
 
             <p className={styles.description}>{DEAL_PRODUCT.description}</p>

@@ -102,9 +102,9 @@ export default function WishlistPage() {
                                 <span className={styles.price}>{product.priceRange}</span>
                               ) : (
                                 <div className={styles.priceWrapper}>
-                                  <span className={styles.price}>${product.price}</span>
+                                  <span className={styles.price}>₹{product.price}</span>
                                   {hasDiscount && (
-                                    <span className={styles.originalPrice}>${product.originalPrice}</span>
+                                    <span className={styles.originalPrice}>₹{product.originalPrice}</span>
                                   )}
                                 </div>
                               )}
@@ -163,9 +163,9 @@ export default function WishlistPage() {
                                 <span className={styles.cardPrice}>{product.priceRange}</span>
                               ) : (
                                 <>
-                                  <span className={styles.cardPrice}>${product.price}</span>
+                                  <span className={styles.cardPrice}>₹{product.price}</span>
                                   {hasDiscount && (
-                                    <span className={styles.cardOriginalPrice}>${product.originalPrice}</span>
+                                    <span className={styles.cardOriginalPrice}>₹{product.originalPrice}</span>
                                   )}
                                 </>
                               )}

@@ -6,8 +6,9 @@ import Link from 'next/link';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import ProductCard from '../../components/ProductCard/ProductCard';
+import ProductListTable from '../../components/ProductCard/ProductListTable';
 import QuickView from '../../components/QuickView/QuickView';
-import { PRODUCTS, Product } from '../../data/products';
+import { Product } from '../../data/products';
 import { ChevronRight, Grid, List, SlidersHorizontal, CheckSquare, Square, ChevronDown } from 'lucide-react';
 import styles from './shop.module.css';
 
@@ -16,203 +17,134 @@ function ShopContent() {
   const subcategoryParam = searchParams.get('subcategory');
   const categoryParam = searchParams.get('category');
 
+  const [categories, setCategories] = useState<any[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState<string>('default');
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [maxPrice, setMaxPrice] = useState<number>(5000);
+  const [maxPossiblePrice, setMaxPossiblePrice] = useState<number>(5000);
 
   const itemsPerPage = 15;
 
-  // Sync category counts from active product database
-  const getCategoryCount = (categoryKey: string) => {
-    if (categoryKey === 'all') return PRODUCTS.length;
-    return PRODUCTS.filter(p => p.category === categoryKey).length;
-  };
+  useEffect(() => {
+    Promise.all([
+      fetch('http://localhost:5000/api/content/categories/hierarchy').then(r => r.json()),
+      fetch('http://localhost:5000/api/products').then(r => r.json())
+    ]).then(([cats, prods]) => {
+      setCategories(cats || []);
+      setProducts(prods || []);
+      
+      let maxP = 100;
+      if (prods && prods.length > 0) {
+        maxP = Math.max(...prods.map((p: any) => p.price || 0));
+      }
+      setMaxPossiblePrice(Math.ceil(maxP / 50) * 50);
+      setMaxPrice(Math.ceil(maxP / 50) * 50);
 
-  const CATEGORIES = [
-    { id: 'all', label: 'Our Store', count: getCategoryCount('all'), key: 'all' },
-    { id: 'anklets', label: 'Anklet', count: getCategoryCount('anklets'), key: 'anklets' },
-    { id: 'bracelets', label: 'Bracelets', count: getCategoryCount('bracelets'), key: 'bracelets' },
-    { id: 'brooches', label: 'Brooches', count: getCategoryCount('brooches'), key: 'brooches' },
-    { id: 'earrings', label: 'Earring', count: getCategoryCount('earrings'), key: 'earrings' },
-    { id: 'rings', label: 'Rings', count: getCategoryCount('rings'), key: 'rings' },
-    { id: 'necklaces', label: 'Necklaces', count: getCategoryCount('necklaces'), key: 'necklaces' }
-  ];
-
-  // Helper to map a subcategory name to its parent category key
-  const getParentCategory = (sub: string): string => {
-    const s = sub.toLowerCase();
-    if (s.includes('ring')) return 'rings';
-    if (s.includes('earring')) return 'earrings';
-    if (s.includes('pendant') || s.includes('necklace') || s.includes('choker')) return 'necklaces';
-    if (s.includes('bangle') || s.includes('bracelet') || s.includes('cuff')) return 'bracelets';
-    if (s.includes('brooche')) return 'brooches';
-    if (s.includes('ankle') || s.includes('anklet')) return 'anklets';
-    return 'all';
-  };
-
-  // Helper to match subcategory names with product items
-  const matchSubcategory = (product: Product, subcategory: string): boolean => {
-    const name = product.name.toLowerCase();
-    const desc = product.description.toLowerCase();
-    const sub = subcategory.toLowerCase();
-
-    if (!sub || sub === 'all') return true;
-
-    // Rings
-    if (sub === 'diamond rings') {
-      return product.category === 'rings' && (name.includes('diamond') || desc.includes('diamond'));
-    }
-    if (sub === 'rose gold rings') {
-      return product.category === 'rings' && (
-        name.includes('rose') || 
-        desc.includes('rose') || 
-        (product.details.metal && product.details.metal.toLowerCase().includes('rose')) ||
-        product.images.some(img => img.toLowerCase().includes('rose'))
-      );
-    }
-    if (sub === 'gold rings') {
-      return product.category === 'rings' && (
-        (name.includes('gold') || desc.includes('gold') || (product.details.metal && product.details.metal.toLowerCase().includes('gold'))) &&
-        !(
-          name.includes('rose gold') || 
-          desc.includes('rose gold') || 
-          (product.details.metal && product.details.metal.toLowerCase().includes('rose gold')) ||
-          name.includes('white gold') || 
-          desc.includes('white gold') || 
-          (product.details.metal && product.details.metal.toLowerCase().includes('white gold'))
-        )
-      );
-    }
-    if (sub === 'cocktail rings') {
-      return product.category === 'rings' && (
-        name.includes('cocktail') || 
-        name.includes('emerald') || 
-        desc.includes('emerald') || 
-        name.includes('sinead') || 
-        product.id.includes('emerald')
-      );
-    }
-
-    // Anklets
-    if (sub === 'ankle bracelets' || sub === 'beaded ankle' || sub === 'braided ankle' || sub === 'charmed ankle') {
-      return product.category === 'anklets';
-    }
-
-    // Bracelets
-    if (sub === 'antique bangle') {
-      return product.category === 'bracelets' && (name.includes('bangle') || desc.includes('bangle'));
-    }
-    if (sub === 'beaded bracelets') {
-      return product.category === 'bracelets' && (name.includes('beaded') || desc.includes('beaded') || name.includes('herringbone') || name.includes('flat'));
-    }
-    if (sub === 'charm bracelet') {
-      return product.category === 'bracelets' && (name.includes('charm') || name.includes('cuff') || desc.includes('cuff'));
-    }
-    if (sub === 'tennis bracelets') {
-      return product.category === 'bracelets' && (name.includes('tennis') || desc.includes('tennis'));
-    }
-
-    // Earring
-    if (sub === 'dangles earring') {
-      return product.category === 'earrings' && (name.includes('dangle') || name.includes('drop') || name.includes('ruby') || name.includes('ximena'));
-    }
-    if (sub === 'drops earring') {
-      return product.category === 'earrings' && (name.includes('drop') || name.includes('ruby') || name.includes('ximena') || name.includes('eulla'));
-    }
-    if (sub === 'hoops earring') {
-      return product.category === 'earrings' && (name.includes('hoop') || desc.includes('hoop'));
-    }
-    if (sub === 'mamuli earring') {
-      return product.category === 'earrings' && (name.includes('mamuli') || name.includes('halo') || desc.includes('halo'));
-    }
-
-    // Brooches
-    if (product.category === 'brooches') {
-      return true;
-    }
-
-    // Necklaces
-    if (sub === 'choker') {
-      return product.category === 'necklaces' && (name.includes('choker') || desc.includes('choker'));
-    }
-    if (sub === 'butterfly pendant') {
-      return product.category === 'necklaces' && (name.includes('butterfly') || name.includes('pendant') || desc.includes('pendant'));
-    }
-    if (sub === 'flower necklace') {
-      return product.category === 'necklaces' && (name.includes('flower') || desc.includes('flower') || name.includes('tiara') || name.includes('duchess'));
-    }
-    if (sub === 'princess necklace') {
-      return product.category === 'necklaces' && (name.includes('princess') || name.includes('tiara') || name.includes('duchess') || name.includes('sapphire'));
-    }
-
-    return name.includes(sub) || desc.includes(sub);
-  };
+      setLoading(false);
+    }).catch(err => {
+      console.error(err);
+      setLoading(false);
+    });
+  }, []);
 
   useEffect(() => {
+    if (categoryParam) {
+      setSelectedCategory(categoryParam.toLowerCase());
+      setExpandedCategories(prev => [...prev, categoryParam.toLowerCase()]);
+    }
     if (subcategoryParam) {
       setSelectedSubcategory(subcategoryParam);
-      const parent = getParentCategory(subcategoryParam);
-      setSelectedCategory(parent);
-    } else if (categoryParam) {
-      setSelectedCategory(categoryParam);
-      setSelectedSubcategory(null);
-    } else {
-      setSelectedCategory('all');
-      setSelectedSubcategory(null);
     }
-  }, [subcategoryParam, categoryParam]);
+  }, [categoryParam, subcategoryParam]);
 
-  // Filtering logic
-  const filteredProducts = PRODUCTS.filter(p => {
-    const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory;
-    const matchesPrice = p.price <= maxPrice;
+  const toggleCategoryExpand = (catId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setExpandedCategories(prev => 
+      prev.includes(catId) ? prev.filter(id => id !== catId) : [...prev, catId]
+    );
+  };
+
+  const handleCategorySelect = (catName: string) => {
+    setSelectedCategory(catName.toLowerCase());
+    setSelectedSubcategory(null);
+    setCurrentPage(1);
+  };
+
+  const handleSubcategorySelect = (subName: string, parentCatName: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedCategory(parentCatName.toLowerCase());
+    setSelectedSubcategory(subName);
+    setCurrentPage(1);
+  };
+
+  const matchSubcategory = (product: any, subcategory: string): boolean => {
+    const name = product.name.toLowerCase();
+    const desc = (product.description || '').toLowerCase();
+    const sub = subcategory.toLowerCase();
     
-    let matchesSubcategory = true;
+    const keywords = sub.split(' ').filter(k => k !== 'and' && k !== 'or' && k.length > 2);
+    if (keywords.length === 0) return name.includes(sub) || desc.includes(sub);
+    
+    return keywords.some(keyword => name.includes(keyword) || desc.includes(keyword));
+  };
+
+  // Filter Logic
+  let filteredProducts = products.filter(p => {
+    if (selectedCategory !== 'all') {
+      if ((p.category || '').toLowerCase() !== selectedCategory) return false;
+    }
     if (selectedSubcategory) {
-      matchesSubcategory = matchSubcategory(p, selectedSubcategory);
+      if (!matchSubcategory(p, selectedSubcategory)) return false;
     }
-    
-    return matchesCategory && matchesPrice && matchesSubcategory;
+    if (p.price > maxPrice) return false;
+    return true;
   });
 
-  // Sorting logic
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    if (sortOption === 'price-asc') return a.price - b.price;
-    if (sortOption === 'price-desc') return b.price - a.price;
-    if (sortOption === 'rating') return b.rating - a.rating;
-    return 0; // Default sorting
-  });
+  // Sort Logic
+  if (sortOption === 'price-asc') {
+    filteredProducts.sort((a, b) => a.price - b.price);
+  } else if (sortOption === 'price-desc') {
+    filteredProducts.sort((a, b) => b.price - a.price);
+  } else if (sortOption === 'rating') {
+    filteredProducts.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  }
 
-  // Pagination bounds
-  const totalProducts = sortedProducts.length;
+  // Pagination Logic
+  const totalProducts = filteredProducts.length;
   const totalPages = Math.ceil(totalProducts / itemsPerPage);
   const indexOfLastProduct = currentPage * itemsPerPage;
   const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
-  const currentProducts = sortedProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
-  // Reset page when category, sorting, or price changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedCategory, sortOption, maxPrice, selectedSubcategory]);
-
-  const handleCategorySelect = (categoryKey: string) => {
-    setSelectedCategory(categoryKey);
-    setSelectedSubcategory(null); // Clear subcategory when user selects a category manually
-  };
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', fontFamily: 'var(--font-roboto), sans-serif' }}>
+        <div style={{
+          width: '50px',
+          height: '50px',
+          border: '4px solid var(--accent-gold-light)',
+          borderTopColor: 'var(--accent-gold)',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite'
+        }} />
+        <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      {/* Header component */}
+    <div className={styles.shopPage}>
       <Header />
-
-      {/* Main content flow */}
       <main style={{ flex: '1', backgroundColor: '#FFFFFF' }}>
         
-        {/* Shop Header Banner */}
         <section className={styles.shopBanner}>
           <div className={styles.bannerOverlay}>
             <div className={styles.bannerContent}>
@@ -226,12 +158,10 @@ function ShopContent() {
           </div>
         </section>
 
-        {/* Shop Main Layout */}
         <section className={styles.shopMain}>
           <div className={styles.container}>
             <div className={styles.shopLayoutGrid}>
               
-              {/* Left Sidebar - Filters */}
               <aside className={`${styles.sidebar} ${isSidebarOpen ? styles.sidebarOpen : ''}`}>
                 <div className={styles.filterSection}>
                   <div 
@@ -239,40 +169,102 @@ function ShopContent() {
                     onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                   >
                     <h2 className={styles.filterTitle}>Filter By Categories</h2>
-                    <span className={styles.toggleIcon}>{isSidebarOpen ? '—' : '+'}</span>
+                    <span className={styles.toggleIcon}>{isSidebarOpen ? '-' : '+'}</span>
                   </div>
                   
                   {isSidebarOpen && (
                     <ul className={styles.categoryList}>
-                      {CATEGORIES.map((cat) => (
-                        <li 
-                          key={cat.id} 
-                          className={`${styles.categoryItem} ${selectedCategory === cat.key ? styles.categoryActive : ''}`}
-                          onClick={() => handleCategorySelect(cat.key)}
+                      <li 
+                        className={`${styles.categoryItemWrapper}`}
+                      >
+                        <div 
+                          className={`${styles.categoryItem} ${selectedCategory === 'all' ? styles.categoryActive : ''}`}
+                          onClick={() => handleCategorySelect('all')}
                         >
                           <div className={styles.checkboxWrapper}>
-                            {selectedCategory === cat.key ? (
+                            {selectedCategory === 'all' ? (
                               <CheckSquare size={18} className={styles.checkedIcon} />
                             ) : (
                               <Square size={18} className={styles.uncheckedIcon} />
                             )}
                           </div>
-                          <span className={styles.categoryLabel}>{cat.label}</span>
-                          <span className={styles.categoryCount}>({cat.count})</span>
-                        </li>
-                      ))}
+                          <span className={styles.categoryLabel}>All Products</span>
+                          <span className={styles.categoryCount}>({products.length})</span>
+                        </div>
+                      </li>
+
+                      {categories.map((cat) => {
+                        const catKey = cat.name.toLowerCase();
+                        const isActive = selectedCategory === catKey;
+                        const isExpanded = expandedCategories.includes(catKey);
+                        const catProducts = products.filter(p => (p.category || '').toLowerCase() === catKey);
+                        
+                        return (
+                          <li key={cat.id} className={styles.categoryItemWrapper}>
+                            <div 
+                              className={`${styles.categoryItem} ${isActive ? styles.categoryActive : ''}`}
+                              onClick={() => handleCategorySelect(cat.name)}
+                            >
+                              <div className={styles.checkboxWrapper}>
+                                {isActive && !selectedSubcategory ? (
+                                  <CheckSquare size={18} className={styles.checkedIcon} />
+                                ) : (
+                                  <Square size={18} className={styles.uncheckedIcon} />
+                                )}
+                              </div>
+                              <span className={styles.categoryLabel}>{cat.name}</span>
+                              <span className={styles.categoryCount}>({catProducts.length})</span>
+                              
+                              {cat.subcategories && cat.subcategories.length > 0 && (
+                                <button 
+                                  className={styles.expandBtn}
+                                  onClick={(e) => toggleCategoryExpand(catKey, e)}
+                                >
+                                  <ChevronDown size={14} className={`${styles.chevron} ${isExpanded ? styles.chevronUp : ''}`} />
+                                </button>
+                              )}
+                            </div>
+
+                            {isExpanded && cat.subcategories && (
+                              <ul className={styles.subcategoryList}>
+                                {cat.subcategories.map((sub: any) => {
+                                  const isSubActive = selectedSubcategory === sub.name;
+                                  // Estimate count
+                                  const subCount = catProducts.filter(p => matchSubcategory(p, sub.name)).length;
+                                  return (
+                                    <li 
+                                      key={sub.id}
+                                      className={`${styles.subcategoryItem} ${isSubActive ? styles.subcategoryActive : ''}`}
+                                      onClick={(e) => handleSubcategorySelect(sub.name, cat.name, e)}
+                                    >
+                                      <div className={styles.checkboxWrapper}>
+                                        {isSubActive ? (
+                                          <CheckSquare size={14} className={styles.checkedIcon} />
+                                        ) : (
+                                          <Square size={14} className={styles.uncheckedIcon} />
+                                        )}
+                                      </div>
+                                      <span className={styles.subcategoryLabel}>{sub.name}</span>
+                                      <span className={styles.categoryCount}>({subCount})</span>
+                                    </li>
+                                  );
+                                })}
+                              </ul>
+                            )}
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
                 </div>
 
-                {/* Price Filter Section */}
                 <div className={styles.filterSection} style={{ marginTop: '2.5rem' }}>
                   <h2 className={styles.filterTitle}>Filter By Price</h2>
                   <div className={styles.priceFilterContainer}>
                     <input 
                       type="range" 
                       min="0" 
-                      max="5000" 
+                      max={maxPossiblePrice} 
                       step="50"
                       value={maxPrice} 
                       onChange={(e) => setMaxPrice(Number(e.target.value))}
@@ -280,24 +272,20 @@ function ShopContent() {
                       aria-label="Price range filter slider"
                     />
                     <div className={styles.priceRangeLabels}>
-                      <span>$0</span>
-                      <span>Max: ${maxPrice}</span>
+                      <span>₹0</span>
+                      <span>Max: ₹{maxPrice}</span>
                     </div>
                   </div>
                 </div>
               </aside>
 
-              {/* Right Side - Products Grid */}
               <div className={styles.catalogArea}>
-                
-                {/* Catalog Controls Header Bar */}
                 <div className={styles.controlsHeader}>
                   <div className={styles.resultsCount}>
-                    Showing {totalProducts === 0 ? 0 : indexOfFirstProduct + 1}–{Math.min(indexOfLastProduct, totalProducts)} of {totalProducts} results
+                    Showing {totalProducts === 0 ? 0 : indexOfFirstProduct + 1}-{Math.min(indexOfLastProduct, totalProducts)} of {totalProducts} results
                   </div>
                   
                   <div className={styles.displayOptions}>
-                    {/* Sort Selector */}
                     <div className={styles.sortWrapper}>
                       <select 
                         value={sortOption}
@@ -313,7 +301,6 @@ function ShopContent() {
                       <ChevronDown size={14} className={styles.selectChevron} />
                     </div>
 
-                    {/* Grid/List Toggles */}
                     <div className={styles.viewToggles}>
                       <button 
                         onClick={() => setViewMode('grid')}
@@ -333,21 +320,21 @@ function ShopContent() {
                   </div>
                 </div>
 
-                {/* Products Catalog Grid */}
                 {currentProducts.length === 0 ? (
                   <div className={styles.noResults}>
                     <h3>No products found</h3>
                     <p>There are no products matching this category filter.</p>
                   </div>
+                ) : viewMode === 'list' ? (
+                  <ProductListTable products={currentProducts} />
                 ) : (
-                  <div className={`${styles.productsGrid} ${viewMode === 'list' ? styles.listView : ''}`}>
+                  <div className={styles.productsGrid}>
                     {currentProducts.map((product) => (
                       <ProductCard key={product.id} product={product} />
                     ))}
                   </div>
                 )}
 
-                {/* Pagination Controls */}
                 {totalPages > 1 && (
                   <div className={styles.pagination}>
                     {Array.from({ length: totalPages }).map((_, idx) => (
@@ -369,23 +356,17 @@ function ShopContent() {
                     )}
                   </div>
                 )}
-
               </div>
-
             </div>
           </div>
         </section>
-
       </main>
-
-      {/* Footer component */}
       <Footer />
-
-      {/* Floating detail view dialog */}
       <QuickView />
     </div>
   );
 }
+
 
 export default function ShopPage() {
   return (

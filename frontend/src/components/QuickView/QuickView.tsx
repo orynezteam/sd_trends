@@ -99,7 +99,7 @@ export default function QuickView() {
               <span>({product.reviewCount} customer reviews)</span>
             </div>
 
-            <div className={styles.price}>${product.price}</div>
+            <div className={styles.price}>₹{product.price}</div>
 
             <p className={styles.description}>{product.description}</p>
 

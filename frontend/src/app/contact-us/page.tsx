@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import Header from '../../components/Header/Header';
@@ -18,6 +18,21 @@ export default function ContactUs() {
     success: null,
     message: ''
   });
+  const [settings, setSettings] = useState<any>({});
+  const [settingsLoading, setSettingsLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/settings')
+      .then(res => res.json())
+      .then(data => {
+        setSettings(data);
+        setSettingsLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setSettingsLoading(false);
+      });
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -71,7 +86,7 @@ export default function ContactUs() {
             <div className={styles.breadcrumb}>
               <Link href="/">Home</Link> / <span>Contact Us</span>
             </div>
-            <h1 className={styles.bannerTitle}>Contact Us</h1>
+            <h1 className={styles.bannerTitle}>{settings.contact_page_title || 'Contact Us'}</h1>
           </div>
         </section>
 
@@ -83,21 +98,21 @@ export default function ContactUs() {
               <div className={styles.mapColumn}>
                 <div className={styles.mapContainer}>
                   <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.056633633887!2d-0.12181742338167998!3d51.50318637181313!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487604b900d26973%3A0x4291f3172409ea92!2sLastminute.com%20London%20Eye!5e0!3m2!1sen!2suk!4v1719220000000!5m2!1sen!2suk"
+                    src={settings.contact_page_map_url || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2483.056633633887!2d-0.12181742338167998!3d51.50318637181313!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x487604b900d26973%3A0x4291f3172409ea92!2sLastminute.com%20London%20Eye!5e0!3m2!1sen!2suk!4v1719220000000!5m2!1sen!2suk"}
                     className={styles.mapIframe}
                     allowFullScreen={true}
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
-                    title="London Eye Location Map"
+                    title="Location Map"
                   ></iframe>
                 </div>
               </div>
 
               {/* Right Column: Contact Form */}
               <div className={styles.formColumn}>
-                <h2 className={styles.formTitle}>Get In Touch With Us</h2>
+                <h2 className={styles.formTitle}>{settings.contact_page_title || 'Get In Touch With Us'}</h2>
                 <p className={styles.formSubtitle}>
-                  If you wish to directly reach us, Please fill out the form below -
+                  {settings.contact_page_subtitle || 'If you wish to directly reach us, Please fill out the form below -'}
                 </p>
 
                 <form onSubmit={handleSubmit}>
@@ -167,8 +182,8 @@ export default function ContactUs() {
                   <MapPin size={22} strokeWidth={1.5} />
                 </span>
                 <div className={styles.infoTexts}>
-                  <span className={styles.infoValue}>60 29th San Francisco,</span>
-                  <span className={styles.infoValue}>507 - Union Trade Center</span>
+                  <span className={styles.infoValue}>{settings.contact_page_address_1 || '60 29th San Francisco,'}</span>
+                  <span className={styles.infoValue}>{settings.contact_page_address_2 || '507 - Union Trade Center'}</span>
                 </div>
               </div>
 
@@ -178,7 +193,7 @@ export default function ContactUs() {
                 </span>
                 <div className={styles.infoTexts}>
                   <span className={styles.infoLabel}>Call us :</span>
-                  <span className={styles.infoValue}>(+01) 987-654-3210</span>
+                  <span className={styles.infoValue}>{settings.contact_page_phone || '(+01) 987-654-3210'}</span>
                 </div>
               </div>
 
@@ -188,7 +203,7 @@ export default function ContactUs() {
                 </span>
                 <div className={styles.infoTexts}>
                   <span className={styles.infoLabel}>Mail us :</span>
-                  <span className={styles.infoValue}>demo@example.com</span>
+                  <span className={styles.infoValue}>{settings.contact_page_email || 'demo@example.com'}</span>
                 </div>
               </div>
 
@@ -198,7 +213,7 @@ export default function ContactUs() {
                 </span>
                 <div className={styles.infoTexts}>
                   <span className={styles.infoLabel}>Open time :</span>
-                  <span className={styles.infoValue}>10:00AM – 6:00PM</span>
+                  <span className={styles.infoValue}>{settings.contact_page_hours || '10:00AM – 6:00PM'}</span>
                 </div>
               </div>
             </div>

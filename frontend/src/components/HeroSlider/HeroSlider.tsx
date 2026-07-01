@@ -4,69 +4,88 @@ import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import styles from './HeroSlider.module.css';
 
-const SLIDE_DATA = [
-  {
-    id: 1,
-    subtitle: "THIS WEEK'S HIGHLIGHTS",
-    title: "Woman In Golden Rings And Necklaces",
-    description: "Awesome products for the dynamic urban lifestyle",
-    buttonText: "SHOP NOW",
-    imageUrl: "/images/hero_bridal.png",
-    link: "/shop",
-    objectPosition: "right center"
-  },
-  {
-    id: 2,
-    subtitle: "TIMELESS SOPHISTICATION",
-    title: "The Fine Gold Collection",
-    description: "Discover solid gold link chains, stackable bands, and layering necklaces crafted for everyday luxury and elegance.",
-    buttonText: "SHOP NOW",
-    imageUrl: "/images/hero_diamond.png",
-    link: "/shop",
-    objectPosition: "right bottom"
-  }
-];
-
 export default function HeroSlider() {
   const [current, setCurrent] = useState(0);
+  const [slides, setSlides] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    fetch('http://localhost:5000/api/content/hero')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setSlides(data);
+        }
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Failed to load hero slides:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    
     const timer = setInterval(() => {
-      setCurrent((prev) => (prev === SLIDE_DATA.length - 1 ? 0 : prev + 1));
+      setCurrent((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
     }, 6000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [slides]);
 
   const nextSlide = () => {
-    setCurrent((prev) => (prev === SLIDE_DATA.length - 1 ? 0 : prev + 1));
+    setCurrent((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
   };
 
   const prevSlide = () => {
-    setCurrent((prev) => (prev === 0 ? SLIDE_DATA.length - 1 : prev - 1));
+    setCurrent((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   };
+
+  if (loading) {
+    return (
+      <section className={styles.slider}>
+        <div className={styles.slide} style={{ backgroundColor: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <p>Loading...</p>
+        </div>
+      </section>
+    );
+  }
+
+  // Fallback if no slides exist in DB
+  if (slides.length === 0) {
+    return (
+      <section className={styles.slider}>
+        <div className={styles.slide} style={{ backgroundColor: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <p>Welcome to SD Trends. Please add a Hero Slide from the Admin Dashboard.</p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className={styles.slider}>
-      {SLIDE_DATA.map((slide, index) => (
+      {slides.map((slide, index) => (
         <div
           key={slide.id}
           className={`${styles.slide} ${index === current ? styles.slideActive : ''}`}
         >
           <img
-            src={slide.imageUrl}
+            src={slide.image_url}
             alt={slide.title}
             className={styles.slideImage}
-            style={{ objectPosition: slide.objectPosition || 'right center' }}
+            style={{ objectPosition: slide.object_position || 'center' }}
           />
           <div className={styles.content}>
             <span className={styles.subtitle}>{slide.subtitle}</span>
             <h1 className={styles.title}>{slide.title}</h1>
             <p className={styles.description}>{slide.description}</p>
             <div className={styles.buttonWrapper}>
-              <a href={slide.link} className={styles.heroBtn}>
-                {slide.buttonText}
-              </a>
+              {slide.button_text && (
+                <a href={slide.link || '#'} className={styles.heroBtn}>
+                  {slide.button_text}
+                </a>
+              )}
             </div>
           </div>
         </div>
@@ -89,16 +108,18 @@ export default function HeroSlider() {
       </button>
 
       {/* Control Dots (Desktop version) */}
-      <div className={styles.dotsContainer}>
-        {SLIDE_DATA.map((_, index) => (
-          <button
-            key={index}
-            className={`${styles.dot} ${index === current ? styles.dotActive : ''}`}
-            onClick={() => setCurrent(index)}
-            aria-label={`Go to slide ${index + 1}`}
-          ></button>
-        ))}
-      </div>
+      {slides.length > 1 && (
+        <div className={styles.dotsContainer}>
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              className={`${styles.dot} ${index === current ? styles.dotActive : ''}`}
+              onClick={() => setCurrent(index)}
+              aria-label={`Go to slide ${index + 1}`}
+            ></button>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

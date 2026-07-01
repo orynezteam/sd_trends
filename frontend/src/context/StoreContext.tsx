@@ -15,6 +15,9 @@ export interface StoreContextValue {
   activeQuickViewProduct: any;
   openQuickView: (product: any) => void;
   closeQuickView: () => void;
+  user: any;
+  login: (userData: any) => void;
+  logout: () => void;
 }
 
 const StoreContext = createContext<StoreContextValue | undefined>(undefined);
@@ -25,6 +28,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState('light');
   const [activeQuickViewProduct, setActiveQuickViewProduct] = useState(null);
   const [notification, setNotification] = useState<{ id: number; title: string; message: string; type: 'success' | 'info' | 'wishlist' } | null>(null);
+  const [user, setUser] = useState(null);
 
   // Load initial state from localStorage on mount
   useEffect(() => {
@@ -41,6 +45,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const savedTheme = localStorage.getItem('sdt_theme') || 'light';
     setTheme(savedTheme);
     document.documentElement.setAttribute('data-theme', savedTheme);
+
+    const savedUser = localStorage.getItem('sdt_user');
+    if (savedUser) {
+      try { setUser(JSON.parse(savedUser)); } catch (e) { console.error(e); }
+    }
   }, []);
 
   // Save state to localStorage when it changes
@@ -107,13 +116,11 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   };
 
   // Toggle Wishlist
-  const toggleWishlist = (productId) => {
+  const toggleWishlist = async (productId) => {
     let newWishlist = [...wishlist];
     const index = newWishlist.indexOf(productId);
     
-    // Find product name for notification
-    const productDetails = PRODUCTS.find(p => p.id === productId);
-    const name = productDetails ? productDetails.name : 'Item';
+    const name = 'Item';
     
     if (index > -1) {
       newWishlist.splice(index, 1);
@@ -122,7 +129,20 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       newWishlist.push(productId);
       showNotification('Added to Wishlist', name, 'wishlist');
     }
-    saveWishlistToStorage(newWishlist);
+    setWishlist(newWishlist);
+    localStorage.setItem('sdt_wishlist', JSON.stringify(newWishlist));
+
+    if (user) {
+      try {
+        await fetch(`http://localhost:5000/api/users/${user.id}/wishlist`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ wishlist: newWishlist })
+        });
+      } catch (e) {
+        console.error("Failed to sync wishlist", e);
+      }
+    }
   };
 
   // Quick View controls
@@ -132,6 +152,43 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const closeQuickView = () => {
     setActiveQuickViewProduct(null);
+  };
+
+  // Auth controls
+  const login = async (userData) => {
+    setUser(userData);
+    localStorage.setItem('sdt_user', JSON.stringify(userData));
+
+    // Sync wishlist from backend merging with local
+    let mergedWishlist = [...wishlist];
+    if (userData.wishlist && Array.isArray(userData.wishlist)) {
+      userData.wishlist.forEach((id: string) => {
+        if (!mergedWishlist.includes(id)) {
+          mergedWishlist.push(id);
+        }
+      });
+    }
+
+    setWishlist(mergedWishlist);
+    localStorage.setItem('sdt_wishlist', JSON.stringify(mergedWishlist));
+    
+    try {
+      await fetch(`http://localhost:5000/api/users/${userData.id}/wishlist`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ wishlist: mergedWishlist })
+      });
+    } catch (e) {
+      console.error(e);
+    }
+
+    showNotification('Welcome back', `Signed in as ${userData.name || userData.email}`, 'success');
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem('sdt_user');
+    showNotification('Signed out', 'You have been successfully signed out.', 'info');
   };
 
   return (
@@ -148,6 +205,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
         activeQuickViewProduct,
         openQuickView,
         closeQuickView,
+        user,
+        login,
+        logout,
       }}
     >
       {children}
