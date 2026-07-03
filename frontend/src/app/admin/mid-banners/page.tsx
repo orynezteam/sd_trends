@@ -11,7 +11,7 @@ export default function AdminMidBanners() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/content/mid_banners')
+    fetch('https://sd-trends.onrender.com/api/content/mid_banners')
       .then(res => res.json())
       .then(data => {
         setBanners(data);

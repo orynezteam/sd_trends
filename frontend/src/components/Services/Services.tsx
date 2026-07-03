@@ -12,7 +12,7 @@ export default function Services() {
   const gridRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    fetch('http://localhost:5000/api/content/services')
+    fetch('https://sd-trends.onrender.com/api/content/services')
       .then(res => res.json())
       .then(data => {
         if (data && Array.isArray(data)) {

@@ -13,8 +13,8 @@ export default function FeaturedProducts() {
     async function fetchData() {
       try {
         const [prodRes, setRes] = await Promise.all([
-          fetch('http://localhost:5000/api/products?tab=featured'),
-          fetch('http://localhost:5000/api/settings')
+          fetch('https://sd-trends.onrender.com/api/products?tab=featured'),
+          fetch('https://sd-trends.onrender.com/api/settings')
         ]);
         
         if (prodRes.ok) {

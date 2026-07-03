@@ -34,7 +34,7 @@ export default function Header() {
 
   // Fetch Category Hierarchy
   useEffect(() => {
-    fetch('http://localhost:5000/api/content/categories/hierarchy')
+    fetch('https://sd-trends.onrender.com/api/content/categories/hierarchy')
       .then(res => res.json())
       .then(data => setCategories(data))
       .catch(err => console.error(err));
@@ -49,7 +49,7 @@ export default function Header() {
 
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/products/search?q=${encodeURIComponent(searchQuery)}`);
+        const res = await fetch(`https://sd-trends.onrender.com/api/products/search?q=${encodeURIComponent(searchQuery)}`);
         if (res.ok) {
           const data = await res.json();
           setSearchResults(data);
@@ -78,7 +78,7 @@ export default function Header() {
 
   // Fetch Promo Banner
   useEffect(() => {
-    fetch('http://localhost:5000/api/content/promo')
+    fetch('https://sd-trends.onrender.com/api/content/promo')
       .then(res => res.json())
       .then(data => {
         if (data && data.is_active) {

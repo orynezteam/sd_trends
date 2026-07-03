@@ -7,7 +7,7 @@ export default function Banners() {
   const [banners, setBanners] = React.useState<any[]>([]);
 
   React.useEffect(() => {
-    fetch('http://localhost:5000/api/content/promotion-banners')
+    fetch('https://sd-trends.onrender.com/api/content/promotion-banners')
       .then(res => res.json())
       .then(data => {
         if (data && Array.isArray(data)) {

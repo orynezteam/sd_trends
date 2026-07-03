@@ -26,7 +26,7 @@ export default function EditMidBannerPage() {
   });
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/content/mid_banners/${slot_name}`)
+    fetch(`https://sd-trends.onrender.com/api/content/mid_banners/${slot_name}`)
       .then(res => res.json())
       .then(data => {
         if (!data.error) {
@@ -92,7 +92,7 @@ export default function EditMidBannerPage() {
         image_url: publicUrl || null
       };
 
-      const res = await fetch(`http://localhost:5000/api/content/mid_banners/${slot_name}`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/content/mid_banners/${slot_name}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

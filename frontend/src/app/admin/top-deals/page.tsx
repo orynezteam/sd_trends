@@ -24,7 +24,7 @@ export default function AdminTopDeals() {
 
   const fetchTopDeals = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/settings/top-deals');
+      const res = await fetch('https://sd-trends.onrender.com/api/settings/top-deals');
       if (res.ok) {
         const data = await res.json();
         setCategories(data.categories || []);
@@ -42,7 +42,7 @@ export default function AdminTopDeals() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const res = await fetch('http://localhost:5000/api/admin/settings/top-deals', {
+      const res = await fetch('https://sd-trends.onrender.com/api/admin/settings/top-deals', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

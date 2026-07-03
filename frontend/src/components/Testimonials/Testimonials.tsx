@@ -26,7 +26,7 @@ export default function Testimonials() {
   useEffect(() => {
     async function fetchTestimonials() {
       try {
-        const res = await fetch('http://localhost:5000/api/testimonials?status=approved');
+        const res = await fetch('https://sd-trends.onrender.com/api/testimonials?status=approved');
         if (res.ok) {
           const data = await res.json();
           setTestimonials(data);
@@ -108,7 +108,7 @@ export default function Testimonials() {
         status: 'pending' // Always pending for user submissions
       };
 
-      const res = await fetch('http://localhost:5000/api/testimonials', {
+      const res = await fetch('https://sd-trends.onrender.com/api/testimonials', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

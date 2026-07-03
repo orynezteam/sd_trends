@@ -20,7 +20,7 @@ export default function ProductTabs({ selectedCategory, onClearCategory }) {
     async function fetchProducts() {
       setLoading(true);
       try {
-        let url = `http://localhost:5000/api/products?tab=${activeTab}`;
+        let url = `https://sd-trends.onrender.com/api/products?tab=${activeTab}`;
         if (selectedCategory) {
           url += `&category=${selectedCategory}`;
         }

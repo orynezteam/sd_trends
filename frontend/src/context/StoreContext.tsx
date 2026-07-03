@@ -134,7 +134,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
     if (user) {
       try {
-        await fetch(`http://localhost:5000/api/users/${user.id}/wishlist`, {
+        await fetch(`https://sd-trends.onrender.com/api/users/${user.id}/wishlist`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ wishlist: newWishlist })
@@ -173,7 +173,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('sdt_wishlist', JSON.stringify(mergedWishlist));
     
     try {
-      await fetch(`http://localhost:5000/api/users/${userData.id}/wishlist`, {
+      await fetch(`https://sd-trends.onrender.com/api/users/${userData.id}/wishlist`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ wishlist: mergedWishlist })

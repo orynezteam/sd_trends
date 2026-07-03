@@ -75,7 +75,7 @@ export default function NewSubcategoryPage() {
         home_image_url: publicUrl || null
       };
       
-      const res = await fetch(`http://localhost:5000/api/content/categories/${catId}/subcategories`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/content/categories/${catId}/subcategories`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

@@ -18,7 +18,7 @@ export default function FAQs() {
 
   const fetchFaqs = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/faqs');
+      const res = await fetch('https://sd-trends.onrender.com/api/faqs');
       if (res.ok) {
         const data = await res.json();
         // Only show active FAQs

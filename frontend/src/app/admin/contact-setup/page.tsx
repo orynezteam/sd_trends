@@ -25,7 +25,7 @@ export default function ContactSetupPage() {
   const fetchSettings = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:5000/api/settings');
+      const res = await fetch('https://sd-trends.onrender.com/api/settings');
       if (res.ok) {
         const data = await res.json();
         setSettings({
@@ -50,7 +50,7 @@ export default function ContactSetupPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await fetch('http://localhost:5000/api/settings', {
+      const res = await fetch('https://sd-trends.onrender.com/api/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(settings)

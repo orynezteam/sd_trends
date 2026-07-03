@@ -11,7 +11,7 @@ export default function AdminServicesPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/content/services')
+    fetch('https://sd-trends.onrender.com/api/content/services')
       .then(res => res.json())
       .then(data => {
         if (data && Array.isArray(data)) {
@@ -28,7 +28,7 @@ export default function AdminServicesPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const res = await fetch('http://localhost:5000/api/content/services', {
+      const res = await fetch('https://sd-trends.onrender.com/api/content/services', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cards.map((c, idx) => ({ ...c, display_order: idx + 1 })))

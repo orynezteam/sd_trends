@@ -47,7 +47,7 @@ export default function CheckoutPage() {
 
   // Load UPI merchant details from settings
   React.useEffect(() => {
-    fetch('http://localhost:5000/api/settings')
+    fetch('https://sd-trends.onrender.com/api/settings')
       .then(res => res.json())
       .then(data => {
         if (data.upi_id) setUpiId(data.upi_id);
@@ -100,7 +100,7 @@ export default function CheckoutPage() {
         }))
       };
 
-      const res = await fetch('http://localhost:5000/api/orders', {
+      const res = await fetch('https://sd-trends.onrender.com/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderPayload)
@@ -142,7 +142,7 @@ export default function CheckoutPage() {
     if (!currentOrderId) return;
     setLoadingPayment(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/orders/${currentOrderId}/status`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/orders/${currentOrderId}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'Pending Verification' })

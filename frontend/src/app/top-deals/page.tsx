@@ -23,7 +23,7 @@ export default function TopDealsPage() {
     // Fetch top deals configuration
     const fetchConfig = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/settings/top-deals');
+        const res = await fetch('https://sd-trends.onrender.com/api/settings/top-deals');
         if (res.ok) {
           const data = await res.json();
           setCategories(data.categories || []);

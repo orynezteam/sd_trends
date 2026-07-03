@@ -38,8 +38,8 @@ export default function AdminFooterPage() {
     try {
       setLoading(true);
       const [settingsRes, linksRes] = await Promise.all([
-        fetch('http://localhost:5000/api/settings', { cache: 'no-store' }),
-        fetch('http://localhost:5000/api/footer-links', { cache: 'no-store' })
+        fetch('https://sd-trends.onrender.com/api/settings', { cache: 'no-store' }),
+        fetch('https://sd-trends.onrender.com/api/footer-links', { cache: 'no-store' })
       ]);
 
       if (settingsRes.ok) {
@@ -68,7 +68,7 @@ export default function AdminFooterPage() {
     e.preventDefault();
     setSavingSettings(true);
     try {
-      const res = await fetch('http://localhost:5000/api/settings', {
+      const res = await fetch('https://sd-trends.onrender.com/api/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(settings)
@@ -103,8 +103,8 @@ export default function AdminFooterPage() {
     e.preventDefault();
     try {
       const url = editingLink 
-        ? `http://localhost:5000/api/footer-links/${editingLink.id}`
-        : `http://localhost:5000/api/footer-links`;
+        ? `https://sd-trends.onrender.com/api/footer-links/${editingLink.id}`
+        : `https://sd-trends.onrender.com/api/footer-links`;
       const method = editingLink ? 'PUT' : 'POST';
 
       const res = await fetch(url, {
@@ -130,7 +130,7 @@ export default function AdminFooterPage() {
   const handleDeleteLink = async (id: number) => {
     if (!confirm('Are you sure you want to delete this link?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/footer-links/${id}`, { method: 'DELETE' });
+      const res = await fetch(`https://sd-trends.onrender.com/api/footer-links/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setLinks(links.filter(l => l.id !== id));
       }

@@ -40,8 +40,8 @@ export default function AdminReviewsPage() {
     setLoading(true);
     try {
       const [revRes, prodRes] = await Promise.all([
-        fetch('http://localhost:5000/api/admin/reviews'),
-        fetch('http://localhost:5000/api/products')
+        fetch('https://sd-trends.onrender.com/api/admin/reviews'),
+        fetch('https://sd-trends.onrender.com/api/products')
       ]);
       const revData = await revRes.json();
       const prodData = await prodRes.json();
@@ -59,7 +59,7 @@ export default function AdminReviewsPage() {
 
   const updateStatus = async (id: number, status: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/reviews/${id}`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/admin/reviews/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
@@ -75,7 +75,7 @@ export default function AdminReviewsPage() {
   const deleteReview = async (id: number) => {
     if (!confirm('Are you sure you want to delete this review?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/reviews/${id}`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/admin/reviews/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {
@@ -90,7 +90,7 @@ export default function AdminReviewsPage() {
     e.preventDefault();
     if (!newReview.product_id || !newReview.author || !newReview.review_text) return;
     try {
-      const res = await fetch('http://localhost:5000/api/admin/reviews', {
+      const res = await fetch('https://sd-trends.onrender.com/api/admin/reviews', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newReview)

@@ -10,7 +10,7 @@ export default function HeroSlider() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/content/hero')
+    fetch('https://sd-trends.onrender.com/api/content/hero')
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {

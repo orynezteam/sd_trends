@@ -22,8 +22,8 @@ export default function AdminProductsPage() {
   const fetchProductsAndSettings = async () => {
     try {
       const [prodRes, setRes] = await Promise.all([
-        fetch('http://localhost:5000/api/products'),
-        fetch('http://localhost:5000/api/settings')
+        fetch('https://sd-trends.onrender.com/api/products'),
+        fetch('https://sd-trends.onrender.com/api/settings')
       ]);
       
       if (prodRes.ok) {
@@ -54,7 +54,7 @@ export default function AdminProductsPage() {
   const handleSaveSettings = async () => {
     setSavingSettings(true);
     try {
-      const res = await fetch('http://localhost:5000/api/settings', {
+      const res = await fetch('https://sd-trends.onrender.com/api/settings', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(settings)
@@ -76,7 +76,7 @@ export default function AdminProductsPage() {
     const isCurrentlyLatest = product.is_latest;
     
     try {
-      const res = await fetch(`http://localhost:5000/api/products/${product.id}`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/products/${product.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_latest: !isCurrentlyLatest })
@@ -101,7 +101,7 @@ export default function AdminProductsPage() {
     const isCurrentlyFeatured = product.isFeatured;
     
     try {
-      const res = await fetch(`http://localhost:5000/api/products/${product.id}`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/products/${product.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_featured: !isCurrentlyFeatured })

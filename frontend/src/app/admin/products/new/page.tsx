@@ -23,7 +23,7 @@ export default function NewProductPage() {
   const [dbCategories, setDbCategories] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/content/categories')
+    fetch('https://sd-trends.onrender.com/api/content/categories')
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -205,7 +205,7 @@ export default function NewProductPage() {
       };
 
       // 3. Save to database
-      const res = await fetch('http://localhost:5000/api/products', {
+      const res = await fetch('https://sd-trends.onrender.com/api/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

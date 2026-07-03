@@ -18,7 +18,7 @@ export default function AdminOrdersPage() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:5000/api/orders');
+      const res = await fetch('https://sd-trends.onrender.com/api/orders');
       if (res.ok) {
         const data = await res.json();
         setOrders(data);
@@ -37,7 +37,7 @@ export default function AdminOrdersPage() {
     
     setUpdatingId(orderId);
     try {
-      const res = await fetch(`http://localhost:5000/api/orders/${orderId}/status`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/orders/${orderId}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })

@@ -15,7 +15,7 @@ export default function AdminPromoPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/content/promo')
+    fetch('https://sd-trends.onrender.com/api/content/promo')
       .then(res => res.json())
       .then(data => {
         if (data) {
@@ -33,7 +33,7 @@ export default function AdminPromoPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await fetch('http://localhost:5000/api/content/promo', {
+      const res = await fetch('https://sd-trends.onrender.com/api/content/promo', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(promo)

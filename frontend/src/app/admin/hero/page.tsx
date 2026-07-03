@@ -35,7 +35,7 @@ export default function AdminHeroPage() {
 
   const fetchSlides = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/content/hero');
+      const res = await fetch('https://sd-trends.onrender.com/api/content/hero');
       if (res.ok) {
         const data = await res.json();
         setSlides(data);
@@ -76,7 +76,7 @@ export default function AdminHeroPage() {
     if (!confirm("Are you sure you want to delete this slide?")) return;
     
     try {
-      const res = await fetch(`http://localhost:5000/api/content/hero/${id}`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/content/hero/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {
@@ -148,8 +148,8 @@ export default function AdminHeroPage() {
 
     try {
       const url = payload.id 
-        ? `http://localhost:5000/api/content/hero/${payload.id}`
-        : `http://localhost:5000/api/content/hero`;
+        ? `https://sd-trends.onrender.com/api/content/hero/${payload.id}`
+        : `https://sd-trends.onrender.com/api/content/hero`;
         
       const method = payload.id ? 'PUT' : 'POST';
 

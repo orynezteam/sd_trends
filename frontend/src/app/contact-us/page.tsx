@@ -22,7 +22,7 @@ export default function ContactUs() {
   const [settingsLoading, setSettingsLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/settings')
+    fetch('https://sd-trends.onrender.com/api/settings')
       .then(res => res.json())
       .then(data => {
         setSettings(data);
@@ -53,7 +53,7 @@ export default function ContactUs() {
     setStatus({ success: null, message: '' });
 
     try {
-      const res = await fetch('http://localhost:5000/api/contact', {
+      const res = await fetch('https://sd-trends.onrender.com/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

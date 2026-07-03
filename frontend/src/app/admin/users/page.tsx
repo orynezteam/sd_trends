@@ -17,7 +17,7 @@ export default function AdminUsersPage() {
   const { user } = useStore();
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/users')
+    fetch('https://sd-trends.onrender.com/api/users')
       .then(res => res.json())
       .then(data => {
         setUsers(data);
@@ -37,7 +37,7 @@ export default function AdminUsersPage() {
     
     if (user) {
       try {
-        const res = await fetch(`http://localhost:5000/api/admin/users/${u.id}/wishlist`);
+        const res = await fetch(`https://sd-trends.onrender.com/api/admin/users/${u.id}/wishlist`);
         if (res.ok) {
           const data = await res.json();
           setUserWishlist(data);
@@ -53,7 +53,7 @@ export default function AdminUsersPage() {
     if (!selectedUser || !user) return;
     setSendingEmail(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/users/${selectedUser.id}/send-wishlist-reminder`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/admin/users/${selectedUser.id}/send-wishlist-reminder`, {
         method: 'POST'
       });
       if (res.ok) {
@@ -81,7 +81,7 @@ export default function AdminUsersPage() {
     setUsers(users.map(u => u.id === selectedUser.id ? { ...u, wishlist: updatedIds } : u));
     
     try {
-      await fetch(`http://localhost:5000/api/users/${selectedUser.id}/wishlist`, {
+      await fetch(`https://sd-trends.onrender.com/api/users/${selectedUser.id}/wishlist`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ wishlist: updatedIds })

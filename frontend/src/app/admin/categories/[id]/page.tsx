@@ -23,7 +23,7 @@ export default function EditCategoryPage() {
 
   const fetchCategory = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/content/categories/hierarchy');
+      const res = await fetch('https://sd-trends.onrender.com/api/content/categories/hierarchy');
       if (res.ok) {
         const data = await res.json();
         const category = data.find((c: any) => c.id.toString() === catId);
@@ -60,7 +60,7 @@ export default function EditCategoryPage() {
 
     setSaving(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/content/categories/${catId}`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/content/categories/${catId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -82,7 +82,7 @@ export default function EditCategoryPage() {
   const handleDeleteSubcategory = async (subId: number) => {
     if (!confirm("Delete this subcategory?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/content/subcategories/${subId}`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/content/subcategories/${subId}`, {
         method: 'DELETE'
       });
       if (res.ok) {

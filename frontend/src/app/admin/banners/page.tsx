@@ -16,7 +16,7 @@ export default function AdminBannersPage() {
   const [previews, setPreviews] = useState<{ [key: number]: string }>({});
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/content/promotion-banners')
+    fetch('https://sd-trends.onrender.com/api/content/promotion-banners')
       .then(res => res.json())
       .then(data => {
         if (data && Array.isArray(data)) {
@@ -87,7 +87,7 @@ export default function AdminBannersPage() {
       }
 
       // Then save the data to backend
-      const res = await fetch('http://localhost:5000/api/content/promotion-banners', {
+      const res = await fetch('https://sd-trends.onrender.com/api/content/promotion-banners', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedBanners)

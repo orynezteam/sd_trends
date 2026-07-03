@@ -25,7 +25,7 @@ export default function NewCategoryPage() {
 
     setSaving(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/content/categories`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/content/categories`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

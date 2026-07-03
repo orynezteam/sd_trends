@@ -65,7 +65,7 @@ export default function NewTestimonialPage() {
         image_url: finalImageUrl || '/images/default_avatar.png'
       };
 
-      const res = await fetch('http://localhost:5000/api/testimonials', {
+      const res = await fetch('https://sd-trends.onrender.com/api/testimonials', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

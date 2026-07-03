@@ -10,7 +10,7 @@ export default function AdminCategories() {
   const [loading, setLoading] = useState(true);
 
   const fetchCategories = () => {
-    fetch('http://localhost:5000/api/content/categories/hierarchy')
+    fetch('https://sd-trends.onrender.com/api/content/categories/hierarchy')
       .then(res => res.json())
       .then(data => {
         setCategories(data);
@@ -30,7 +30,7 @@ export default function AdminCategories() {
     if (!confirm("Are you sure you want to delete this Category and ALL its Subcategories?")) return;
 
     try {
-      const res = await fetch(`http://localhost:5000/api/content/categories/${id}`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/content/categories/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {

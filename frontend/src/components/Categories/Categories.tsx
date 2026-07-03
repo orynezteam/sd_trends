@@ -62,7 +62,7 @@ export default function CCategories({ onSelectCategory }: CategoriesProps) {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    fetch('http://localhost:5000/api/content/categories/home_featured')
+    fetch('https://sd-trends.onrender.com/api/content/categories/home_featured')
       .then(res => res.json())
       .then(data => {
         setCategories(data);

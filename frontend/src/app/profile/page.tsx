@@ -54,7 +54,7 @@ export default function ProfilePage() {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/user/profile?email=${encodeURIComponent(user.email)}`);
+      const res = await fetch(`https://sd-trends.onrender.com/api/user/profile?email=${encodeURIComponent(user.email)}`);
       if (res.ok) {
         const data = await res.json();
         setOrders(data.orders || []);
@@ -70,7 +70,7 @@ export default function ProfilePage() {
     setLoading(true);
     
     try {
-      const res = await fetch('http://localhost:5000/api/auth/request-otp', {
+      const res = await fetch('https://sd-trends.onrender.com/api/auth/request-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, is_login: isLoginTab })
@@ -110,7 +110,7 @@ export default function ProfilePage() {
         payload.pincode = pincode;
       }
 
-      const res = await fetch('http://localhost:5000/api/auth/verify-otp', {
+      const res = await fetch('https://sd-trends.onrender.com/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

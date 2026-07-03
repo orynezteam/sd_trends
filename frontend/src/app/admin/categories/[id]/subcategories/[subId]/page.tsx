@@ -30,7 +30,7 @@ export default function EditSubcategoryPage() {
   useEffect(() => {
     const fetchSubcategory = async () => {
       try {
-        const res = await fetch('http://localhost:5000/api/content/categories/hierarchy');
+        const res = await fetch('https://sd-trends.onrender.com/api/content/categories/hierarchy');
         if (res.ok) {
           const data = await res.json();
           const category = data.find((c: any) => c.id.toString() === catId);
@@ -115,7 +115,7 @@ export default function EditSubcategoryPage() {
         home_image_url: publicUrl || null
       };
       
-      const res = await fetch(`http://localhost:5000/api/content/subcategories/${subId}`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/content/subcategories/${subId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

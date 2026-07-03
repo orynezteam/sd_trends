@@ -7,7 +7,7 @@ export default function BraceletBanner() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    fetch('http://localhost:5000/api/content/mid_banners/bracelet')
+    fetch('https://sd-trends.onrender.com/api/content/mid_banners/bracelet')
       .then(res => res.json())
       .then(resData => {
         if (!resData.error) setData(resData);

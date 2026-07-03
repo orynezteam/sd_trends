@@ -15,7 +15,7 @@ export default function MessagesPage() {
   const fetchMessages = async () => {
     try {
       setLoading(true);
-      const res = await fetch('http://localhost:5000/api/contact-messages');
+      const res = await fetch('https://sd-trends.onrender.com/api/contact-messages');
       if (res.ok) {
         const data = await res.json();
         setMessages(data);
@@ -29,7 +29,7 @@ export default function MessagesPage() {
 
   const toggleReadStatus = async (id: number, currentStatus: boolean) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/contact-messages/${id}`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/contact-messages/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_read: !currentStatus })
@@ -46,7 +46,7 @@ export default function MessagesPage() {
   const deleteMessage = async (id: number) => {
     if (!confirm('Are you sure you want to delete this message?')) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/contact-messages/${id}`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/contact-messages/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {

@@ -26,8 +26,8 @@ export default function Footer() {
     async function fetchData() {
       try {
         const [setRes, linkRes] = await Promise.all([
-          fetch('http://localhost:5000/api/settings', { cache: 'no-store' }),
-          fetch('http://localhost:5000/api/footer-links', { cache: 'no-store' }),
+          fetch('https://sd-trends.onrender.com/api/settings', { cache: 'no-store' }),
+          fetch('https://sd-trends.onrender.com/api/footer-links', { cache: 'no-store' }),
         ]);
         if (setRes.ok) {
           const s = await setRes.json();
@@ -62,7 +62,7 @@ export default function Footer() {
     setStatus({ success: null, message: '' });
 
     try {
-      const res = await fetch('http://localhost:5000/api/newsletter', {
+      const res = await fetch('https://sd-trends.onrender.com/api/newsletter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

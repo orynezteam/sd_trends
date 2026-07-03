@@ -35,8 +35,8 @@ function ShopContent() {
 
   useEffect(() => {
     Promise.all([
-      fetch('http://localhost:5000/api/content/categories/hierarchy').then(r => r.json()),
-      fetch('http://localhost:5000/api/products').then(r => r.json())
+      fetch('https://sd-trends.onrender.com/api/content/categories/hierarchy').then(r => r.json()),
+      fetch('https://sd-trends.onrender.com/api/products').then(r => r.json())
     ]).then(([cats, prods]) => {
       setCategories(cats || []);
       setProducts(prods || []);

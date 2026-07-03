@@ -29,7 +29,7 @@ export default function EditTestimonialPage() {
   useEffect(() => {
     async function fetchTestimonial() {
       try {
-        const res = await fetch(`http://localhost:5000/api/testimonials`);
+        const res = await fetch(`https://sd-trends.onrender.com/api/testimonials`);
         if (res.ok) {
           const data = await res.json();
           const testimonial = data.find((t: any) => t.id.toString() === id);
@@ -98,7 +98,7 @@ export default function EditTestimonialPage() {
         image_url: finalImageUrl
       };
 
-      const res = await fetch(`http://localhost:5000/api/testimonials/${id}`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/testimonials/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

@@ -15,8 +15,8 @@ export default function LatestProducts() {
     async function fetchData() {
       try {
         const [prodRes, setRes] = await Promise.all([
-          fetch('http://localhost:5000/api/products?is_latest=true'),
-          fetch('http://localhost:5000/api/settings')
+          fetch('https://sd-trends.onrender.com/api/products?is_latest=true'),
+          fetch('https://sd-trends.onrender.com/api/settings')
         ]);
         
         if (prodRes.ok) {

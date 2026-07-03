@@ -11,7 +11,7 @@ export default function AdminTestimonialsPage() {
 
   const fetchTestimonials = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/testimonials');
+      const res = await fetch('https://sd-trends.onrender.com/api/testimonials');
       if (res.ok) {
         const data = await res.json();
         setTestimonials(data);
@@ -30,7 +30,7 @@ export default function AdminTestimonialsPage() {
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete this testimonial?")) return;
     try {
-      const res = await fetch(`http://localhost:5000/api/testimonials/${id}`, { method: 'DELETE' });
+      const res = await fetch(`https://sd-trends.onrender.com/api/testimonials/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setTestimonials(testimonials.filter(t => t.id !== id));
       } else {
@@ -43,7 +43,7 @@ export default function AdminTestimonialsPage() {
 
   const handleUpdateStatus = async (id: number, newStatus: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/testimonials/${id}`, {
+      const res = await fetch(`https://sd-trends.onrender.com/api/testimonials/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
