@@ -6,6 +6,8 @@ import { supabase } from '../../../../../../utils/supabase';
 import { Save, ArrowLeft, Upload, X } from 'lucide-react';
 import Link from 'next/link';
 import styles from '../../../../products/new/NewProduct.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function EditSubcategoryPage() {
   const router = useRouter();
@@ -30,7 +32,7 @@ export default function EditSubcategoryPage() {
   useEffect(() => {
     const fetchSubcategory = async () => {
       try {
-        const res = await fetch('https://sd-trends.onrender.com/api/content/categories/hierarchy');
+        const res = await fetch(`${API_BASE_URL}/content/categories/hierarchy`);
         if (res.ok) {
           const data = await res.json();
           const category = data.find((c: any) => c.id.toString() === catId);
@@ -115,7 +117,7 @@ export default function EditSubcategoryPage() {
         home_image_url: publicUrl || null
       };
       
-      const res = await fetch(`https://sd-trends.onrender.com/api/content/subcategories/${subId}`, {
+      const res = await fetch(`${API_BASE_URL}/content/subcategories/${subId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

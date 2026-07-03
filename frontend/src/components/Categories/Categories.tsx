@@ -53,26 +53,12 @@ const CATEGORIES: CategoryItem[] = [
 
 interface CategoriesProps {
   onSelectCategory?: (categoryId: string) => void;
+  categories?: any[];
 }
 
-export default function CCategories({ onSelectCategory }: CategoriesProps) {
+export default function CCategories({ onSelectCategory, categories = [] }: CategoriesProps) {
   const router = useRouter();
   const sliderRef = useRef<HTMLDivElement>(null);
-  const [categories, setCategories] = React.useState<any[]>([]);
-  const [loading, setLoading] = React.useState(true);
-
-  React.useEffect(() => {
-    fetch('https://sd-trends.onrender.com/api/content/categories/home_featured')
-      .then(res => res.json())
-      .then(data => {
-        setCategories(data);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Failed to fetch categories", err);
-        setLoading(false);
-      });
-  }, []);
 
   const isDown = useRef(false);
   const startX = useRef(0);
@@ -135,7 +121,7 @@ export default function CCategories({ onSelectCategory }: CategoriesProps) {
     router.push(`/shop?subcategory=${encodeURIComponent(category.name)}`);
   };
 
-  if (loading || categories.length === 0) return null;
+  if (categories.length === 0) return null;
 
   return (
     <section id="categories" className={styles.section}>

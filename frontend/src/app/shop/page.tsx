@@ -11,6 +11,8 @@ import QuickView from '../../components/QuickView/QuickView';
 import { Product } from '../../data/products';
 import { ChevronRight, Grid, List, SlidersHorizontal, CheckSquare, Square, ChevronDown } from 'lucide-react';
 import styles from './shop.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 function ShopContent() {
   const searchParams = useSearchParams();
@@ -35,8 +37,8 @@ function ShopContent() {
 
   useEffect(() => {
     Promise.all([
-      fetch('https://sd-trends.onrender.com/api/content/categories/hierarchy').then(r => r.json()),
-      fetch('https://sd-trends.onrender.com/api/products').then(r => r.json())
+      fetch(`${API_BASE_URL}/content/categories/hierarchy`).then(r => r.json()),
+      fetch(`${API_BASE_URL}/products`).then(r => r.json())
     ]).then(([cats, prods]) => {
       setCategories(cats || []);
       setProducts(prods || []);

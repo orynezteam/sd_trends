@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../../utils/supabase';
 import { Save, Image as ImageIcon } from 'lucide-react';
 import styles from './AdminBanners.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function AdminBannersPage() {
   const [banners, setBanners] = useState<any[]>([]);
@@ -16,7 +18,7 @@ export default function AdminBannersPage() {
   const [previews, setPreviews] = useState<{ [key: number]: string }>({});
 
   useEffect(() => {
-    fetch('https://sd-trends.onrender.com/api/content/promotion-banners')
+    fetch(`${API_BASE_URL}/content/promotion-banners`)
       .then(res => res.json())
       .then(data => {
         if (data && Array.isArray(data)) {
@@ -87,7 +89,7 @@ export default function AdminBannersPage() {
       }
 
       // Then save the data to backend
-      const res = await fetch('https://sd-trends.onrender.com/api/content/promotion-banners', {
+      const res = await fetch(`${API_BASE_URL}/content/promotion-banners`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedBanners)

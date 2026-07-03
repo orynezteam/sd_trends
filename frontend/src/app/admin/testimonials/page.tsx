@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Plus, Edit2, Trash2, CheckCircle, XCircle } from 'lucide-react';
 import styles from '../products/AdminProducts.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function AdminTestimonialsPage() {
   const [testimonials, setTestimonials] = useState<any[]>([]);
@@ -11,7 +13,7 @@ export default function AdminTestimonialsPage() {
 
   const fetchTestimonials = async () => {
     try {
-      const res = await fetch('https://sd-trends.onrender.com/api/testimonials');
+      const res = await fetch(`${API_BASE_URL}/testimonials`);
       if (res.ok) {
         const data = await res.json();
         setTestimonials(data);
@@ -30,7 +32,7 @@ export default function AdminTestimonialsPage() {
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete this testimonial?")) return;
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/testimonials/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${API_BASE_URL}/testimonials/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setTestimonials(testimonials.filter(t => t.id !== id));
       } else {
@@ -43,7 +45,7 @@ export default function AdminTestimonialsPage() {
 
   const handleUpdateStatus = async (id: number, newStatus: string) => {
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/testimonials/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/testimonials/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })

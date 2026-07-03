@@ -6,6 +6,8 @@ import { supabase } from '../../../../utils/supabase';
 import { Save, ArrowLeft, Upload, X } from 'lucide-react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 import 'react-quill-new/dist/quill.snow.css';
@@ -23,7 +25,7 @@ export default function NewProductPage() {
   const [dbCategories, setDbCategories] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch('https://sd-trends.onrender.com/api/content/categories')
+    fetch(`${API_BASE_URL}/content/categories`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -205,7 +207,7 @@ export default function NewProductPage() {
       };
 
       // 3. Save to database
-      const res = await fetch('https://sd-trends.onrender.com/api/products', {
+      const res = await fetch(`${API_BASE_URL}/products`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

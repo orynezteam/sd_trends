@@ -6,6 +6,8 @@ import { supabase } from '../../../../utils/supabase';
 import { Save, ArrowLeft, Upload, X } from 'lucide-react';
 import Link from 'next/link';
 import styles from '../../products/new/NewProduct.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function EditMidBannerPage() {
   const router = useRouter();
@@ -26,7 +28,7 @@ export default function EditMidBannerPage() {
   });
 
   useEffect(() => {
-    fetch(`https://sd-trends.onrender.com/api/content/mid_banners/${slot_name}`)
+    fetch(`${API_BASE_URL}/content/mid_banners/${slot_name}`)
       .then(res => res.json())
       .then(data => {
         if (!data.error) {
@@ -92,7 +94,7 @@ export default function EditMidBannerPage() {
         image_url: publicUrl || null
       };
 
-      const res = await fetch(`https://sd-trends.onrender.com/api/content/mid_banners/${slot_name}`, {
+      const res = await fetch(`${API_BASE_URL}/content/mid_banners/${slot_name}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

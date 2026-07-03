@@ -5,10 +5,16 @@ import { ChevronLeft, ChevronRight, X, Upload } from 'lucide-react';
 import styles from './Testimonials.module.css';
 import { useStore } from '../../context/StoreContext';
 import { supabase } from '../../utils/supabase';
+import { API_BASE_URL, BASE_URL } from '@/config';
 
-export default function Testimonials() {
+
+interface TestimonialsProps {
+  testimonials?: any[];
+}
+
+export default function Testimonials({ testimonials: initialTestimonials = [] }: TestimonialsProps) {
   const { user } = useStore();
-  const [testimonials, setTestimonials] = useState<any[]>([]);
+  const [testimonials, setTestimonials] = useState<any[]>(initialTestimonials);
   const [visibleCards, setVisibleCards] = useState(3);
   const [currentIndex, setCurrentIndex] = useState(0);
   
@@ -23,20 +29,7 @@ export default function Testimonials() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    async function fetchTestimonials() {
-      try {
-        const res = await fetch('https://sd-trends.onrender.com/api/testimonials?status=approved');
-        if (res.ok) {
-          const data = await res.json();
-          setTestimonials(data);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    }
-    fetchTestimonials();
-  }, []);
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -108,7 +101,7 @@ export default function Testimonials() {
         status: 'pending' // Always pending for user submissions
       };
 
-      const res = await fetch('https://sd-trends.onrender.com/api/testimonials', {
+      const res = await fetch(`${API_BASE_URL}/testimonials`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

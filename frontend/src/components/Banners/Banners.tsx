@@ -3,19 +3,11 @@
 import React from 'react';
 import styles from './Banners.module.css';
 
-export default function Banners() {
-  const [banners, setBanners] = React.useState<any[]>([]);
+interface BannersProps {
+  banners?: any[];
+}
 
-  React.useEffect(() => {
-    fetch('https://sd-trends.onrender.com/api/content/promotion-banners')
-      .then(res => res.json())
-      .then(data => {
-        if (data && Array.isArray(data)) {
-          setBanners(data);
-        }
-      })
-      .catch(err => console.error("Failed to load banners:", err));
-  }, []);
+export default function Banners({ banners = [] }: BannersProps) {
 
   // Helper to find banner by ID (1=Left, 2=Top Right, 3=Bottom Right)
   const getBanner = (id: number) => {

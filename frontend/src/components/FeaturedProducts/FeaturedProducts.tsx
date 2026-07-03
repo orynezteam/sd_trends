@@ -4,41 +4,14 @@ import React, { useState, useEffect } from 'react';
 import ProductCard from '../ProductCard/ProductCard';
 import styles from './FeaturedProducts.module.css';
 
-export default function FeaturedProducts() {
-  const [products, setProducts] = useState<any[]>([]);
-  const [settings, setSettings] = useState({ title: 'Featured Products', subtitle: '' });
-  const [loading, setLoading] = useState(true);
+interface FeaturedProductsProps {
+  products?: any[];
+}
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [prodRes, setRes] = await Promise.all([
-          fetch('https://sd-trends.onrender.com/api/products?tab=featured'),
-          fetch('https://sd-trends.onrender.com/api/settings')
-        ]);
-        
-        if (prodRes.ok) {
-          const prodData = await prodRes.json();
-          setProducts(prodData);
-        }
-        
-        if (setRes.ok) {
-          const setData = await setRes.json();
-          setSettings({
-            title: setData.featured_products_title || 'Featured Products',
-            subtitle: setData.featured_products_subtitle || ''
-          });
-        }
-      } catch (err) {
-        console.error("Failed to fetch data:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
+export default function FeaturedProducts({ products = [] }: FeaturedProductsProps) {
+  const settings = { title: 'Featured Products', subtitle: '' };
 
-  if (loading || products.length === 0) return null;
+  if (products.length === 0) return null;
 
   return (
     <section className={styles.section}>

@@ -13,9 +13,44 @@ import Testimonials from '../components/Testimonials/Testimonials';
 import Footer from '../components/Footer/Footer';
 import QuickView from '../components/QuickView/QuickView';
 import CCategories from '../components/Categories/Categories';
+import { JewelryLoader } from '../components/JewelryLoader/JewelryLoader';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [homeData, setHomeData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  React.useEffect(() => {
+    const fetchHomeData = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/home-data`);
+        if (!res.ok) throw new Error('Failed to fetch home data');
+        const data = await res.json();
+        
+        setHomeData({
+          hero: Array.isArray(data.hero) ? data.hero : [],
+          services: Array.isArray(data.services) ? data.services : [],
+          banners: Array.isArray(data.banners) ? data.banners : [],
+          latest: Array.isArray(data.latest) ? data.latest : [],
+          categories: Array.isArray(data.categories) ? data.categories : [],
+          bracelet: data.bracelet || {},
+          featured: Array.isArray(data.featured) ? data.featured : [],
+          highlights: data.highlights || {},
+          testimonials: Array.isArray(data.testimonials) ? data.testimonials : [],
+          settings: data.settings || {},
+          footerLinks: Array.isArray(data.footerLinks) ? data.footerLinks : []
+        });
+      } catch (err) {
+        console.error("Failed to load home data", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchHomeData();
+  }, []);
 
   const handleSelectCategory = (categoryId) => {
     setSelectedCategory(categoryId);
@@ -24,6 +59,10 @@ export default function Home() {
   const handleClearCategory = () => {
     setSelectedCategory(null);
   };
+
+  if (isLoading) {
+    return <JewelryLoader fullScreen text="Polishing your experience..." />;
+  }
 
   return (
     <div
@@ -34,35 +73,35 @@ export default function Home() {
       {/* Main Homepage Flow */}
       <main style={{ flex: '1' }}>
         {/* Dynamic Hero Slider */}
-        <HeroSlider />
+        <HeroSlider hero={homeData?.hero} />
 
         {/* Premium services/values grid */}
-        <Services />
+        <Services services={homeData?.services} />
 
         {/* Promotion Banners - Rings, Bracelet, Pendant */}
-        <Banners />
+        <Banners banners={homeData?.banners} />
 
         {/* Latest Products Section (Mockup Replica) */}
-        <LatestProducts />
+        <LatestProducts products={homeData?.latest} />
 
         {/* Categories Grid - triggers scroll and category filters */}
-        <CCategories onSelectCategory={handleSelectCategory} />
+        <CCategories categories={homeData?.categories} onSelectCategory={handleSelectCategory} />
 
         {/* Bracelet Promo Banner Section */}
-        <BraceletBanner />
+        <BraceletBanner bannerData={homeData?.bracelet} />
 
         {/* Featured Products Section */}
-        <FeaturedProducts />
+        <FeaturedProducts products={homeData?.featured} />
 
         {/* Weekly Highlights Banner Section */}
-        <HighlightsBanner />
+        <HighlightsBanner bannerData={homeData?.highlights} />
 
         {/* Testimonials (What Our Clients Say) Slider Section */}
-        <Testimonials />
+        <Testimonials testimonials={homeData?.testimonials} />
       </main>
 
       {/* Footer with active newsletter form */}
-      <Footer />
+      <Footer settings={homeData?.settings} footerLinks={homeData?.footerLinks} />
 
       {/* Floating Dialog Modals */}
       <QuickView />

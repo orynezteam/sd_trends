@@ -6,6 +6,8 @@ import { CheckCircle2, XCircle, Clock, ArrowLeft, Home, ShoppingCart } from 'luc
 import Header from '../../../components/Header/Header';
 import Footer from '../../../components/Footer/Footer';
 import styles from './OrdersStatus.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function OrderStatusPage() {
   const [order, setOrder] = useState<any | null>(null);
@@ -25,7 +27,7 @@ export default function OrderStatusPage() {
 
     const fetchOrder = async () => {
       try {
-        const res = await fetch(`https://sd-trends.onrender.com/api/orders/${orderId}`);
+        const res = await fetch(`${API_BASE_URL}/orders/${orderId}`);
         if (res.ok) {
           const data = await res.json();
           setOrder(data);

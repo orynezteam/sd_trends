@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Send, Image as ImageIcon, Search, CheckCircle } from 'lucide-react';
 import styles from './Newsletter.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function NewsletterPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -19,7 +21,7 @@ export default function NewsletterPage() {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch('https://sd-trends.onrender.com/api/products');
+      const res = await fetch(`${API_BASE_URL}/products`);
       if (res.ok) {
         const data = await res.json();
         setProducts(data);
@@ -55,7 +57,7 @@ export default function NewsletterPage() {
 
     setSending(true);
     try {
-      const res = await fetch('https://sd-trends.onrender.com/api/newsletter/send', {
+      const res = await fetch(`${API_BASE_URL}/newsletter/send`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -120,7 +122,7 @@ export default function NewsletterPage() {
                     >
                       <div className={styles.productImgWrapper}>
                         {primaryImage ? (
-                          <img src={`https://sd-trends.onrender.com${primaryImage.image_url}`} alt={product.name} />
+                          <img src={`${BASE_URL}${primaryImage.image_url}`} alt={product.name} />
                         ) : (
                           <ImageIcon size={24} color="#ccc" />
                         )}
@@ -175,7 +177,7 @@ export default function NewsletterPage() {
                           <div key={p.id} className={styles.previewProduct}>
                             <div className={styles.previewImg}>
                               {img ? (
-                                <img src={`https://sd-trends.onrender.com${img.image_url}`} alt={p.name} />
+                                <img src={`${BASE_URL}${img.image_url}`} alt={p.name} />
                               ) : (
                                 <ImageIcon size={20} color="#ccc" />
                               )}

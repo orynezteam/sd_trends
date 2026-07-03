@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { Save, ArrowUp, ArrowDown } from 'lucide-react';
 import * as Icons from 'lucide-react';
 import styles from './AdminServices.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function AdminServicesPage() {
   const [cards, setCards] = useState<any[]>([]);
@@ -11,7 +13,7 @@ export default function AdminServicesPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetch('https://sd-trends.onrender.com/api/content/services')
+    fetch(`${API_BASE_URL}/content/services`)
       .then(res => res.json())
       .then(data => {
         if (data && Array.isArray(data)) {
@@ -28,7 +30,7 @@ export default function AdminServicesPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const res = await fetch('https://sd-trends.onrender.com/api/content/services', {
+      const res = await fetch(`${API_BASE_URL}/content/services`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(cards.map((c, idx) => ({ ...c, display_order: idx + 1 })))

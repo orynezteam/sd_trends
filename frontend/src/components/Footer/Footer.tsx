@@ -4,8 +4,15 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { MapPin, Phone, Mail } from 'lucide-react';
 import styles from './Footer.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
 
-export default function Footer() {
+
+interface FooterProps {
+  settings?: any;
+  footerLinks?: any[];
+}
+
+export default function Footer({ settings: initialSettings = {}, footerLinks: initialLinks = [] }: FooterProps) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<{
     success: boolean | null;
@@ -13,40 +20,14 @@ export default function Footer() {
   }>({ success: null, message: '' });
   const [loading, setLoading] = useState(false);
 
-  const [settings, setSettings] = useState({
-    footer_about_text: 'Loading...',
-    footer_address: 'Loading...',
-    footer_phone: 'Loading...',
-    footer_email: 'Loading...',
-  });
+  const settings = {
+    footer_about_text: initialSettings.footer_about_text || '',
+    footer_address: initialSettings.footer_address || '',
+    footer_phone: initialSettings.footer_phone || '',
+    footer_email: initialSettings.footer_email || '',
+  };
 
-  const [links, setLinks] = useState<any[]>([]);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [setRes, linkRes] = await Promise.all([
-          fetch('https://sd-trends.onrender.com/api/settings', { cache: 'no-store' }),
-          fetch('https://sd-trends.onrender.com/api/footer-links', { cache: 'no-store' }),
-        ]);
-        if (setRes.ok) {
-          const s = await setRes.json();
-          setSettings({
-            footer_about_text: s.footer_about_text || '',
-            footer_address: s.footer_address || '',
-            footer_phone: s.footer_phone || '',
-            footer_email: s.footer_email || '',
-          });
-        }
-        if (linkRes.ok) {
-          setLinks(await linkRes.json());
-        }
-      } catch (err) {
-        console.error('Failed to fetch footer data', err);
-      }
-    }
-    fetchData();
-  }, []);
+  const links = initialLinks;
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,7 +43,7 @@ export default function Footer() {
     setStatus({ success: null, message: '' });
 
     try {
-      const res = await fetch('https://sd-trends.onrender.com/api/newsletter', {
+      const res = await fetch(`${API_BASE_URL}/newsletter`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

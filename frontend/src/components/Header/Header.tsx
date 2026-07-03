@@ -7,6 +7,8 @@ import Image from 'next/image';
 import { useStore } from '../../context/StoreContext';
 import { Search, Heart, ShoppingCart, User, ChevronDown, Sun, Moon, Menu, X, Trash2 } from 'lucide-react';
 import styles from './Header.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function Header() {
   const pathname = usePathname();
@@ -34,7 +36,7 @@ export default function Header() {
 
   // Fetch Category Hierarchy
   useEffect(() => {
-    fetch('https://sd-trends.onrender.com/api/content/categories/hierarchy')
+    fetch(`${API_BASE_URL}/content/categories/hierarchy`)
       .then(res => res.json())
       .then(data => setCategories(data))
       .catch(err => console.error(err));
@@ -49,7 +51,7 @@ export default function Header() {
 
     const timer = setTimeout(async () => {
       try {
-        const res = await fetch(`https://sd-trends.onrender.com/api/products/search?q=${encodeURIComponent(searchQuery)}`);
+        const res = await fetch(`${API_BASE_URL}/products/search?q=${encodeURIComponent(searchQuery)}`);
         if (res.ok) {
           const data = await res.json();
           setSearchResults(data);
@@ -78,7 +80,7 @@ export default function Header() {
 
   // Fetch Promo Banner
   useEffect(() => {
-    fetch('https://sd-trends.onrender.com/api/content/promo')
+    fetch(`${API_BASE_URL}/content/promo`)
       .then(res => res.json())
       .then(data => {
         if (data && data.is_active) {

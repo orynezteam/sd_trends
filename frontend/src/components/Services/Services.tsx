@@ -6,21 +6,13 @@ import styles from './Services.module.css';
 
 import * as Icons from 'lucide-react';
 
-export default function Services() {
-  const [services, setServices] = React.useState<any[]>([]);
+interface ServicesProps {
+  services?: any[];
+}
+
+export default function Services({ services = [] }: ServicesProps) {
   const [scrollProgress, setScrollProgress] = React.useState(0);
   const gridRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    fetch('https://sd-trends.onrender.com/api/content/services')
-      .then(res => res.json())
-      .then(data => {
-        if (data && Array.isArray(data)) {
-          setServices(data);
-        }
-      })
-      .catch(err => console.error("Failed to load services:", err));
-  }, []);
 
   const renderIcon = (iconName: string) => {
     const IconComponent = Icons[iconName as keyof typeof Icons] as React.ElementType;

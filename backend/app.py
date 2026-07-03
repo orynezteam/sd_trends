@@ -1264,34 +1264,6 @@ def save_top_deals_settings():
     return jsonify({'message': 'Top deals settings saved successfully'}), 200
 
 
-if __name__ == '__main__':
-    # Only run migration in the active worker process to prevent connection leaks from the parent reloader
-    if os.environ.get('WERKZEUG_RUN_MAIN') == 'true' or not app.config.get('DEBUG', True):
-        with app.app_context():
-            # self-healing migration to add payment_method and items_json if not exist
-            try:
-                db.session.execute(db.text("ALTER TABLE sd_orders ADD COLUMN payment_method VARCHAR(100) DEFAULT 'Direct Bank Transfer';"))
-                db.session.commit()
-                print("Successfully added payment_method column to sd_orders")
-            except Exception as e:
-                db.session.rollback()
-                if "already exists" in str(e).lower() or "duplicate column" in str(e).lower():
-                    print("Database column payment_method already exists (skipping alter).")
-                else:
-                    print(f"Error checking/altering payment_method column: {e}")
-                
-            try:
-                db.session.execute(db.text("ALTER TABLE sd_orders ADD COLUMN items_json TEXT;"))
-                db.session.commit()
-                print("Successfully added items_json column to sd_orders")
-            except Exception as e:
-                db.session.rollback()
-                if "already exists" in str(e).lower() or "duplicate column" in str(e).lower():
-                    print("Database column items_json already exists (skipping alter).")
-                else:
-                    print(f"Error checking/altering items_json column: {e}")
-            
-    app.run(host='0.0.0.0', port=5000, debug=True)
 
 # ==========================================
 # Product Reviews API
@@ -1360,3 +1332,111 @@ def delete_review(id):
     db.session.delete(review)
     db.session.commit()
     return jsonify({'message': 'Deleted successfully'}), 200
+
+# ==========================================
+# Aggregated Home Data API (Optimization)
+# ==========================================
+@app.route("/api/home-data", methods=["GET"])
+def get_home_data():
+    try:
+        # Fetch all required data concurrently (using DB queries which are fast)
+        hero = [s.to_dict() for s in HeroSlide.query.order_by(HeroSlide.id).all()]
+        services = [s.to_dict() for s in ServiceCard.query.order_by(ServiceCard.id).all()]
+        banners = [b.to_dict() for b in PromotionBanner.query.order_by(PromotionBanner.id).all()]
+        latest = [p.to_dict() for p in Product.query.filter_by(is_latest=True).all()]
+        
+        # Categories hierarchy structure (home_featured)
+        home_categories = Subcategory.query.filter_by(is_home_featured=True).limit(5).all()
+        categories = [c.to_dict() for c in home_categories]
+            
+        bracelet = MidPageBanner.query.filter_by(slot_name='bracelet').first()
+        bracelet_data = bracelet.to_dict() if bracelet else {}
+        
+        featured = [p.to_dict() for p in Product.query.filter_by(is_featured=True).all()]
+        
+        highlights = MidPageBanner.query.filter_by(slot_name='highlights').first()
+        highlights_data = highlights.to_dict() if highlights else {}
+        
+        testimonials = [t.to_dict() for t in Testimonial.query.filter_by(status='approved').all()]
+        
+        settings_records = SiteSetting.query.all()
+        settings = {s.key: s.value for s in settings_records}
+        
+        footer_links = [l.to_dict() for l in FooterLink.query.all()]
+        
+        return jsonify({
+            'hero': hero,
+            'services': services,
+            'banners': banners,
+            'latest': latest,
+            'categories': categories,
+            'bracelet': bracelet_data,
+            'featured': featured,
+            'highlights': highlights_data,
+            'testimonials': testimonials,
+            'settings': settings,
+            'footerLinks': footer_links
+        }), 200
+    except Exception as e:
+        print("Error aggregating home data:", e)
+        return jsonify({'error': str(e)}), 500
+
+if __name__ == '__main__':
+    # Only run migration in the active worker process to prevent connection leaks from the parent reloader
+    if os.environ.get('WERKZEUG_RUN_MAIN') == 'true' or not app.config.get('DEBUG', True):
+        with app.app_context():
+            # Automatically create any entirely new tables (like sd_product_reviews)
+            try:
+                db.create_all()
+                print("Successfully created any missing tables")
+            except Exception as e:
+                print(f"Error creating tables: {e}")
+                
+            # self-healing migration to add payment_method and items_json if not exist
+            try:
+                db.session.execute(db.text("ALTER TABLE sd_orders ADD COLUMN payment_method VARCHAR(100) DEFAULT 'Direct Bank Transfer';"))
+                db.session.commit()
+                print("Successfully added payment_method column to sd_orders")
+            except Exception as e:
+                db.session.rollback()
+                if "already exists" in str(e).lower() or "duplicate column" in str(e).lower():
+                    print("Database column payment_method already exists (skipping alter).")
+                else:
+                    print(f"Error checking/altering payment_method column: {e}")
+                
+            try:
+                db.session.execute(db.text("ALTER TABLE sd_orders ADD COLUMN items_json TEXT;"))
+                db.session.commit()
+                print("Successfully added items_json column to sd_orders")
+            except Exception as e:
+                db.session.rollback()
+                if "already exists" not in str(e).lower() and "duplicate column" not in str(e).lower():
+                    print(f"Error checking/altering items_json column: {e}")
+            
+            # Self-healing migration for ALL newly added Product columns
+            product_columns = [
+                ("subcategory", "VARCHAR(100)"),
+                ("timer", "VARCHAR(100)"),
+                ("is_new", "BOOLEAN DEFAULT FALSE"),
+                ("is_bestseller", "BOOLEAN DEFAULT FALSE"),
+                ("is_latest", "BOOLEAN DEFAULT FALSE"),
+                ("review_count", "INTEGER DEFAULT 0"),
+                ("stock", "INTEGER DEFAULT 10"),
+                ("viewer_count", "INTEGER DEFAULT 18"),
+                ("sold_count", "INTEGER DEFAULT 15"),
+                ("about_text", "TEXT"),
+                ("shipping_text", "TEXT"),
+                ("details_json", "TEXT")
+            ]
+            
+            for col_name, col_type in product_columns:
+                try:
+                    db.session.execute(db.text(f"ALTER TABLE sd_products ADD COLUMN {col_name} {col_type};"))
+                    db.session.commit()
+                    print(f"Successfully added {col_name} column to sd_products")
+                except Exception as e:
+                    db.session.rollback()
+                    if "already exists" not in str(e).lower() and "duplicate column" not in str(e).lower():
+                        print(f"Error checking/altering {col_name} column: {e}")
+            
+    app.run(host='0.0.0.0', port=5000, debug=True)

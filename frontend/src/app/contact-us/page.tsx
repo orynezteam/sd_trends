@@ -6,6 +6,8 @@ import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import styles from './contact.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function ContactUs() {
   const [formData, setFormData] = useState({
@@ -22,7 +24,7 @@ export default function ContactUs() {
   const [settingsLoading, setSettingsLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://sd-trends.onrender.com/api/settings')
+    fetch(`${API_BASE_URL}/settings`)
       .then(res => res.json())
       .then(data => {
         setSettings(data);
@@ -53,7 +55,7 @@ export default function ContactUs() {
     setStatus({ success: null, message: '' });
 
     try {
-      const res = await fetch('https://sd-trends.onrender.com/api/contact', {
+      const res = await fetch(`${API_BASE_URL}/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

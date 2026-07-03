@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Save, CreditCard, Info } from 'lucide-react';
 import styles from './PaymentSetup.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function PaymentSetupPage() {
   const [loading, setLoading] = useState(true);
@@ -19,7 +21,7 @@ export default function PaymentSetupPage() {
   const fetchSettings = async () => {
     try {
       setLoading(true);
-      const res = await fetch('https://sd-trends.onrender.com/api/settings');
+      const res = await fetch(`${API_BASE_URL}/settings`);
       if (res.ok) {
         const data = await res.json();
         setSettings({
@@ -43,7 +45,7 @@ export default function PaymentSetupPage() {
     
     setSaving(true);
     try {
-      const res = await fetch('https://sd-trends.onrender.com/api/settings', {
+      const res = await fetch(`${API_BASE_URL}/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(settings)

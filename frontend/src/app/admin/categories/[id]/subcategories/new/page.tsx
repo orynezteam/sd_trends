@@ -6,6 +6,8 @@ import { supabase } from '../../../../../../utils/supabase';
 import { Save, ArrowLeft, Upload, X } from 'lucide-react';
 import Link from 'next/link';
 import styles from '../../../../products/new/NewProduct.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function NewSubcategoryPage() {
   const router = useRouter();
@@ -75,7 +77,7 @@ export default function NewSubcategoryPage() {
         home_image_url: publicUrl || null
       };
       
-      const res = await fetch(`https://sd-trends.onrender.com/api/content/categories/${catId}/subcategories`, {
+      const res = await fetch(`${API_BASE_URL}/content/categories/${catId}/subcategories`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

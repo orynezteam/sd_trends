@@ -6,6 +6,8 @@ import { supabase } from '../../../../utils/supabase';
 import { Save, ArrowLeft, Upload, X } from 'lucide-react';
 import Link from 'next/link';
 import styles from '../../products/new/NewProduct.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function NewTestimonialPage() {
   const router = useRouter();
@@ -65,7 +67,7 @@ export default function NewTestimonialPage() {
         image_url: finalImageUrl || '/images/default_avatar.png'
       };
 
-      const res = await fetch('https://sd-trends.onrender.com/api/testimonials', {
+      const res = await fetch(`${API_BASE_URL}/testimonials`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

@@ -4,25 +4,13 @@ import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import styles from './HeroSlider.module.css';
 
-export default function HeroSlider() {
-  const [current, setCurrent] = useState(0);
-  const [slides, setSlides] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+interface HeroSliderProps {
+  hero?: any[];
+}
 
-  useEffect(() => {
-    fetch('https://sd-trends.onrender.com/api/content/hero')
-      .then(res => res.json())
-      .then(data => {
-        if (Array.isArray(data) && data.length > 0) {
-          setSlides(data);
-        }
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Failed to load hero slides:", err);
-        setLoading(false);
-      });
-  }, []);
+export default function HeroSlider({ hero = [] }: HeroSliderProps) {
+  const [current, setCurrent] = useState(0);
+  const slides = hero;
 
   useEffect(() => {
     if (slides.length <= 1) return;
@@ -42,15 +30,6 @@ export default function HeroSlider() {
     setCurrent((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   };
 
-  if (loading) {
-    return (
-      <section className={styles.slider}>
-        <div className={styles.slide} style={{ backgroundColor: '#f5f5f5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <p>Loading...</p>
-        </div>
-      </section>
-    );
-  }
 
   // Fallback if no slides exist in DB
   if (slides.length === 0) {

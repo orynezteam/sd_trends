@@ -6,6 +6,8 @@ import { supabase } from '../../../../utils/supabase';
 import { Save, ArrowLeft, Upload, X } from 'lucide-react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 import 'react-quill-new/dist/quill.snow.css';
@@ -27,7 +29,7 @@ export default function EditProductPage() {
   const [dbCategories, setDbCategories] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch('https://sd-trends.onrender.com/api/content/categories')
+    fetch(`${API_BASE_URL}/content/categories`)
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) setDbCategories(data);
@@ -62,7 +64,7 @@ export default function EditProductPage() {
     
     const decodedId = decodeURIComponent(productId);
 
-    fetch(`https://sd-trends.onrender.com/api/products`)
+    fetch(`${API_BASE_URL}/products`)
       .then(res => res.json())
       .then(data => {
         const product = data.find((p: any) => p.id === decodedId);
@@ -260,7 +262,7 @@ export default function EditProductPage() {
       
       // We will send a PUT request to /api/products/<id>
       // Wait, let's update app.py to handle updating all fields and images in PUT.
-      const res = await fetch(`https://sd-trends.onrender.com/api/products/${params.id}`, {
+      const res = await fetch(`${API_BASE_URL}/products/${params.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

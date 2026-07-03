@@ -6,6 +6,8 @@ import { Save, ArrowLeft, Plus, Edit2, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import styles from '../../products/new/NewProduct.module.css';
 import tableStyles from '../../products/AdminProducts.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function EditCategoryPage() {
   const router = useRouter();
@@ -23,7 +25,7 @@ export default function EditCategoryPage() {
 
   const fetchCategory = async () => {
     try {
-      const res = await fetch('https://sd-trends.onrender.com/api/content/categories/hierarchy');
+      const res = await fetch(`${API_BASE_URL}/content/categories/hierarchy`);
       if (res.ok) {
         const data = await res.json();
         const category = data.find((c: any) => c.id.toString() === catId);
@@ -60,7 +62,7 @@ export default function EditCategoryPage() {
 
     setSaving(true);
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/content/categories/${catId}`, {
+      const res = await fetch(`${API_BASE_URL}/content/categories/${catId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -82,7 +84,7 @@ export default function EditCategoryPage() {
   const handleDeleteSubcategory = async (subId: number) => {
     if (!confirm("Delete this subcategory?")) return;
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/content/subcategories/${subId}`, {
+      const res = await fetch(`${API_BASE_URL}/content/subcategories/${subId}`, {
         method: 'DELETE'
       });
       if (res.ok) {

@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Save, Plus, Edit2, Trash2, X } from 'lucide-react';
 import styles from './FooterAdmin.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function AdminFooterPage() {
   const [activeTab, setActiveTab] = useState<'settings' | 'links'>('settings');
@@ -38,8 +40,8 @@ export default function AdminFooterPage() {
     try {
       setLoading(true);
       const [settingsRes, linksRes] = await Promise.all([
-        fetch('https://sd-trends.onrender.com/api/settings', { cache: 'no-store' }),
-        fetch('https://sd-trends.onrender.com/api/footer-links', { cache: 'no-store' })
+        fetch(`${API_BASE_URL}/settings`, { cache: 'no-store' }),
+        fetch(`${API_BASE_URL}/footer-links`, { cache: 'no-store' })
       ]);
 
       if (settingsRes.ok) {
@@ -68,7 +70,7 @@ export default function AdminFooterPage() {
     e.preventDefault();
     setSavingSettings(true);
     try {
-      const res = await fetch('https://sd-trends.onrender.com/api/settings', {
+      const res = await fetch(`${API_BASE_URL}/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(settings)
@@ -103,8 +105,8 @@ export default function AdminFooterPage() {
     e.preventDefault();
     try {
       const url = editingLink 
-        ? `https://sd-trends.onrender.com/api/footer-links/${editingLink.id}`
-        : `https://sd-trends.onrender.com/api/footer-links`;
+        ? `${API_BASE_URL}/footer-links/${editingLink.id}`
+        : `${API_BASE_URL}/footer-links`;
       const method = editingLink ? 'PUT' : 'POST';
 
       const res = await fetch(url, {
@@ -130,7 +132,7 @@ export default function AdminFooterPage() {
   const handleDeleteLink = async (id: number) => {
     if (!confirm('Are you sure you want to delete this link?')) return;
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/footer-links/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${API_BASE_URL}/footer-links/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setLinks(links.filter(l => l.id !== id));
       }

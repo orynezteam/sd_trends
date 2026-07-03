@@ -6,6 +6,8 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
 import styles from './faqs.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function FAQs() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
@@ -18,7 +20,7 @@ export default function FAQs() {
 
   const fetchFaqs = async () => {
     try {
-      const res = await fetch('https://sd-trends.onrender.com/api/faqs');
+      const res = await fetch(`${API_BASE_URL}/faqs`);
       if (res.ok) {
         const data = await res.json();
         // Only show active FAQs

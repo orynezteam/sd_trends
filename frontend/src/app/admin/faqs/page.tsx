@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Eye, EyeOff, Save, X } from 'lucide-react';
 import styles from './FAQsAdmin.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function FAQsAdminPage() {
   const [faqs, setFaqs] = useState<any[]>([]);
@@ -24,7 +26,7 @@ export default function FAQsAdminPage() {
   const fetchFaqs = async () => {
     try {
       setLoading(true);
-      const res = await fetch('https://sd-trends.onrender.com/api/faqs');
+      const res = await fetch(`${API_BASE_URL}/faqs`);
       if (res.ok) {
         const data = await res.json();
         setFaqs(data);
@@ -65,8 +67,8 @@ export default function FAQsAdminPage() {
     }
 
     const url = currentFaq.id 
-      ? `https://sd-trends.onrender.com/api/faqs/${currentFaq.id}`
-      : `https://sd-trends.onrender.com/api/faqs`;
+      ? `${API_BASE_URL}/faqs/${currentFaq.id}`
+      : `${API_BASE_URL}/faqs`;
     
     const method = currentFaq.id ? 'PUT' : 'POST';
 
@@ -89,7 +91,7 @@ export default function FAQsAdminPage() {
 
   const toggleActive = async (faq: any) => {
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/faqs/${faq.id}`, {
+      const res = await fetch(`${API_BASE_URL}/faqs/${faq.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_active: !faq.is_active })
@@ -105,7 +107,7 @@ export default function FAQsAdminPage() {
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete this FAQ?")) return;
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/faqs/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/faqs/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {

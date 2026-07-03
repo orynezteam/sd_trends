@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingBag, Check, X, Eye, ShieldCheck, Mail, Calendar, ArrowRight } from 'lucide-react';
 import styles from './OrdersAdmin.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -18,7 +20,7 @@ export default function AdminOrdersPage() {
   const fetchOrders = async () => {
     try {
       setLoading(true);
-      const res = await fetch('https://sd-trends.onrender.com/api/orders');
+      const res = await fetch(`${API_BASE_URL}/orders`);
       if (res.ok) {
         const data = await res.json();
         setOrders(data);
@@ -37,7 +39,7 @@ export default function AdminOrdersPage() {
     
     setUpdatingId(orderId);
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/orders/${orderId}/status`, {
+      const res = await fetch(`${API_BASE_URL}/orders/${orderId}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })

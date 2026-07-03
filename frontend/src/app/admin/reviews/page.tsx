@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import styles from './AdminReviews.module.css';
 import { Trash2, Edit, CheckCircle, XCircle } from 'lucide-react';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 interface Review {
   id: number;
@@ -40,8 +42,8 @@ export default function AdminReviewsPage() {
     setLoading(true);
     try {
       const [revRes, prodRes] = await Promise.all([
-        fetch('https://sd-trends.onrender.com/api/admin/reviews'),
-        fetch('https://sd-trends.onrender.com/api/products')
+        fetch(`${API_BASE_URL}/admin/reviews`),
+        fetch(`${API_BASE_URL}/products`)
       ]);
       const revData = await revRes.json();
       const prodData = await prodRes.json();
@@ -59,7 +61,7 @@ export default function AdminReviewsPage() {
 
   const updateStatus = async (id: number, status: string) => {
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/admin/reviews/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/admin/reviews/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status })
@@ -75,7 +77,7 @@ export default function AdminReviewsPage() {
   const deleteReview = async (id: number) => {
     if (!confirm('Are you sure you want to delete this review?')) return;
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/admin/reviews/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/admin/reviews/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {
@@ -90,7 +92,7 @@ export default function AdminReviewsPage() {
     e.preventDefault();
     if (!newReview.product_id || !newReview.author || !newReview.review_text) return;
     try {
-      const res = await fetch('https://sd-trends.onrender.com/api/admin/reviews', {
+      const res = await fetch(`${API_BASE_URL}/admin/reviews`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newReview)

@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Plus, Search, Edit2 } from 'lucide-react';
 import styles from './AdminProducts.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
@@ -22,8 +24,8 @@ export default function AdminProductsPage() {
   const fetchProductsAndSettings = async () => {
     try {
       const [prodRes, setRes] = await Promise.all([
-        fetch('https://sd-trends.onrender.com/api/products'),
-        fetch('https://sd-trends.onrender.com/api/settings')
+        fetch(`${API_BASE_URL}/products`),
+        fetch(`${API_BASE_URL}/settings`)
       ]);
       
       if (prodRes.ok) {
@@ -54,7 +56,7 @@ export default function AdminProductsPage() {
   const handleSaveSettings = async () => {
     setSavingSettings(true);
     try {
-      const res = await fetch('https://sd-trends.onrender.com/api/settings', {
+      const res = await fetch(`${API_BASE_URL}/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(settings)
@@ -76,7 +78,7 @@ export default function AdminProductsPage() {
     const isCurrentlyLatest = product.is_latest;
     
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/products/${product.id}`, {
+      const res = await fetch(`${API_BASE_URL}/products/${product.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_latest: !isCurrentlyLatest })
@@ -101,7 +103,7 @@ export default function AdminProductsPage() {
     const isCurrentlyFeatured = product.isFeatured;
     
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/products/${product.id}`, {
+      const res = await fetch(`${API_BASE_URL}/products/${product.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_featured: !isCurrentlyFeatured })

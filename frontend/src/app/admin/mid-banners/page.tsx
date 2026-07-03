@@ -5,13 +5,15 @@ import Link from 'next/link';
 import { Edit2 } from 'lucide-react';
 import styles from '../banners/AdminBanners.module.css';
 import tableStyles from '../products/AdminProducts.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function AdminMidBanners() {
   const [banners, setBanners] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('https://sd-trends.onrender.com/api/content/mid_banners')
+    fetch(`${API_BASE_URL}/content/mid_banners`)
       .then(res => res.json())
       .then(data => {
         setBanners(data);

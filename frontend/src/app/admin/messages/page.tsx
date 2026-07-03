@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, MailOpen, Trash2, Calendar, User } from 'lucide-react';
 import styles from './Messages.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function MessagesPage() {
   const [messages, setMessages] = useState<any[]>([]);
@@ -15,7 +17,7 @@ export default function MessagesPage() {
   const fetchMessages = async () => {
     try {
       setLoading(true);
-      const res = await fetch('https://sd-trends.onrender.com/api/contact-messages');
+      const res = await fetch(`${API_BASE_URL}/contact-messages`);
       if (res.ok) {
         const data = await res.json();
         setMessages(data);
@@ -29,7 +31,7 @@ export default function MessagesPage() {
 
   const toggleReadStatus = async (id: number, currentStatus: boolean) => {
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/contact-messages/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/contact-messages/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ is_read: !currentStatus })
@@ -46,7 +48,7 @@ export default function MessagesPage() {
   const deleteMessage = async (id: number) => {
     if (!confirm('Are you sure you want to delete this message?')) return;
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/contact-messages/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/contact-messages/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {

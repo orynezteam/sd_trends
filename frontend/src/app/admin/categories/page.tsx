@@ -4,13 +4,15 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Plus, Edit2, Trash2, List } from 'lucide-react';
 import styles from '../products/AdminProducts.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function AdminCategories() {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchCategories = () => {
-    fetch('https://sd-trends.onrender.com/api/content/categories/hierarchy')
+    fetch(`${API_BASE_URL}/content/categories/hierarchy`)
       .then(res => res.json())
       .then(data => {
         setCategories(data);
@@ -30,7 +32,7 @@ export default function AdminCategories() {
     if (!confirm("Are you sure you want to delete this Category and ALL its Subcategories?")) return;
 
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/content/categories/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/content/categories/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {

@@ -3,19 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import styles from './BraceletBanner.module.css';
 
-export default function BraceletBanner() {
-  const [data, setData] = useState<any>(null);
+interface BraceletBannerProps {
+  bannerData?: any;
+}
 
-  useEffect(() => {
-    fetch('https://sd-trends.onrender.com/api/content/mid_banners/bracelet')
-      .then(res => res.json())
-      .then(resData => {
-        if (!resData.error) setData(resData);
-      })
-      .catch(console.error);
-  }, []);
+export default function BraceletBanner({ bannerData = null }: BraceletBannerProps) {
+  const data = bannerData;
 
-  if (!data) return null;
+  if (!data || Object.keys(data).length === 0) return null;
 
   return (
     <section 

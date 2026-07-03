@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { Save, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import styles from '../../products/new/NewProduct.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function NewCategoryPage() {
   const router = useRouter();
@@ -25,7 +27,7 @@ export default function NewCategoryPage() {
 
     setSaving(true);
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/content/categories`, {
+      const res = await fetch(`${API_BASE_URL}/content/categories`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)

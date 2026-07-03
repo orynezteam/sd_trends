@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { Save, Plus, Trash2, Clock } from 'lucide-react';
 import styles from './AdminTopDeals.module.css';
 import { useStore } from '../../../context/StoreContext';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 interface DealCategory {
   name: string;
@@ -24,7 +26,7 @@ export default function AdminTopDeals() {
 
   const fetchTopDeals = async () => {
     try {
-      const res = await fetch('https://sd-trends.onrender.com/api/settings/top-deals');
+      const res = await fetch(`${API_BASE_URL}/settings/top-deals`);
       if (res.ok) {
         const data = await res.json();
         setCategories(data.categories || []);
@@ -42,7 +44,7 @@ export default function AdminTopDeals() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const res = await fetch('https://sd-trends.onrender.com/api/admin/settings/top-deals', {
+      const res = await fetch(`${API_BASE_URL}/admin/settings/top-deals`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

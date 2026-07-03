@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Save } from 'lucide-react';
 import styles from './AdminPromo.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function AdminPromoPage() {
   const [promo, setPromo] = useState({
@@ -15,7 +17,7 @@ export default function AdminPromoPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetch('https://sd-trends.onrender.com/api/content/promo')
+    fetch(`${API_BASE_URL}/content/promo`)
       .then(res => res.json())
       .then(data => {
         if (data) {
@@ -33,7 +35,7 @@ export default function AdminPromoPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await fetch('https://sd-trends.onrender.com/api/content/promo', {
+      const res = await fetch(`${API_BASE_URL}/content/promo`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(promo)

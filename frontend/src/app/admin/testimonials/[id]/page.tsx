@@ -6,6 +6,8 @@ import { supabase } from '../../../../utils/supabase';
 import { Save, ArrowLeft, Upload, X } from 'lucide-react';
 import Link from 'next/link';
 import styles from '../../products/new/NewProduct.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function EditTestimonialPage() {
   const router = useRouter();
@@ -29,7 +31,7 @@ export default function EditTestimonialPage() {
   useEffect(() => {
     async function fetchTestimonial() {
       try {
-        const res = await fetch(`https://sd-trends.onrender.com/api/testimonials`);
+        const res = await fetch(`${API_BASE_URL}/testimonials`);
         if (res.ok) {
           const data = await res.json();
           const testimonial = data.find((t: any) => t.id.toString() === id);
@@ -98,7 +100,7 @@ export default function EditTestimonialPage() {
         image_url: finalImageUrl
       };
 
-      const res = await fetch(`https://sd-trends.onrender.com/api/testimonials/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/testimonials/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

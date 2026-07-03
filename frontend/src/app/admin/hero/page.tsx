@@ -5,6 +5,8 @@ import { useStore } from '../../../context/StoreContext';
 import { supabase } from '../../../utils/supabase';
 import { Plus, Edit2, Trash2, Save, X, Image as ImageIcon } from 'lucide-react';
 import styles from './AdminHero.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function AdminHeroPage() {
   const { user } = useStore();
@@ -35,7 +37,7 @@ export default function AdminHeroPage() {
 
   const fetchSlides = async () => {
     try {
-      const res = await fetch('https://sd-trends.onrender.com/api/content/hero');
+      const res = await fetch(`${API_BASE_URL}/content/hero`);
       if (res.ok) {
         const data = await res.json();
         setSlides(data);
@@ -76,7 +78,7 @@ export default function AdminHeroPage() {
     if (!confirm("Are you sure you want to delete this slide?")) return;
     
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/content/hero/${id}`, {
+      const res = await fetch(`${API_BASE_URL}/content/hero/${id}`, {
         method: 'DELETE'
       });
       if (res.ok) {
@@ -148,8 +150,8 @@ export default function AdminHeroPage() {
 
     try {
       const url = payload.id 
-        ? `https://sd-trends.onrender.com/api/content/hero/${payload.id}`
-        : `https://sd-trends.onrender.com/api/content/hero`;
+        ? `${API_BASE_URL}/content/hero/${payload.id}`
+        : `${API_BASE_URL}/content/hero`;
         
       const method = payload.id ? 'PUT' : 'POST';
 

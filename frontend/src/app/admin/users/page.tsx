@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { Search, Heart, X, Send, Trash2, Eye } from 'lucide-react';
 import styles from './AdminUsers.module.css';
 import { useStore } from '../../../context/StoreContext';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<any[]>([]);
@@ -17,7 +19,7 @@ export default function AdminUsersPage() {
   const { user } = useStore();
 
   useEffect(() => {
-    fetch('https://sd-trends.onrender.com/api/users')
+    fetch(`${API_BASE_URL}/users`)
       .then(res => res.json())
       .then(data => {
         setUsers(data);
@@ -37,7 +39,7 @@ export default function AdminUsersPage() {
     
     if (user) {
       try {
-        const res = await fetch(`https://sd-trends.onrender.com/api/admin/users/${u.id}/wishlist`);
+        const res = await fetch(`${API_BASE_URL}/admin/users/${u.id}/wishlist`);
         if (res.ok) {
           const data = await res.json();
           setUserWishlist(data);
@@ -53,7 +55,7 @@ export default function AdminUsersPage() {
     if (!selectedUser || !user) return;
     setSendingEmail(true);
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/admin/users/${selectedUser.id}/send-wishlist-reminder`, {
+      const res = await fetch(`${API_BASE_URL}/admin/users/${selectedUser.id}/send-wishlist-reminder`, {
         method: 'POST'
       });
       if (res.ok) {
@@ -81,7 +83,7 @@ export default function AdminUsersPage() {
     setUsers(users.map(u => u.id === selectedUser.id ? { ...u, wishlist: updatedIds } : u));
     
     try {
-      await fetch(`https://sd-trends.onrender.com/api/users/${selectedUser.id}/wishlist`, {
+      await fetch(`${API_BASE_URL}/users/${selectedUser.id}/wishlist`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ wishlist: updatedIds })

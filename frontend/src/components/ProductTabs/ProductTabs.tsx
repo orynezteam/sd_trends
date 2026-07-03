@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import ProductCard from '../ProductCard/ProductCard';
 import { X } from 'lucide-react';
 import styles from './ProductTabs.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 const TABS = [
   { id: 'new', label: 'New Arrivals' },
@@ -20,7 +22,7 @@ export default function ProductTabs({ selectedCategory, onClearCategory }) {
     async function fetchProducts() {
       setLoading(true);
       try {
-        let url = `https://sd-trends.onrender.com/api/products?tab=${activeTab}`;
+        let url = `${API_BASE_URL}/products?tab=${activeTab}`;
         if (selectedCategory) {
           url += `&category=${selectedCategory}`;
         }

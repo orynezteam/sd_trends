@@ -6,41 +6,14 @@ import styles from './LatestProducts.module.css';
 
 
 
-export default function LatestProducts() {
-  const [products, setProducts] = useState<any[]>([]);
-  const [settings, setSettings] = useState({ title: 'Latest Products', subtitle: '' });
-  const [loading, setLoading] = useState(true);
+interface LatestProductsProps {
+  products?: any[];
+}
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const [prodRes, setRes] = await Promise.all([
-          fetch('https://sd-trends.onrender.com/api/products?is_latest=true'),
-          fetch('https://sd-trends.onrender.com/api/settings')
-        ]);
-        
-        if (prodRes.ok) {
-          const prodData = await prodRes.json();
-          setProducts(prodData);
-        }
-        
-        if (setRes.ok) {
-          const setData = await setRes.json();
-          setSettings({
-            title: setData.latest_products_title || 'Latest Products',
-            subtitle: setData.latest_products_subtitle || ''
-          });
-        }
-      } catch (err) {
-        console.error("Failed to fetch data:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchData();
-  }, []);
+export default function LatestProducts({ products = [] }: LatestProductsProps) {
+  const settings = { title: 'Latest Products', subtitle: '' };
 
-  if (loading || products.length === 0) return null;
+  if (products.length === 0) return null;
 
   return (
     <section className={styles.section}>

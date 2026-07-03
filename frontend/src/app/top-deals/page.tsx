@@ -7,6 +7,8 @@ import Footer from '../../components/Footer/Footer';
 import QuickView from '../../components/QuickView/QuickView';
 import { ChevronRight, Clock } from 'lucide-react';
 import styles from './top-deals.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 interface DealCategory {
   name: string;
@@ -23,7 +25,7 @@ export default function TopDealsPage() {
     // Fetch top deals configuration
     const fetchConfig = async () => {
       try {
-        const res = await fetch('https://sd-trends.onrender.com/api/settings/top-deals');
+        const res = await fetch(`${API_BASE_URL}/settings/top-deals`);
         if (res.ok) {
           const data = await res.json();
           setCategories(data.categories || []);

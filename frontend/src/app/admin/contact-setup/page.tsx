@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Save, Map, Clock, Phone, Mail, MapPin } from 'lucide-react';
 import styles from './ContactSetup.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function ContactSetupPage() {
   const [loading, setLoading] = useState(true);
@@ -25,7 +27,7 @@ export default function ContactSetupPage() {
   const fetchSettings = async () => {
     try {
       setLoading(true);
-      const res = await fetch('https://sd-trends.onrender.com/api/settings');
+      const res = await fetch(`${API_BASE_URL}/settings`);
       if (res.ok) {
         const data = await res.json();
         setSettings({
@@ -50,7 +52,7 @@ export default function ContactSetupPage() {
     e.preventDefault();
     setSaving(true);
     try {
-      const res = await fetch('https://sd-trends.onrender.com/api/settings', {
+      const res = await fetch(`${API_BASE_URL}/settings`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(settings)

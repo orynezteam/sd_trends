@@ -1,4 +1,5 @@
 "use client";
+import { API_BASE_URL, BASE_URL } from '@/config';
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -51,7 +52,7 @@ export default function ProductClientPage({ productId }: ProductClientPageProps)
 
   useEffect(() => {
     if (productId) {
-      fetch(`https://sd-trends.onrender.com/api/products/${productId}/reviews`)
+      fetch(`${API_BASE_URL}/products/${productId}/reviews`)
         .then(res => res.json())
         .then(data => {
           if (Array.isArray(data)) setReviews(data);
@@ -65,7 +66,7 @@ export default function ProductClientPage({ productId }: ProductClientPageProps)
     if (!newReview.author || !newReview.review_text) return;
     setSubmittingReview(true);
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/products/${productId}/reviews`, {
+      const res = await fetch(`${API_BASE_URL}/products/${productId}/reviews`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newReview)
@@ -91,7 +92,7 @@ export default function ProductClientPage({ productId }: ProductClientPageProps)
   useEffect(() => {
     async function getProduct() {
       try {
-        const res = await fetch('https://sd-trends.onrender.com/api/products');
+        const res = await fetch(`${API_BASE_URL}/products`);
         if (res.ok) {
           const data: Product[] = await res.json();
           const found = data.find(p => p.id === productId);

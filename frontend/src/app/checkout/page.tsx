@@ -7,6 +7,8 @@ import Footer from '../../components/Footer/Footer';
 import { useStore } from '../../context/StoreContext';
 import { ChevronRight, Check, ShieldCheck, CreditCard, ShoppingBag, CheckCircle, Copy, X } from 'lucide-react';
 import styles from './checkout.module.css';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export default function CheckoutPage() {
   const { cart, clearCart, user } = useStore();
@@ -47,7 +49,7 @@ export default function CheckoutPage() {
 
   // Load UPI merchant details from settings
   React.useEffect(() => {
-    fetch('https://sd-trends.onrender.com/api/settings')
+    fetch(`${API_BASE_URL}/settings`)
       .then(res => res.json())
       .then(data => {
         if (data.upi_id) setUpiId(data.upi_id);
@@ -100,7 +102,7 @@ export default function CheckoutPage() {
         }))
       };
 
-      const res = await fetch('https://sd-trends.onrender.com/api/orders', {
+      const res = await fetch(`${API_BASE_URL}/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderPayload)
@@ -142,7 +144,7 @@ export default function CheckoutPage() {
     if (!currentOrderId) return;
     setLoadingPayment(true);
     try {
-      const res = await fetch(`https://sd-trends.onrender.com/api/orders/${currentOrderId}/status`, {
+      const res = await fetch(`${API_BASE_URL}/orders/${currentOrderId}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'Pending Verification' })

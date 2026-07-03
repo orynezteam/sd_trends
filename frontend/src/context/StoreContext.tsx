@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { PRODUCTS } from '../data/products';
+import { API_BASE_URL, BASE_URL } from '@/config';
+
 
 export interface StoreContextValue {
   cart: any[];
@@ -134,7 +136,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
     if (user) {
       try {
-        await fetch(`https://sd-trends.onrender.com/api/users/${user.id}/wishlist`, {
+        await fetch(`${API_BASE_URL}/users/${user.id}/wishlist`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ wishlist: newWishlist })
@@ -173,7 +175,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('sdt_wishlist', JSON.stringify(mergedWishlist));
     
     try {
-      await fetch(`https://sd-trends.onrender.com/api/users/${userData.id}/wishlist`, {
+      await fetch(`${API_BASE_URL}/users/${userData.id}/wishlist`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ wishlist: mergedWishlist })

@@ -3,19 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import styles from './HighlightsBanner.module.css';
 
-export default function HighlightsBanner() {
-  const [data, setData] = useState<any>(null);
+interface HighlightsBannerProps {
+  bannerData?: any;
+}
 
-  useEffect(() => {
-    fetch('https://sd-trends.onrender.com/api/content/mid_banners/highlights')
-      .then(res => res.json())
-      .then(resData => {
-        if (!resData.error) setData(resData);
-      })
-      .catch(console.error);
-  }, []);
+export default function HighlightsBanner({ bannerData = null }: HighlightsBannerProps) {
+  const data = bannerData;
 
-  if (!data) return null;
+  if (!data || Object.keys(data).length === 0) return null;
 
   return (
     <section 
