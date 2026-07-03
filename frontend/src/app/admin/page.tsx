@@ -15,7 +15,7 @@ export default function AdminDashboardPage() {
     { title: 'Promotion Banners', icon: <Layers size={24} />, href: '/admin/banners', description: 'Manage the 3 homepage grid banners' },
     { title: 'Promo Banner', icon: <Megaphone size={24} />, href: '/admin/promo', description: 'Update the top header announcement' },
     { title: 'Hero Slider', icon: <ImageIcon size={24} />, href: '/admin/hero', description: 'Manage homepage hero images' },
-    { title: 'Orders', icon: <ShoppingBag size={24} />, href: '#', description: 'View and manage customer orders (Coming Soon)' },
+    { title: 'Orders', icon: <ShoppingBag size={24} />, href: '/admin/orders', description: 'Verify and manage customer payments and orders' },
     { title: 'Users', icon: <Users size={24} />, href: '/admin/users', description: 'Manage registered accounts and profiles' },
   ];
 

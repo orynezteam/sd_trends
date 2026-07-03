@@ -207,7 +207,7 @@ export default function Footer() {
         <div className="container">
           <div className={styles.footerBottomInner}>
             <p className={styles.copyright}>
-              © {new Date().getFullYear()} SD Trends. All Rights Reserved.
+              © {new Date().getFullYear()} SD Trends. All Rights Reserved. Built by <a href="https://www.orynez.com/contact" target="_blank" rel="noopener noreferrer" className={styles.orynezLink}>orynez</a>
             </p>
             {/* <div className={styles.paymentMethods}>
               <img src="/images/visa.png" alt="Visa" className={styles.paymentIcon} />

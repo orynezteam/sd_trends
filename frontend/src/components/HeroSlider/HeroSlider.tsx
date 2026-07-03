@@ -87,6 +87,20 @@ export default function HeroSlider() {
                 </a>
               )}
             </div>
+            
+            {/* Mobile dots placed inside slide content flow to align perfectly under the action button */}
+            {slides.length > 1 && (
+              <div className={styles.mobileDots}>
+                {slides.map((_, dotIdx) => (
+                  <button
+                    key={dotIdx}
+                    className={`${styles.dot} ${dotIdx === current ? styles.dotActive : ''}`}
+                    onClick={() => setCurrent(dotIdx)}
+                    aria-label={`Go to slide ${dotIdx + 1}`}
+                  ></button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       ))}

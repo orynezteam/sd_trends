@@ -24,10 +24,22 @@ export default function EditProductPage() {
   const [descriptionImagePreview, setDescriptionImagePreview] = useState<string | null>(null);
   const [existingDescriptionImage, setExistingDescriptionImage] = useState<string | null>(null);
   
+  const [dbCategories, setDbCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/content/categories')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setDbCategories(data);
+      })
+      .catch(err => console.error("Error fetching categories:", err));
+  }, []);
+
   const [formData, setFormData] = useState({
     id: '', // slug (readonly)
     name: '',
     category: 'rings',
+    subcategory: '',
     price: '',
     originalPrice: '',
     description: '',
@@ -59,6 +71,7 @@ export default function EditProductPage() {
             id: product.id,
             name: product.name || '',
             category: product.category || 'rings',
+            subcategory: product.subcategory || '',
             price: product.price?.toString() || '',
             originalPrice: product.originalPrice?.toString() || '',
             description: product.description || '',
@@ -102,7 +115,14 @@ export default function EditProductPage() {
       const checked = (e.target as HTMLInputElement).checked;
       setFormData(prev => ({ ...prev, [name]: checked }));
     } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData(prev => {
+        const updated = { ...prev, [name]: value };
+        if (name === 'category') {
+          const catObj = dbCategories.find(cat => cat.name.toLowerCase() === value.toLowerCase());
+          updated.subcategory = catObj && catObj.subcategories.length > 0 ? catObj.subcategories[0].name : '';
+        }
+        return updated;
+      });
     }
   };
 
@@ -262,6 +282,9 @@ export default function EditProductPage() {
     }
   };
 
+  const selectedCatObj = dbCategories.find(cat => cat.name.toLowerCase() === formData.category.toLowerCase());
+  const currentSubcategories = selectedCatObj ? selectedCatObj.subcategories : [];
+
   if (loading) return <div>Loading...</div>;
 
   return (
@@ -297,10 +320,30 @@ export default function EditProductPage() {
               <div className={styles.formGroup}>
                 <label>Category *</label>
                 <select name="category" value={formData.category} onChange={handleInputChange} required>
-                  <option value="rings">Rings</option>
-                  <option value="necklaces">Necklaces</option>
-                  <option value="earrings">Earrings</option>
-                  <option value="bracelets">Bracelets</option>
+                  {dbCategories.map(cat => (
+                    <option key={cat.id} value={cat.name.toLowerCase()}>
+                      {cat.name}
+                    </option>
+                  ))}
+                  {dbCategories.length === 0 && (
+                    <>
+                      <option value="rings">Rings</option>
+                      <option value="necklaces">Necklaces</option>
+                      <option value="earrings">Earrings</option>
+                      <option value="bracelets">Bracelets</option>
+                    </>
+                  )}
+                </select>
+              </div>
+              <div className={styles.formGroup}>
+                <label>Subcategory *</label>
+                <select name="subcategory" value={formData.subcategory} onChange={handleInputChange} required>
+                  <option value="">-- Select Subcategory --</option>
+                  {currentSubcategories.map((sub: any) => (
+                    <option key={sub.id} value={sub.name}>
+                      {sub.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>

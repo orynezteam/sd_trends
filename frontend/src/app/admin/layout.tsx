@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, Image as ImageIcon, Megaphone, Store, LogOut, Users, Briefcase, Layers, Box, List, Package, Layout, MessageSquare, Map, Mail, HelpCircle } from 'lucide-react';
+import { LayoutDashboard, Image as ImageIcon, Megaphone, Store, LogOut, Users, Briefcase, Layers, Box, List, Package, Layout, MessageSquare, Map, Mail, HelpCircle, CreditCard, ShoppingBag } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
 import styles from './AdminLayout.module.css';
 
@@ -31,6 +31,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const navItems = [
     { label: 'Dashboard', href: '/admin', icon: <LayoutDashboard size={20} /> },
+    { label: 'Orders', href: '/admin/orders', icon: <ShoppingBag size={20} /> },
     { label: 'Products', href: '/admin/products', icon: <Package size={20} /> },
     { label: 'Product Categories', href: '/admin/categories', icon: <List size={20} /> },
     { label: 'Users', href: '/admin/users', icon: <Users size={20} /> },
@@ -41,6 +42,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: 'Newsletter', href: '/admin/newsletter', icon: <Mail size={20} /> },
     { label: 'FAQs Setup', href: '/admin/faqs', icon: <HelpCircle size={20} /> },
     { label: 'Contact Setup', href: '/admin/contact-setup', icon: <Map size={20} /> },
+    { label: 'Payment Setup', href: '/admin/payment-setup', icon: <CreditCard size={20} /> },
     { label: 'Footer Setup', href: '/admin/footer', icon: <Layout size={20} /> },
     { label: 'Promotion Banners', href: '/admin/banners', icon: <Layers size={20} /> },
     { label: 'Mid-Page Banners', href: '/admin/mid-banners', icon: <Box size={20} /> },

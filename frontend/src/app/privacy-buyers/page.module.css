@@ -1,0 +1,186 @@
+/* Legal Page Shared Styles */
+.page {
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+}
+
+/* Hero Banner */
+.hero {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d1f1f 50%, #1a1212 100%);
+  padding: 3.5rem 1.5rem 4rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Breadcrumb */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+}
+
+.breadcrumbLink {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.45);
+  text-decoration: none;
+  letter-spacing: 0.04em;
+  transition: color 0.2s;
+}
+
+.breadcrumbLink:hover {
+  color: rgb(206, 150, 126);
+}
+
+.breadcrumbSep {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.25);
+  user-select: none;
+}
+
+.breadcrumbCurrent {
+  font-size: 0.8rem;
+  color: rgb(206, 150, 126);
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(206, 150, 126, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.heroInner {
+  position: relative;
+  z-index: 1;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.35rem 1rem;
+  background: rgba(206, 150, 126, 0.15);
+  border: 1px solid rgba(206, 150, 126, 0.4);
+  border-radius: 999px;
+  color: rgb(206, 150, 126);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+
+.title {
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 1rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.65);
+  line-height: 1.7;
+  margin: 0 auto 1.25rem;
+  max-width: 580px;
+}
+
+.updated {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.05em;
+}
+
+/* Content Area */
+.content {
+  padding: 4rem 1.5rem 6rem;
+}
+
+.inner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+/* Individual Section */
+.section {
+  margin-bottom: 2.5rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--border-color, rgba(0,0,0,0.08));
+}
+
+.section:last-of-type {
+  border-bottom: none;
+}
+
+.sectionTitle {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sectionTitle::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 1.1em;
+  background: rgb(206, 150, 126);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.sectionText {
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--text-secondary, #555);
+  margin: 0;
+}
+
+/* Contact CTA at bottom */
+.contact {
+  margin-top: 3rem;
+  padding: 2rem 2.5rem;
+  background: linear-gradient(135deg, rgba(206,150,126,0.08) 0%, rgba(206,150,126,0.04) 100%);
+  border: 1px solid rgba(206, 150, 126, 0.25);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.contact h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.5rem;
+}
+
+.contact p {
+  font-size: 0.95rem;
+  color: var(--text-secondary, #555);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.contact a {
+  color: rgb(206, 150, 126);
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.contact a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}

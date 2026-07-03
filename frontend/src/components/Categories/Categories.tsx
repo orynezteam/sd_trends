@@ -74,6 +74,46 @@ export default function CCategories({ onSelectCategory }: CategoriesProps) {
       });
   }, []);
 
+  const isDown = useRef(false);
+  const startX = useRef(0);
+  const scrollLeft = useRef(0);
+  const isDragging = useRef(false);
+  const dragThreshold = 5;
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (!sliderRef.current) return;
+    isDown.current = true;
+    isDragging.current = false;
+    sliderRef.current.classList.add(styles.active);
+    startX.current = e.pageX - sliderRef.current.offsetLeft;
+    scrollLeft.current = sliderRef.current.scrollLeft;
+  };
+
+  const handleMouseLeave = () => {
+    isDown.current = false;
+    if (sliderRef.current) {
+      sliderRef.current.classList.remove(styles.active);
+    }
+  };
+
+  const handleMouseUp = () => {
+    isDown.current = false;
+    if (sliderRef.current) {
+      sliderRef.current.classList.remove(styles.active);
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDown.current || !sliderRef.current) return;
+    e.preventDefault();
+    const x = e.pageX - sliderRef.current.offsetLeft;
+    const walk = (x - startX.current) * 1.5;
+    if (Math.abs(walk) > dragThreshold) {
+      isDragging.current = true;
+    }
+    sliderRef.current.scrollLeft = scrollLeft.current - walk;
+  };
+
   const scroll = (direction: 'left' | 'right') => {
     if (sliderRef.current) {
       const scrollAmount = 300;
@@ -84,7 +124,11 @@ export default function CCategories({ onSelectCategory }: CategoriesProps) {
     }
   };
 
-  const handleCategoryClick = (category: any) => {
+  const handleCategoryClick = (category: any, e: React.MouseEvent) => {
+    if (isDragging.current) {
+      e.preventDefault();
+      return;
+    }
     if (onSelectCategory) {
       onSelectCategory(category.id.toString());
     }
@@ -106,17 +150,25 @@ export default function CCategories({ onSelectCategory }: CategoriesProps) {
           </button>
 
           {/* Scrollable Categories List */}
-          <div ref={sliderRef} className={styles.slider}>
+          <div 
+            ref={sliderRef} 
+            className={styles.slider}
+            onMouseDown={handleMouseDown}
+            onMouseLeave={handleMouseLeave}
+            onMouseUp={handleMouseUp}
+            onMouseMove={handleMouseMove}
+          >
             {categories.map((category, index) => (
               <div
                 key={`${category.id}-${index}`}
                 className={styles.card}
-                onClick={() => handleCategoryClick(category)}>
+                onClick={(e) => handleCategoryClick(category, e)}>
                 <img
                   src={category.home_image_url}
                   alt={category.name}
                   className={styles.cardImage}
                   loading="lazy"
+                  draggable="false"
                 />
                 <div className={styles.infoBox}>
                   <h3 className={styles.name}>{category.name}</h3>

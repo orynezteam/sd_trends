@@ -527,3 +527,281 @@
   background-color: #111111;
   color: #ffffff;
 }
+
+/* UPI Payment Gateway Modal Styles */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(28, 27, 25, 0.65);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1.5rem;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.modalContent {
+  background-color: #ffffff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modalHeader {
+  background: linear-gradient(135deg, #1c1b19 0%, #2d1f1f 100%);
+  padding: 1.5rem;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modalTitle {
+  margin: 0;
+  font-family: var(--font-roboto), sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.modalClose {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.modalClose:hover {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.modalBody {
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.upiInstructions {
+  font-family: var(--font-roboto), sans-serif;
+  font-size: 0.95rem;
+  color: #555555;
+  text-align: center;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.qrContainer {
+  background: #ffffff;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px dashed rgba(206, 150, 126, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.qrImage {
+  display: block;
+  width: 180px;
+  height: 180px;
+  object-fit: contain;
+}
+
+.payDetailsCard {
+  width: 100%;
+  background-color: #faf8f5;
+  border: 1px solid rgba(206, 150, 126, 0.15);
+  border-radius: 8px;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-family: var(--font-roboto), sans-serif;
+}
+
+.detailRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.detailLabel {
+  color: #666666;
+}
+
+.detailVal {
+  font-weight: 600;
+  color: #111111;
+}
+
+.upiIdWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 6px 10px;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.upiIdText {
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: #334155;
+  font-weight: 500;
+}
+
+.copyBtn {
+  background: transparent;
+  border: none;
+  color: rgb(206, 150, 126);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.copyBtn:hover {
+  background-color: rgba(206, 150, 126, 0.08);
+}
+
+.stepsBlock {
+  width: 100%;
+  font-family: var(--font-roboto), sans-serif;
+  font-size: 0.85rem;
+  color: #666666;
+  background-color: #f8fafc;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.stepsBlock h4 {
+  margin: 0 0 0.5rem 0;
+  color: #334155;
+  font-weight: 600;
+}
+
+.stepsList {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.stepsList li {
+  line-height: 1.4;
+}
+
+.modalActions {
+  display: flex;
+  width: 100%;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.verifyBtn {
+  flex: 1;
+  background-color: rgb(206, 150, 126);
+  color: #ffffff;
+  border: none;
+  padding: 0.85rem;
+  border-radius: 6px;
+  font-family: var(--font-roboto), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.verifyBtn:hover {
+  background-color: rgb(186, 130, 106);
+}
+
+.cancelBtn {
+  flex: 1;
+  background-color: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #475569;
+  padding: 0.85rem;
+  border-radius: 6px;
+  font-family: var(--font-roboto), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cancelBtn:hover {
+  background-color: #f8fafc;
+  border-color: #94a3b8;
+}
+
+.mobileUpiBtn {
+  width: 100%;
+  background-color: #12b76a;
+  color: #ffffff;
+  border: none;
+  padding: 1rem;
+  border-radius: 8px;
+  font-family: var(--font-roboto), sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(18, 183, 106, 0.2);
+}
+
+.mobileUpiBtn:hover {
+  background-color: #0e9f5c;
+  transform: translateY(-1px);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+

@@ -91,7 +91,7 @@ export default function ContactUs() {
         </section>
 
         {/* Main Map & Form Grid */}
-        <section className={styles.mainSection}>
+        <section id="map" className={styles.mainSection}>
           <div className="container">
             <div className={styles.grid}>
               {/* Left Column: Google Maps Iframe */}

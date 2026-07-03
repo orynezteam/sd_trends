@@ -161,14 +161,14 @@
 
 /* Lower Footer Tier Content */
 .lowerFooterContent {
-  padding: 4.5rem 0 3rem 0;
+  padding: 3rem 0 1.5rem 0;
 }
 
 .columns {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr 2.2fr;
   gap: 3rem;
-  margin-bottom: 4rem;
+  margin-bottom: 2rem;
 }
 
 @media (max-width: 992px) {
@@ -365,4 +365,16 @@
 .scrollToTop:hover {
   background-color: rgb(186, 130, 106);
   transform: translateY(-2px);
+}
+
+.orynezLink {
+  color: inherit;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.orynezLink:hover {
+  color: rgb(206, 150, 126);
+  text-decoration: underline;
 }

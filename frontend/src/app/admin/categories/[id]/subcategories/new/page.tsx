@@ -43,7 +43,7 @@ export default function NewSubcategoryPage() {
     e.preventDefault();
     if (!formData.name) return alert("Please fill in Subcategory Name");
     if (formData.is_home_featured && !image) {
-      return alert("You must upload an image if this subcategory is featured on the homepage.");
+      return alert("You must upload a Homepage Image when featuring this subcategory on the homepage slider.");
     }
 
     setSaving(true);
@@ -51,8 +51,8 @@ export default function NewSubcategoryPage() {
     try {
       let publicUrl = '';
 
-      // Upload image if provided and featured
-      if (formData.is_home_featured && image) {
+      // Upload image if provided
+      if (image) {
         const fileExt = image.name.split('.').pop();
         const fileName = `${Math.random()}.${fileExt}`;
         const filePath = `categories/${fileName}`;
@@ -82,7 +82,7 @@ export default function NewSubcategoryPage() {
       });
       
       if (res.ok) {
-        alert("Subcategory created!");
+        alert("Subcategory created successfully!");
         router.push(`/admin/categories/${catId}`);
       } else {
         const data = await res.json();
@@ -127,6 +127,12 @@ export default function NewSubcategoryPage() {
           </div>
 
           <div className={styles.section}>
+            <div style={{ padding: '12px 16px', backgroundColor: 'rgba(206,150,126,0.1)', border: '1px solid rgba(206,150,126,0.4)', borderRadius: '8px', marginBottom: '1.5rem' }}>
+              <p style={{ margin: 0, fontSize: '14px', color: 'var(--text-secondary)' }}>
+                💡 <strong>To show this subcategory on the homepage slider</strong>: Enable the toggle below, fill in the count text, and upload a category image. The image is required for the slider to display.
+              </p>
+            </div>
+
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
               <input 
                 type="checkbox" 
@@ -149,7 +155,7 @@ export default function NewSubcategoryPage() {
                 </div>
                 
                 <div className={styles.formGroup}>
-                  <label>Homepage Category Image *</label>
+                  <label>Homepage Category Image * <span style={{ fontWeight: 400, color: 'var(--text-secondary)', fontSize: '13px' }}>(Required for homepage slider)</span></label>
                   <div className={styles.imageGrid}>
                     {preview ? (
                       <div className={styles.imagePreviewWrapper}>

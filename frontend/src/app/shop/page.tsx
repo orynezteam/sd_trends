@@ -86,6 +86,9 @@ function ShopContent() {
   };
 
   const matchSubcategory = (product: any, subcategory: string): boolean => {
+    if (product.subcategory) {
+      return product.subcategory.toLowerCase() === subcategory.toLowerCase();
+    }
     const name = product.name.toLowerCase();
     const desc = (product.description || '').toLowerCase();
     const sub = subcategory.toLowerCase();

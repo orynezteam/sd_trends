@@ -45,6 +45,12 @@
   z-index: 1;
 }
 
+@media (max-width: 768px) {
+  .slideImage {
+    object-position: right center !important;
+  }
+}
+
 
 
 .content {
@@ -172,8 +178,7 @@
 
 @media (max-width: 768px) {
   .dotsContainer {
-    display: flex; /* Keep visible on mobile */
-    bottom: 12px; /* Position closer to bottom of slider */
+    display: none;
   }
 }
 
@@ -200,6 +205,26 @@
     height: 6px;
     margin: 0 4px;
   }
+}
+
+.mobileDots {
+  display: none;
+  opacity: 0;
+  transform: translateY(15px);
+}
+
+@media (max-width: 768px) {
+  .mobileDots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 0.75rem;
+    width: 86px; /* Centered under the mobile SHOP NOW button width */
+  }
+}
+
+.slideActive .mobileDots {
+  animation: slideUpIn 0.8s cubic-bezier(0.25, 1, 0.5, 1) 0.95s forwards;
 }
 
 /* Slide arrows */

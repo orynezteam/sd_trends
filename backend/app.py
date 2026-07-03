@@ -2,13 +2,42 @@ import os
 import json
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from models import db, User, OTP, Order, HeroSlide, PromoBanner, ServiceCard, PromotionBanner, Product, ProductImage, SiteSetting, Category, Subcategory, MidPageBanner, Testimonial, FooterLink, ContactMessage, Subscriber, FAQ
+from dotenv import load_dotenv
+from models import db, User, OTP, Order, HeroSlide, PromoBanner, ServiceCard, PromotionBanner, Product, ProductImage, SiteSetting, Category, Subcategory, MidPageBanner, Testimonial, FooterLink, ContactMessage, Subscriber, FAQ, ProductReview
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
 basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'instance', 'site.db')
+
+# Configure Database URI: use POSTGRES_URI if provided, otherwise fallback to SQLite
+db_uri = os.environ.get('POSTGRES_URI')
+if db_uri:
+    if db_uri.startswith('postgresql://'):
+        prefix = 'postgresql://'
+        rest = db_uri[len(prefix):]
+        if '@' in rest:
+            # Split by the last '@' to separate userinfo from host info
+            parts = rest.rsplit('@', 1)
+            userinfo = parts[0]
+            hostinfo = parts[1]
+            # URL-encode the password if it contains special characters and is not already encoded
+            if ':' in userinfo:
+                username, password = userinfo.split(':', 1)
+                if '%' not in password:
+                    from urllib.parse import quote
+                    password = quote(password)
+                userinfo = f"{username}:{password}"
+            db_uri = f"postgresql+pg8000://{userinfo}@{hostinfo}"
+        else:
+            db_uri = db_uri.replace('postgresql://', 'postgresql+pg8000://', 1)
+else:
+    db_uri = 'sqlite:///' + os.path.join(basedir, 'instance', 'site.db')
+
+app.config['SQLALCHEMY_DATABASE_URI'] = db_uri
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
@@ -123,10 +152,18 @@ def add_testimonial():
 def update_testimonial(id):
     t = Testimonial.query.get_or_404(id)
     data = request.json
-    if 'is_approved' in data:
-        t.is_approved = data['is_approved']
-    if 'content' in data:
-        t.content = data['content']
+    if 'title' in data:
+        t.title = data['title']
+    if 'quote' in data:
+        t.quote = data['quote']
+    if 'author' in data:
+        t.author = data['author']
+    if 'role' in data:
+        t.role = data['role']
+    if 'status' in data:
+        t.status = data['status']
+    if 'image_url' in data:
+        t.image_url = data['image_url']
     db.session.commit()
     return jsonify(t.to_dict()), 200
 
@@ -562,7 +599,10 @@ def api_categories():
         cats = Category.query.all()
         return jsonify([c.to_dict() for c in cats]), 200
     data = request.json
-    new_cat = Category(name=data.get('name', ''), description=data.get('description', ''), image_url=data.get('image_url', ''), is_active=data.get('is_active', True))
+    new_cat = Category(
+        name=data.get('name', ''),
+        display_order=int(data.get('display_order', 0))
+    )
     db.session.add(new_cat)
     db.session.commit()
     return jsonify(new_cat.to_dict()), 201
@@ -596,7 +636,14 @@ def update_subcategory(id):
 @app.route('/api/content/categories/<cat_id>/subcategories', methods=['POST'])
 def add_subcategory(cat_id):
     data = request.json
-    new_sub = Subcategory(category_id=cat_id, name=data.get('name', ''), description=data.get('description', ''), is_active=data.get('is_active', True))
+    new_sub = Subcategory(
+        category_id=int(cat_id),
+        name=data.get('name', ''),
+        display_order=int(data.get('display_order', 0)),
+        is_home_featured=data.get('is_home_featured', False),
+        home_image_url=data.get('home_image_url'),
+        home_count_text=data.get('home_count_text')
+    )
     db.session.add(new_sub)
     db.session.commit()
     return jsonify(new_sub.to_dict()), 201
@@ -649,10 +696,284 @@ def search_products():
 
 @app.route('/api/content/categories/home_featured', methods=['GET'])
 def get_home_featured_categories():
-    categories = Subcategory.query.filter_by(is_home_featured=True).limit(5).all()
+    categories = Subcategory.query.filter_by(is_home_featured=True).order_by(Subcategory.display_order).all()
     return jsonify([c.to_dict() for c in categories]), 200
 
+import json
 
+def send_smtp_email(to_email, subject, body_text):
+    import smtplib
+    from email.message import EmailMessage
+    from email.utils import make_msgid, formatdate
+    
+    smtp_server = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
+    smtp_port = int(os.environ.get('SMTP_PORT', 587))
+    smtp_username = os.environ.get('SMTP_USERNAME')
+    smtp_password = os.environ.get('SMTP_PASSWORD')
+    sender = os.environ.get('MAIL_DEFAULT_SENDER', smtp_username if smtp_username else 'karthikrajay.cc@gmail.com')
+    
+    if not smtp_username or not smtp_password:
+        print('Error: SMTP credentials not found in environment variables. Falling back to local logging.')
+        print(f"--- EMAIL FALLBACK TO {to_email} ---\nSubject: {subject}\nBody:\n{body_text}\n----------------------")
+        return False
+        
+    msg = EmailMessage()
+    
+    # Generate HTML content for professional appearance (spam reduction)
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            body {{
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                color: #2c3e50;
+                background-color: #faf8f6;
+                padding: 30px;
+                margin: 0;
+            }}
+            .container {{
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: #ffffff;
+                border: 1px solid #ebdcd5;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.03);
+            }}
+            .header {{
+                background: linear-gradient(135deg, #1c1b19 0%, #2d1f1f 100%);
+                color: #ffffff;
+                padding: 40px 30px;
+                text-align: center;
+            }}
+            .header h1 {{
+                margin: 0;
+                font-size: 26px;
+                font-weight: 500;
+                letter-spacing: 3px;
+                color: #f7e6d4;
+            }}
+            .content {{
+                padding: 40px 30px;
+                line-height: 1.7;
+                font-size: 15px;
+            }}
+            .footer {{
+                background-color: #fcfbfa;
+                padding: 24px;
+                text-align: center;
+                font-size: 11px;
+                color: #9e9a95;
+                border-top: 1px solid #ebdcd5;
+            }}
+            .divider {{
+                border: 0;
+                height: 1px;
+                background: #ebdcd5;
+                margin: 20px 0;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>SD TRENDS DESIGN</h1>
+            </div>
+            <div class="content">
+                {body_text.replace('\n', '<br>')}
+            </div>
+            <div class="footer">
+                &copy; 2026 SD Trends Luxury Jewelry. All rights reserved.<br>
+                This email was sent to you as an official order transaction notice.
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    
+    msg.set_content(body_text)  # Plain text fallback
+    msg.add_alternative(html_content, subtype='html')  # HTML alternative
+    
+    msg['Subject'] = subject
+    msg['From'] = f"SD Trends <{sender}>"
+    msg['To'] = to_email
+    msg['Reply-To'] = sender
+    msg['Date'] = formatdate(localtime=True)
+    msg['Message-ID'] = make_msgid()
+    
+    try:
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        server.login(smtp_username, smtp_password)
+        server.send_message(msg)
+        server.quit()
+        print(f'Successfully sent verified email to {to_email}')
+        return True
+    except Exception as e:
+        print(f'Failed to send email: {e}')
+        return False
+
+def notify_admin_of_new_order(order, user, items):
+    admin_email = 'karthikrajay.cc@gmail.com'
+    
+    items_list_str = ""
+    for item in items:
+        items_list_str += f"- {item.get('name')} ({item.get('metal')}): Qty {item.get('quantity')} @ ₹{item.get('price')}\n"
+        
+    subject = f"NEW ORDER: Order #{order.id} Pending Verification"
+    body = f"""Hello Admin,
+
+A new order has been placed and requires payment verification.
+
+Order ID: #{order.id}
+Payment Method: {order.payment_method}
+Total Amount: ₹{order.total_amount}
+
+Customer Details:
+Name: {user.name}
+Email: {user.email}
+Phone: {user.phone}
+Address: {user.street_name}, {user.state}, {user.pincode}
+
+Items Ordered:
+{items_list_str}
+
+Please review the payment and update the status in the Admin Dashboard:
+http://localhost:3000/admin/orders
+"""
+    send_smtp_email(admin_email, subject, body)
+
+def notify_customer_order_verified(order, user):
+    subject = f"Your SD Trends Order #{order.id} has been confirmed!"
+    body = f"""Dear {user.name},
+
+Thank you for your purchase! We have successfully verified your payment of ₹{order.total_amount} for Order #{order.id}.
+
+Your order has been confirmed and is now being processed.
+
+You can view your order status, items ordered, and progress on our website:
+http://localhost:3000/checkout/status?order_id={order.id}
+
+Best regards,
+SD Trends Team
+"""
+    send_smtp_email(user.email, subject, body)
+
+def notify_customer_order_declined(order, user):
+    subject = f"Payment Verification Failed for SD Trends Order #{order.id}"
+    body = f"""Dear {user.name},
+
+We are writing to inform you that we were unable to verify your payment of ₹{order.total_amount} for Order #{order.id}. 
+
+As a result, your order has been declined (Payment not done).
+
+You can review your order status and attempt payment again on our website:
+http://localhost:3000/checkout/status?order_id={order.id}
+
+Best regards,
+SD Trends Team
+"""
+    send_smtp_email(user.email, subject, body)
+
+
+@app.route('/api/orders', methods=['GET', 'POST'])
+def handle_orders():
+    if request.method == 'GET':
+        orders = Order.query.order_by(Order.created_at.desc()).all()
+        result = []
+        for o in orders:
+            d = o.to_dict()
+            d['user'] = o.user.to_dict() if o.user else None
+            result.append(d)
+        return jsonify(result), 200
+        
+    data = request.json
+    email = data.get('email')
+    total_amount = float(data.get('total_amount', 0))
+    status = data.get('status', 'Pending')
+    payment_method = data.get('payment_method', 'Direct Bank Transfer')
+    items = data.get('items', [])
+
+    if not email:
+        return jsonify({'error': 'Email is required'}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        user = User(
+            email=email,
+            name=data.get('name', ''),
+            phone=data.get('phone', ''),
+            street_name=data.get('street_name', ''),
+            city=data.get('city', ''),
+            state=data.get('state', ''),
+            pincode=data.get('pincode', ''),
+        )
+        db.session.add(user)
+        db.session.commit()
+
+    order = Order(
+        user_id=user.id,
+        total_amount=total_amount,
+        status=status,
+        payment_method=payment_method,
+        items_json=json.dumps(items)
+    )
+    db.session.add(order)
+    db.session.commit()
+
+    if status == 'Pending Verification':
+        try:
+            notify_admin_of_new_order(order, user, items)
+        except Exception as ex:
+            print("Error notifying admin:", ex)
+
+    return jsonify(order.to_dict()), 201
+
+@app.route('/api/orders/<int:order_id>/status', methods=['PUT'])
+def update_order_status(order_id):
+    data = request.json
+    status = data.get('status')
+    if not status:
+        return jsonify({'error': 'Status is required'}), 400
+    
+    order = Order.query.get(order_id)
+    if not order:
+        return jsonify({'error': 'Order not found'}), 404
+        
+    old_status = order.status
+    order.status = status
+    db.session.commit()
+
+    if status != old_status:
+        try:
+            if status == 'Pending Verification':
+                import json
+                items = []
+                if order.items_json:
+                    try:
+                        items = json.loads(order.items_json)
+                    except:
+                        pass
+                notify_admin_of_new_order(order, order.user, items)
+            elif status == 'Processing':
+                notify_customer_order_verified(order, order.user)
+            elif status == 'Declined':
+                notify_customer_order_declined(order, order.user)
+        except Exception as ex:
+            print("Error sending status transition email:", ex)
+            
+    return jsonify(order.to_dict()), 200
+
+@app.route('/api/orders/<int:order_id>', methods=['GET'])
+def get_single_order(order_id):
+    order = Order.query.get(order_id)
+    if not order:
+        return jsonify({'error': 'Order not found'}), 404
+    d = order.to_dict()
+    d['user'] = order.user.to_dict() if order.user else None
+    return jsonify(d), 200
 
 @app.route('/api/settings', methods=['GET', 'POST', 'PUT'])
 def api_settings():
@@ -941,6 +1262,32 @@ def save_top_deals_settings():
 
 
 if __name__ == '__main__':
+    # Only run migration in the active worker process to prevent connection leaks from the parent reloader
+    if os.environ.get('WERKZEUG_RUN_MAIN') == 'true' or not app.config.get('DEBUG', True):
+        with app.app_context():
+            # self-healing migration to add payment_method and items_json if not exist
+            try:
+                db.session.execute(db.text("ALTER TABLE sd_orders ADD COLUMN payment_method VARCHAR(100) DEFAULT 'Direct Bank Transfer';"))
+                db.session.commit()
+                print("Successfully added payment_method column to sd_orders")
+            except Exception as e:
+                db.session.rollback()
+                if "already exists" in str(e).lower() or "duplicate column" in str(e).lower():
+                    print("Database column payment_method already exists (skipping alter).")
+                else:
+                    print(f"Error checking/altering payment_method column: {e}")
+                
+            try:
+                db.session.execute(db.text("ALTER TABLE sd_orders ADD COLUMN items_json TEXT;"))
+                db.session.commit()
+                print("Successfully added items_json column to sd_orders")
+            except Exception as e:
+                db.session.rollback()
+                if "already exists" in str(e).lower() or "duplicate column" in str(e).lower():
+                    print("Database column items_json already exists (skipping alter).")
+                else:
+                    print(f"Error checking/altering items_json column: {e}")
+            
     app.run(host='0.0.0.0', port=5000, debug=True)
 
 # ==========================================
@@ -949,6 +1296,7 @@ if __name__ == '__main__':
 
 @app.route("/api/products/<id>/reviews", methods=["GET"])
 def get_product_reviews(id):
+    print("Inside get_product_reviews for ID:", id, flush=True)
     product = Product.query.get_or_404(id)
     approved_reviews = [r.to_dict() for r in product.reviews if r.status == 'approved']
     return jsonify(approved_reviews), 200

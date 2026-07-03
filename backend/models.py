@@ -15,6 +15,7 @@ class User(db.Model):
     state = db.Column(db.String(100), nullable=True)
     pincode = db.Column(db.String(20), nullable=True)
     is_admin = db.Column(db.Boolean, default=False)
+    password_hash = db.Column(db.String(255), nullable=True)
     is_subscribed = db.Column(db.Boolean, default=False)
     wishlist = db.Column(db.Text, default="[]")
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
@@ -244,6 +245,7 @@ class Product(db.Model):
     id = db.Column(db.String(100), primary_key=True)  # Using string ID to match existing slug logic (e.g. ring-solitaire)
     name = db.Column(db.String(255), nullable=False)
     category = db.Column(db.String(100), nullable=False)
+    subcategory = db.Column(db.String(100), nullable=True)
     price = db.Column(db.Float, nullable=False)
     original_price = db.Column(db.Float, nullable=True)
     price_range = db.Column(db.String(100), nullable=True)
@@ -283,6 +285,7 @@ class Product(db.Model):
             'id': self.id,
             'name': self.name,
             'category': self.category,
+            'subcategory': self.subcategory,
             'price': self.price,
             'originalPrice': self.original_price,
             'priceRange': self.price_range,
@@ -378,16 +381,27 @@ class Order(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('sd_users.id'), nullable=False)
     total_amount = db.Column(db.Float, nullable=False)
     status = db.Column(db.String(50), default='Processing')
+    payment_method = db.Column(db.String(100), default='Direct Bank Transfer')
+    items_json = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     user = db.relationship('User', backref=db.backref('orders', lazy=True))
 
     def to_dict(self):
+        import json
+        items = []
+        if self.items_json:
+            try:
+                items = json.loads(self.items_json)
+            except Exception:
+                pass
         return {
             'id': self.id,
             'user_id': self.user_id,
             'total_amount': self.total_amount,
             'status': self.status,
+            'payment_method': self.payment_method,
+            'items': items,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
 

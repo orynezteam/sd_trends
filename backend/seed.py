@@ -4,7 +4,7 @@ from app import app, db
 from models import (
     Category, Subcategory, SiteSetting, User, 
     Product, ProductImage, MidPageBanner, FAQ, 
-    FooterLink, Testimonial, ContactMessage
+    FooterLink, Testimonial, ContactMessage, PromotionBanner, ServiceCard
 )
 from werkzeug.security import generate_password_hash
 
@@ -94,7 +94,9 @@ SETTINGS_DEFAULTS = {
     "footer_social_fb": "#",
     "footer_social_tw": "#",
     "footer_social_ig": "#",
-    "footer_social_yt": "#"
+    "footer_social_yt": "#",
+    "upi_id": "mythu2124@oksbi",
+    "upi_merchant_name": "SD Trends"
 }
 
 FOOTER_LINKS = [
@@ -137,6 +139,64 @@ MID_BANNERS = [
         'description': 'Awesome Products For The Dynamic Urban Lifestyle',
         'image_url': '/images/highlights_bg.png',
         'link_url': '#categories'
+    }
+]
+
+PROMOTION_BANNERS = [
+    {
+        "id": 1,
+        "slot_name": "Left Banner (Large)",
+        "image_url": "/images/banner_rings.png",
+        "subtitle": "Diamond Rings",
+        "title": "Yellow Gold & <br /> Diamond Ring",
+        "link_url": "/shop"
+    },
+    {
+        "id": 2,
+        "slot_name": "Top Right Banner",
+        "image_url": "https://xznlbaqqxmmglaidridj.supabase.co/storage/v1/object/public/sd_assets/banners/0.4386439561423694.png",
+        "subtitle": "Wedding & Bridal",
+        "title": "Exclusive Diamond<br />Necklaces",
+        "link_url": "/shop"
+    },
+    {
+        "id": 3,
+        "slot_name": "Bottom Right Banner",
+        "image_url": "https://xznlbaqqxmmglaidridj.supabase.co/storage/v1/object/public/sd_assets/banners/0.146504395000412.png",
+        "subtitle": "New Collection",
+        "title": "Discover Our<br />Latest Earrings",
+        "link_url": "/shop"
+    }
+]
+
+SERVICE_CARDS = [
+    {
+        "id": 1,
+        "icon_name": "Truck",
+        "title": "Free Shipping",
+        "description": "On all orders over ",
+        "display_order": 1
+    },
+    {
+        "id": 2,
+        "icon_name": "RotateCcw",
+        "title": "Easy Returns",
+        "description": "30 Days return policy",
+        "display_order": 2
+    },
+    {
+        "id": 3,
+        "icon_name": "CreditCard",
+        "title": "Secure Payment",
+        "description": "100% secure payment",
+        "display_order": 3
+    },
+    {
+        "id": 4,
+        "icon_name": "Headphones",
+        "title": "24/7 Support",
+        "description": "Dedicated support",
+        "display_order": 4
     }
 ]
 
@@ -194,7 +254,7 @@ INITIAL_FAQS = [
 
 def seed_settings():
     for key, value in SETTINGS_DEFAULTS.items():
-        if not SiteSetting.query.get(key):
+        if not db.session.get(SiteSetting, key):
             db.session.add(SiteSetting(key=key, value=value))
     
     if FooterLink.query.count() == 0:
@@ -237,6 +297,18 @@ def seed_mid_banners():
             db.session.add(MidPageBanner(**b_data))
     print("Mid-page banners seeded!")
 
+def seed_promotion_banners():
+    if PromotionBanner.query.count() == 0:
+        for pb in PROMOTION_BANNERS:
+            db.session.add(PromotionBanner(**pb))
+        print("Promotion banners seeded!")
+
+def seed_services():
+    if ServiceCard.query.count() == 0:
+        for sc in SERVICE_CARDS:
+            db.session.add(ServiceCard(**sc))
+        print("Service cards seeded!")
+
 def seed_testimonials():
     if Testimonial.query.count() == 0:
         for t in TESTIMONIALS:
@@ -259,7 +331,7 @@ def seed_products():
         products = json.load(f)
 
     for p in products:
-        if not Product.query.get(p['id']):
+        if not db.session.get(Product, p['id']):
             is_latest = len(p.get('images', [])) == 2
             is_featured = len(p.get('images', [])) != 2
             
@@ -297,6 +369,8 @@ def seed_products():
 
 def run_all():
     with app.app_context():
+        # Drop all tables to ensure clean schema recreation
+        db.drop_all()
         # Ensures all tables are created
         db.create_all()
         
@@ -305,6 +379,8 @@ def run_all():
         seed_users()
         seed_hierarchy()
         seed_mid_banners()
+        seed_promotion_banners()
+        seed_services()
         seed_testimonials()
         seed_faqs()
         seed_products()

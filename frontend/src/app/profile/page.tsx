@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useStore } from '../../context/StoreContext';
 import Header from '../../components/Header/Header';
 import Footer from '../../components/Footer/Footer';
@@ -9,7 +10,21 @@ import styles from './Profile.module.css';
 
 export default function ProfilePage() {
   const { user, login, logout } = useStore();
+  const router = useRouter();
   
+  // Redirect URL handling
+  const [redirectUrl, setRedirectUrl] = useState('');
+  
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const red = params.get('redirect');
+      if (red) {
+        setRedirectUrl(red);
+      }
+    }
+  }, []);
+
   // Auth state
   const [isLoginTab, setIsLoginTab] = useState(true);
   const [step, setStep] = useState<'email' | 'otp'>('email');
@@ -104,6 +119,9 @@ export default function ProfilePage() {
       const data = await res.json();
       if (res.ok && data.user) {
         login(data.user);
+        if (redirectUrl) {
+          router.push(redirectUrl);
+        }
       } else {
         setError(data.error || 'Invalid OTP');
       }

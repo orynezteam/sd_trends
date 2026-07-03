@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../../../utils/supabase';
 import { Save, ArrowLeft, Upload, X } from 'lucide-react';
@@ -20,10 +20,33 @@ export default function NewProductPage() {
   const [descriptionImage, setDescriptionImage] = useState<File | null>(null);
   const [descriptionImagePreview, setDescriptionImagePreview] = useState<string | null>(null);
   
+  const [dbCategories, setDbCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/content/categories')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setDbCategories(data);
+          if (data.length > 0) {
+            const firstCat = data[0];
+            const firstSub = firstCat.subcategories && firstCat.subcategories.length > 0 ? firstCat.subcategories[0].name : '';
+            setFormData(prev => ({ 
+              ...prev, 
+              category: firstCat.name.toLowerCase(),
+              subcategory: firstSub
+            }));
+          }
+        }
+      })
+      .catch(err => console.error("Error fetching categories:", err));
+  }, []);
+
   const [formData, setFormData] = useState({
     id: '', // slug
     name: '',
     category: 'rings',
+    subcategory: '',
     price: '',
     originalPrice: '',
     description: '',
@@ -47,7 +70,14 @@ export default function NewProductPage() {
       const checked = (e.target as HTMLInputElement).checked;
       setFormData(prev => ({ ...prev, [name]: checked }));
     } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData(prev => {
+        const updated = { ...prev, [name]: value };
+        if (name === 'category') {
+          const catObj = dbCategories.find(cat => cat.name.toLowerCase() === value.toLowerCase());
+          updated.subcategory = catObj && catObj.subcategories.length > 0 ? catObj.subcategories[0].name : '';
+        }
+        return updated;
+      });
     }
   };
 
@@ -197,6 +227,9 @@ export default function NewProductPage() {
     }
   };
 
+  const selectedCatObj = dbCategories.find(cat => cat.name.toLowerCase() === formData.category.toLowerCase());
+  const currentSubcategories = selectedCatObj ? selectedCatObj.subcategories : [];
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -230,10 +263,30 @@ export default function NewProductPage() {
               <div className={styles.formGroup}>
                 <label>Category *</label>
                 <select name="category" value={formData.category} onChange={handleInputChange} required>
-                  <option value="rings">Rings</option>
-                  <option value="necklaces">Necklaces</option>
-                  <option value="earrings">Earrings</option>
-                  <option value="bracelets">Bracelets</option>
+                  {dbCategories.map(cat => (
+                    <option key={cat.id} value={cat.name.toLowerCase()}>
+                      {cat.name}
+                    </option>
+                  ))}
+                  {dbCategories.length === 0 && (
+                    <>
+                      <option value="rings">Rings</option>
+                      <option value="necklaces">Necklaces</option>
+                      <option value="earrings">Earrings</option>
+                      <option value="bracelets">Bracelets</option>
+                    </>
+                  )}
+                </select>
+              </div>
+              <div className={styles.formGroup}>
+                <label>Subcategory *</label>
+                <select name="subcategory" value={formData.subcategory} onChange={handleInputChange} required>
+                  <option value="">-- Select Subcategory --</option>
+                  {currentSubcategories.map((sub: any) => (
+                    <option key={sub.id} value={sub.name}>
+                      {sub.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>

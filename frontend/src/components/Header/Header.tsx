@@ -409,6 +409,20 @@ export default function Header() {
           >
             WISHLIST {wishlist.length > 0 && `(${wishlist.length})`}
           </Link>
+          <Link 
+            href="/checkout" 
+            className={`${styles.mobileNavLink} ${pathname === '/checkout' ? styles.mobileNavActive : ''}`}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            CART / CHECKOUT {cartTotalItems > 0 && `(${cartTotalItems})`}
+          </Link>
+          <Link 
+            href="/profile" 
+            className={`${styles.mobileNavLink} ${pathname === '/profile' ? styles.mobileNavActive : ''}`}
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            MY ACCOUNT {user ? `(${user.name || user.email})` : ''}
+          </Link>
           <hr className={styles.mobileNavDivider} />
           <Link 
             href="/shop" 
