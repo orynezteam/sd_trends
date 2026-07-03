@@ -127,7 +127,7 @@ def delete_product(id):
     return jsonify({"message": "Deleted"}), 200
 
 # ==========================================
-# Testimonials API
+# Testimonials ,API
 # ==========================================
 @app.route("/api/testimonials", methods=["GET"])
 def get_testimonials():
