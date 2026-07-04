@@ -160,7 +160,7 @@ def delete_product(id):
 
 
 # ==========================================
-# Testimonials API
+# Testimonials ,API
 # ==========================================
 @app.route("/api/testimonials", methods=["GET"])
 def get_testimonials():
@@ -786,6 +786,111 @@ import json
 
 
 def send_smtp_email(to_email, subject, body_text):
+    import requests
+    import os
+
+    # 1. Try sending via Resend API (HTTP REST over port 443, never blocked by Render)
+    resend_api_key = os.environ.get("RESEND_API_KEY")
+    if resend_api_key:
+        print("Attempting email transmission via Resend HTTP API...")
+
+        # HTML content template
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <style>
+                body {{
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    color: #2c3e50;
+                    background-color: #faf8f6;
+                    padding: 30px;
+                    margin: 0;
+                }}
+                .container {{
+                    max-width: 600px;
+                    margin: 0 auto;
+                    background-color: #ffffff;
+                    border: 1px solid #ebdcd5;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    box-shadow: 0 8px 24px rgba(0,0,0,0.03);
+                }}
+                .header {{
+                    background: linear-gradient(135deg, #1c1b19 0%, #2d1f1f 100%);
+                    color: #ffffff;
+                    padding: 40px 30px;
+                    text-align: center;
+                }}
+                .header h1 {{
+                    margin: 0;
+                    font-size: 26px;
+                    font-weight: 500;
+                    letter-spacing: 3px;
+                    color: #f7e6d4;
+                }}
+                .content {{
+                    padding: 40px 30px;
+                    line-height: 1.7;
+                    font-size: 15px;
+                }}
+                .footer {{
+                    background-color: #fcfbfa;
+                    padding: 24px;
+                    text-align: center;
+                    font-size: 11px;
+                    color: #9e9a95;
+                    border-top: 1px solid #ebdcd5;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>SD TRENDS DESIGN</h1>
+                </div>
+                <div class="content">
+                    {body_text.replace('\n', '<br>')}
+                </div>
+                <div class="footer">
+                    &copy; 2026 SD Trends Luxury Jewelry. All rights reserved.<br>
+                    This email was sent to you as an official order transaction notice.
+                </div>
+            </div>
+        </body>
+        </html>
+        """
+
+        # Resend's free tier default domain is 'onboarding@resend.dev'
+        sender = os.environ.get("MAIL_DEFAULT_SENDER", "onboarding@resend.dev")
+
+        url = "https://api.resend.com/emails"
+        headers = {
+            "Authorization": f"Bearer {resend_api_key}",
+            "Content-Type": "application/json",
+        }
+        payload = {
+            "from": f"SD Trends <{sender}>",
+            "to": [to_email],
+            "subject": subject,
+            "html": html_content,
+            "text": body_text,
+        }
+
+        try:
+            res = requests.post(url, json=payload, headers=headers)
+            if res.status_code in [200, 201]:
+                print(f"Successfully sent Resend email to {to_email}")
+                return True
+            else:
+                print(
+                    f"Failed to send via Resend API: {res.status_code} - {res.text}. Trying SMTP fallback..."
+                )
+        except Exception as e:
+            print(f"Resend HTTP exception: {e}. Trying SMTP fallback...")
+
+    # 2. Fallback to Standard SMTP (for Local development where port 587 is unblocked)
     import smtplib
     from email.message import EmailMessage
     from email.utils import make_msgid, formatdate
@@ -858,12 +963,6 @@ def send_smtp_email(to_email, subject, body_text):
                 font-size: 11px;
                 color: #9e9a95;
                 border-top: 1px solid #ebdcd5;
-            }}
-            .divider {{
-                border: 0;
-                height: 1px;
-                background: #ebdcd5;
-                margin: 20px 0;
             }}
         </style>
     </head>

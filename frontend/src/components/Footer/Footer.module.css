@@ -378,3 +378,23 @@
   color: rgb(206, 150, 126);
   text-decoration: underline;
 }
+
+/* Footer Bottom Layout & Alignment */
+.footerBottom {
+  border-top: 1px solid var(--border-color);
+  padding: 1.5rem 0;
+  background-color: var(--bg-surface);
+}
+
+.footerBottomInner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.copyright {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  text-align: center;
+  margin: 0;
+}

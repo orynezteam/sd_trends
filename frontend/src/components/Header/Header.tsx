@@ -101,18 +101,7 @@ export default function Header() {
         <div className="container">
           <div className={styles.topbarContent}>
             <div className={styles.topbarLeft}>
-              {promo ? (
-                <>
-                  {promo.text}{' '}
-                  {promo.link_text && (
-                    <Link href={promo.link_url || '#'} className={styles.shopNowLink}>
-                      {promo.link_text}
-                    </Link>
-                  )}
-                </>
-              ) : (
-                <span>Welcome to SD Trends</span>
-              )}
+              <span>Welcome to SD Trends</span>
             </div>
             <div className={styles.topbarRight}>
               {user?.is_admin && (
