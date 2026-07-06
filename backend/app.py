@@ -889,128 +889,20 @@ def send_smtp_email(to_email, subject, body_text):
                 print(f"Successfully sent Brevo email to {to_email}")
                 return True
         except Exception as e:
-            print(f"Brevo HTTP exception: {e}. Trying SMTP fallback...")
+            print(f"Brevo HTTP exception: {e}")
 
-    # 2. Fallback to Standard SMTP (for Local development where port 587 is unblocked)
-    import smtplib
-    from email.message import EmailMessage
-    from email.utils import make_msgid, formatdate
-
-    smtp_server = os.environ.get("SMTP_SERVER", "smtp.gmail.com")
-    smtp_port = int(os.environ.get("SMTP_PORT", 587))
-    smtp_username = os.environ.get("SMTP_USERNAME")
-    smtp_password = os.environ.get("SMTP_PASSWORD")
-    sender = os.environ.get(
-        "MAIL_DEFAULT_SENDER",
-        smtp_username,
+    # Fallback to local console logging if Brevo fails or API key is missing
+    print(
+        f"--- EMAIL FALLBACK TO {to_email} ---\nSubject: {subject}\nBody:\n{body_text}\n----------------------"
     )
-    print(f"sender: {sender}")
+    return False
 
-    if not smtp_username or not smtp_password:
-        print(
-            "Error: SMTP credentials not found in environment variables. Falling back to local logging."
-        )
-        print(
-            f"--- EMAIL FALLBACK TO {to_email} ---\nSubject: {subject}\nBody:\n{body_text}\n----------------------"
-        )
-        return False
-
-    msg = EmailMessage()
-
-    # Generate HTML content for professional appearance (spam reduction)
-    html_content = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <style>
-            body {{
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                color: #2c3e50;
-                background-color: #faf8f6;
-                padding: 30px;
-                margin: 0;
-            }}
-            .container {{
-                max-width: 600px;
-                margin: 0 auto;
-                background-color: #ffffff;
-                border: 1px solid #ebdcd5;
-                border-radius: 12px;
-                overflow: hidden;
-                box-shadow: 0 8px 24px rgba(0,0,0,0.03);
-            }}
-            .header {{
-                background: linear-gradient(135deg, #1c1b19 0%, #2d1f1f 100%);
-                color: #ffffff;
-                padding: 40px 30px;
-                text-align: center;
-            }}
-            .header h1 {{
-                margin: 0;
-                font-size: 26px;
-                font-weight: 500;
-                letter-spacing: 3px;
-                color: #f7e6d4;
-            }}
-            .content {{
-                padding: 40px 30px;
-                line-height: 1.7;
-                font-size: 15px;
-            }}
-            .footer {{
-                background-color: #fcfbfa;
-                padding: 24px;
-                text-align: center;
-                font-size: 11px;
-                color: #9e9a95;
-                border-top: 1px solid #ebdcd5;
-            }}
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="header">
-                <h1>SD TRENDS DESIGN</h1>
-            </div>
-            <div class="content">
-                {body_text.replace('\n', '<br>')}
-            </div>
-            <div class="footer">
-                &copy; 2026 SD Trends Luxury Jewelry. All rights reserved.<br>
-                This email was sent to you as an official order transaction notice.
-            </div>
-        </div>
-    </body>
-    </html>
-    """
-
-    msg.set_content(body_text)  # Plain text fallback
-    msg.add_alternative(html_content, subtype="html")  # HTML alternative
-
-    msg["Subject"] = subject
-    msg["From"] = f"SD Trends <{sender}>"
-    msg["To"] = to_email
-    msg["Reply-To"] = sender
-    msg["Date"] = formatdate(localtime=True)
-    msg["Message-ID"] = make_msgid()
-
-    try:
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls()
-        server.login(smtp_username, smtp_password)
-        server.send_message(msg)
-        server.quit()
-        print(f"Successfully sent verified email to {to_email}")
-        return True
-    except Exception as e:
-        print(f"Failed to send email: {e}")
-        return False
 
 
 def notify_admin_of_new_order(order, user, items):
-    admin_email = "karthikrajay.cc@gmail.com"
-    frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+    admin_email = os.environ.get("ADMIN_EMAIL", "karthikrajay.cc@gmail.com")
+    frontend_url = os.environ.get("FRONTEND_URL", "https://sd-trends.netlify.app")
+
 
     items_list_str = ""
     for item in items:
@@ -1041,7 +933,7 @@ Please review the payment and update the status in the Admin Dashboard:
 
 
 def notify_customer_order_verified(order, user):
-    frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+    frontend_url = os.environ.get("FRONTEND_URL", "https://sd-trends.netlify.app")
     subject = f"Your SD Trends Order #{order.id} has been confirmed!"
     body = f"""Dear {user.name},
 
@@ -1059,7 +951,7 @@ SD Trends Team
 
 
 def notify_customer_order_declined(order, user):
-    frontend_url = os.environ.get("FRONTEND_URL", "http://localhost:3000")
+    frontend_url = os.environ.get("FRONTEND_URL", "https://sd-trends.netlify.app")
     subject = f"Payment Verification Failed for SD Trends Order #{order.id}"
     body = f"""Dear {user.name},
 
@@ -1217,8 +1109,6 @@ def api_contact_setup():
 
 import random
 import os
-import smtplib
-from email.message import EmailMessage
 
 otp_store = {}
 
@@ -1227,7 +1117,7 @@ def send_otp_email(to_email, otp):
     sender = os.environ.get("MAIL_DEFAULT_SENDER", "noreply@sdtrends.com")
     print(f"sender: {sender}")
 
-    # 1. Try Brevo HTTP API (Best for Render free tier, no port blocking)
+    # Try Brevo HTTP API (Best for Render free tier, no port blocking)
     brevo_api_key = os.environ.get("BREVO_API_KEY")
     if brevo_api_key:
         import urllib.request
@@ -1257,40 +1147,13 @@ def send_otp_email(to_email, otp):
                 return True
         except Exception as e:
             print(f"Failed to send email via Brevo API: {e}")
-            # DO NOT return False here, allow it to fallback to the next method!
+            return False
 
-    # 3. Fallback to standard SMTP (Works locally, but blocked on Render Free Tier)
-    smtp_server = os.environ.get("SMTP_SERVER", "smtp.gmail.com")
-    smtp_port = int(os.environ.get("SMTP_PORT", 587))
-    smtp_username = os.environ.get("SMTP_USERNAME")
-    smtp_password = os.environ.get("SMTP_PASSWORD")
-    sender = os.environ.get("MAIL_DEFAULT_SENDER", smtp_username)
-
-    if not smtp_username or not smtp_password:
-        print(
-            "Error: Email API keys or SMTP credentials not found in environment variables."
-        )
-        return False
-
-    msg = EmailMessage()
-    msg.set_content(
-        f"Your SD Trends Verification Code is: {otp}\n\nPlease do not share this code with anyone."
+    print(
+        f"--- OTP EMAIL FALLBACK TO {to_email} ---\nSubject: Your SD Trends Verification Code\nCode: {otp}\n----------------------"
     )
-    msg["Subject"] = "Your SD Trends Verification Code"
-    msg["From"] = sender
-    msg["To"] = to_email
+    return False
 
-    try:
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls()
-        server.login(smtp_username, smtp_password)
-        server.send_message(msg)
-        server.quit()
-        print(f"Successfully sent OTP email via SMTP to {to_email}")
-        return True
-    except Exception as e:
-        print(f"Failed to send email via SMTP: {e}")
-        return False
 
 
 @app.route("/api/auth/request-otp", methods=["POST", "OPTIONS"])
@@ -1404,23 +1267,9 @@ def send_wishlist_reminder(user_id):
             product_names.append(p.name)
     product_list_str = "\\n- ".join(product_names)
 
-    # Email setup
-    smtp_server = os.environ.get("SMTP_SERVER", "smtp.gmail.com")
-    smtp_port = int(os.environ.get("SMTP_PORT", 587))
-    smtp_username = os.environ.get("SMTP_USERNAME")
-    smtp_password = os.environ.get("SMTP_PASSWORD")
-    sender = os.environ.get("MAIL_DEFAULT_SENDER", smtp_username)
-
-    if not smtp_username or not smtp_password:
-        return jsonify({"error": "SMTP credentials not configured on the server"}), 500
-
-    try:
-        from email.message import EmailMessage
-        import smtplib
-
-        msg = EmailMessage()
-
-        email_body = f"""Hi {user.name or 'there'},
+    # Email setup using unified send_smtp_email (which uses Brevo)
+    subject = "Special Offer: Your Favorites are waiting!"
+    email_body = f"""Hi {user.name or 'there'},
 
 We noticed you have some amazing items saved in your favorites!
 
@@ -1435,22 +1284,15 @@ Best,
 SD Trends Team
 """
 
-        msg.set_content(email_body)
-        msg["Subject"] = "Special Offer: Your Favorites are waiting!"
-        msg["From"] = sender
-        msg["To"] = user.email
-
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls()
-        server.login(smtp_username, smtp_password)
-        server.send_message(msg)
-        server.quit()
-
-        return jsonify({"message": "Reminder email sent successfully"}), 200
-
+    try:
+        if send_smtp_email(user.email, subject, email_body):
+            return jsonify({"message": "Reminder email sent successfully"}), 200
+        else:
+            return jsonify({"error": "Failed to send email. Check server logs."}), 500
     except Exception as e:
         print(f"Error sending email: {str(e)}")
         return jsonify({"error": "Failed to send email. Check server logs."}), 500
+
 
 
 # ==========================================

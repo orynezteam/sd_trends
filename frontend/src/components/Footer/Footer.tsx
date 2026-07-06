@@ -20,14 +20,39 @@ export default function Footer({ settings: initialSettings = {}, footerLinks: in
   }>({ success: null, message: '' });
   const [loading, setLoading] = useState(false);
 
-  const settings = {
-    footer_about_text: initialSettings.footer_about_text || '',
-    footer_address: initialSettings.footer_address || '',
-    footer_phone: initialSettings.footer_phone || '',
-    footer_email: initialSettings.footer_email || '',
-  };
+  const [fetchedSettings, setFetchedSettings] = useState({
+    footer_about_text: '',
+    footer_address: '',
+    footer_phone: '',
+    footer_email: '',
+  });
+  const [fetchedLinks, setFetchedLinks] = useState<any[]>([]);
 
-  const links = initialLinks;
+  useEffect(() => {
+    // Auto-fetch if not provided via props (e.g., checkout and other subpages)
+    const hasProps = Object.keys(initialSettings).length > 0 || initialLinks.length > 0;
+    if (!hasProps) {
+      fetch(`${API_BASE_URL}/home-data`)
+        .then(res => {
+          if (!res.ok) throw new Error('Failed to fetch footer data');
+          return res.json();
+        })
+        .then(data => {
+          if (data.settings) {
+            setFetchedSettings({
+              footer_about_text: data.settings.footer_about_text || '',
+              footer_address: data.settings.footer_address || '',
+              footer_phone: data.settings.footer_phone || '',
+              footer_email: data.settings.footer_email || '',
+            });
+          }
+          if (data.footerLinks) {
+            setFetchedLinks(data.footerLinks);
+          }
+        })
+        .catch(err => console.error("Error loading footer content dynamically", err));
+    }
+  }, []);
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,9 +94,19 @@ export default function Footer({ settings: initialSettings = {}, footerLinks: in
     }
   };
 
+  const settings = {
+    footer_about_text: initialSettings.footer_about_text || fetchedSettings.footer_about_text || '',
+    footer_address: initialSettings.footer_address || fetchedSettings.footer_address || '',
+    footer_phone: initialSettings.footer_phone || fetchedSettings.footer_phone || '',
+    footer_email: initialSettings.footer_email || fetchedSettings.footer_email || '',
+  };
+
+  const links = initialLinks.length > 0 ? initialLinks : fetchedLinks;
+
   const quickLinks = links.filter((l) => l.column_name === 'Quick Links');
   const servicesLinks = links.filter((l) => l.column_name === 'Services');
   const accountLinks = links.filter((l) => l.column_name === 'Your Account');
+
 
   return (
     <footer id="newsletter" className={styles.footer}>
