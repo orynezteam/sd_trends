@@ -133,6 +133,12 @@ input:focus, select:focus, textarea:focus {
   .container {
     padding: 0 1rem;
   }
+  body {
+    font-size: 14px;
+  }
+  .section-header h2 {
+    font-size: 2rem;
+  }
 }
 
 /* Typography Classes */

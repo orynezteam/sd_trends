@@ -2,8 +2,6 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Header from '../../components/Header/Header';
-import Footer from '../../components/Footer/Footer';
 import { useStore } from '../../context/StoreContext';
 import { PRODUCTS } from '../../data/products';
 import { ChevronRight, X, Heart, ShoppingBag } from 'lucide-react';
@@ -17,7 +15,7 @@ export default function WishlistPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Header />
+      
 
       <main style={{ flex: '1', backgroundColor: '#FFFFFF' }}>
         
@@ -196,7 +194,7 @@ export default function WishlistPage() {
         </section>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

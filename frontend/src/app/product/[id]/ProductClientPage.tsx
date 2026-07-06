@@ -4,8 +4,6 @@ import { API_BASE_URL, BASE_URL } from '@/config';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import Header from '../../../components/Header/Header';
-import Footer from '../../../components/Footer/Footer';
 import ProductCard from '../../../components/ProductCard/ProductCard';
 import { useStore } from '../../../context/StoreContext';
 import { PRODUCTS, Product } from '../../../data/products';
@@ -132,7 +130,7 @@ export default function ProductClientPage({ productId }: ProductClientPageProps)
   if (loading) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <Header />
+        
         <main style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div style={{
             width: '40px',
@@ -149,7 +147,7 @@ export default function ProductClientPage({ productId }: ProductClientPageProps)
             }
           `}</style>
         </main>
-        <Footer />
+        
       </div>
     );
   }
@@ -157,7 +155,7 @@ export default function ProductClientPage({ productId }: ProductClientPageProps)
   if (!product) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <Header />
+        
         <main style={{ flex: '1' }}>
           <div className={styles.errorWrapper}>
             <h1 className={styles.errorTitle}>Product Not Found</h1>
@@ -169,7 +167,7 @@ export default function ProductClientPage({ productId }: ProductClientPageProps)
             </Link>
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
@@ -243,7 +241,7 @@ export default function ProductClientPage({ productId }: ProductClientPageProps)
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Header />
+      
 
       <main style={{ flex: '1', backgroundColor: '#FFFFFF' }}>
         <div className={styles.container}>
@@ -641,7 +639,7 @@ export default function ProductClientPage({ productId }: ProductClientPageProps)
         </div>
       </main>
 
-      <Footer />
+      
 
       {/* Sticky Bottom Checkout Bar */}
       <div className={`${styles.stickyBar} ${showStickyBar ? styles.stickyBarActive : ''}`}>

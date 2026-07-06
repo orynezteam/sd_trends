@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Header from '../../components/Header/Header';
-import Footer from '../../components/Footer/Footer';
 import QuickView from '../../components/QuickView/QuickView';
 import { ChevronRight, Clock } from 'lucide-react';
 import styles from './top-deals.module.css';
@@ -73,7 +71,7 @@ export default function TopDealsPage() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       {/* Header component */}
-      <Header />
+      
 
       {/* Main content flow */}
       <main style={{ flex: '1', backgroundColor: '#FFFFFF' }}>
@@ -155,7 +153,7 @@ export default function TopDealsPage() {
         </section>
       </main>
 
-      <Footer />
+      
       <QuickView />
     </div>
   );

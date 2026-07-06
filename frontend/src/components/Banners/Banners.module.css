@@ -43,13 +43,35 @@
 
 @media (max-width: 768px) {
   .leftBanner {
-    height: 400px;
+    height: 300px;
+  }
+  .leftBanner .textBlock {
+    transform: translateY(0);
+  }
+  .textBlock {
+    transform: translateY(0);
   }
   .rightStack {
     height: auto;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .rightStack .banner {
+    min-height: 300px;
+    height: 300px;
+  }
+}
+
+@media (max-width: 576px) {
+  .leftBanner {
+    height: 280px;
+  }
+  .rightStack {
+    gap: 1.5rem;
   }
   .rightStack .banner {
     min-height: 280px;
+    height: 280px;
   }
 }
 
@@ -175,10 +197,19 @@
   .overlay {
     padding: 1.5rem;
   }
+  .subtitle {
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.12em;
+  }
   .title {
     font-size: 1.4rem;
+    margin-bottom: 1rem;
   }
   .leftBanner .title {
-    font-size: 1.6rem;
+    font-size: 1.4rem;
+  }
+  .link {
+    font-size: 0.85rem;
   }
 }

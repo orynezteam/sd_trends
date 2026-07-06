@@ -574,6 +574,7 @@
   left: 50%;
   transform: translate(-50%, 15px);
   width: 920px;
+  max-width: 95vw;
   background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
   box-shadow: var(--card-shadow);
@@ -597,6 +598,51 @@
   grid-template-columns: repeat(6, 1fr);
   gap: 1.5rem;
   width: 100%;
+}
+
+@media (max-width: 992px) {
+  .megaDropdownContainer {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .megaDropdown {
+    width: 95vw;
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .megaDropdownContainer {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  .megaDropdown {
+    width: 95vw;
+    padding: 1rem;
+    left: 0;
+    transform: translate(-20%, 15px);
+  }
+  .navItemDropdown:hover .megaDropdown {
+    transform: translate(-20%, 0);
+  }
+}
+@media (max-width: 1200px) {
+  .megaDropdownContainer {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 768px) {
+  .megaDropdownContainer {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .megaDropdown {
+    width: 100%;
+    padding: 1rem;
+    position: static;
+    transform: none;
+    box-shadow: none;
+    border: none;
+  }
 }
 
 .megaColumn {

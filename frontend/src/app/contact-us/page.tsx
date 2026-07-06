@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
-import Header from '../../components/Header/Header';
-import Footer from '../../components/Footer/Footer';
 import styles from './contact.module.css';
 import { API_BASE_URL, BASE_URL } from '@/config';
 
@@ -78,7 +76,7 @@ export default function ContactUs() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Header />
+      
 
       <main style={{ flex: '1' }}>
         {/* Breadcrumb Banner */}
@@ -223,7 +221,7 @@ export default function ContactUs() {
         </section>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

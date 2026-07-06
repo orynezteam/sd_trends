@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import Header from '../../components/Header/Header';
-import Footer from '../../components/Footer/Footer';
 import styles from './faqs.module.css';
 import { API_BASE_URL, BASE_URL } from '@/config';
 
@@ -39,7 +37,7 @@ export default function FAQs() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Header />
+      
 
       <main style={{ flex: '1' }}>
         {/* Breadcrumb Banner */}
@@ -110,7 +108,7 @@ export default function FAQs() {
         </section>
       </main>
 
-      <Footer />
+      
     </div>
   );
 }

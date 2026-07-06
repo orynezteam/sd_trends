@@ -29,29 +29,7 @@ export default function Footer({ settings: initialSettings = {}, footerLinks: in
   const [fetchedLinks, setFetchedLinks] = useState<any[]>([]);
 
   useEffect(() => {
-    // Auto-fetch if not provided via props (e.g., checkout and other subpages)
-    const hasProps = Object.keys(initialSettings).length > 0 || initialLinks.length > 0;
-    if (!hasProps) {
-      fetch(`${API_BASE_URL}/home-data`)
-        .then(res => {
-          if (!res.ok) throw new Error('Failed to fetch footer data');
-          return res.json();
-        })
-        .then(data => {
-          if (data.settings) {
-            setFetchedSettings({
-              footer_about_text: data.settings.footer_about_text || '',
-              footer_address: data.settings.footer_address || '',
-              footer_phone: data.settings.footer_phone || '',
-              footer_email: data.settings.footer_email || '',
-            });
-          }
-          if (data.footerLinks) {
-            setFetchedLinks(data.footerLinks);
-          }
-        })
-        .catch(err => console.error("Error loading footer content dynamically", err));
-    }
+    // Rely exclusively on layout.tsx props for global data. No fallback fetch.
   }, []);
 
   const handleSubscribe = async (e: React.FormEvent) => {

@@ -63,6 +63,29 @@ app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
 
+import time
+_cache = {}
+def ttl_cache(key, ttl=300):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            now = time.time()
+            if key in _cache and now - _cache[key]["time"] < ttl:
+                return _cache[key]["data"]
+            result = func(*args, **kwargs)
+            # Only cache successful JSON responses (tuple of dict, 200)
+            if isinstance(result, tuple) and result[1] == 200:
+                # Flask's jsonify returns a Response, we need to extract JSON if we want to cache it, or just cache the response data.
+                # Actually, if the function returns (jsonify(...), 200), we can just cache the tuple if it's safe. But Flask Response objects are bound to the app context.
+                pass
+            return result
+        # To avoid Flask Response context issues, we'll implement caching directly in the route functions instead of a decorator for simplicity.
+        return wrapper
+
+@app.route("/api/health", methods=["GET"])
+def health_check():
+    return jsonify({"status": "ok", "timestamp": time.time()}), 200
+
+
 
 # ==========================================
 # Auth API
@@ -741,10 +764,17 @@ def add_product():
 
 @app.route("/api/products", methods=["GET"])
 def get_products():
-    query = Product.query
     tab = request.args.get("tab")
     is_latest = request.args.get("is_latest")
     category = request.args.get("category")
+
+    # Simple cache key
+    cache_key = f"products_{tab}_{is_latest}_{category}"
+    now = time.time()
+    if cache_key in _cache and now - _cache[cache_key]["time"] < 300:
+        return jsonify(_cache[cache_key]["data"]), 200
+
+    query = Product.query
 
     if is_latest == "true":
         query = query.filter_by(is_latest=True)
@@ -760,7 +790,9 @@ def get_products():
         query = query.order_by(Product.rating.desc())
 
     products = query.all()
-    return jsonify([p.to_dict() for p in products]), 200
+    products_data = [p.to_dict() for p in products]
+    _cache[cache_key] = {"data": products_data, "time": now}
+    return jsonify(products_data), 200
 
 
 @app.route("/api/products/search", methods=["GET"])
@@ -783,7 +815,7 @@ def get_home_featured_categories():
 
 
 import json
-
+import threading
 
 def send_smtp_email(to_email, subject, body_text):
     import urllib.request
@@ -897,6 +929,12 @@ def send_smtp_email(to_email, subject, body_text):
     )
     return False
 
+def send_smtp_email_async(to_email, subject, body_text):
+    # Sends email in a background thread to prevent blocking the request
+    thread = threading.Thread(target=send_smtp_email, args=(to_email, subject, body_text))
+    thread.daemon = True
+    thread.start()
+
 
 
 def notify_admin_of_new_order(order, user, items):
@@ -929,7 +967,7 @@ Items Ordered:
 Please review the payment and update the status in the Admin Dashboard:
 {frontend_url}/admin/orders
 """
-    send_smtp_email(admin_email, subject, body)
+    send_smtp_email_async(admin_email, subject, body)
 
 
 def notify_customer_order_verified(order, user):
@@ -947,7 +985,7 @@ You can view your order status, items ordered, and progress on our website:
 Best regards,
 SD Trends Team
 """
-    send_smtp_email(user.email, subject, body)
+    send_smtp_email_async(user.email, subject, body)
 
 
 def notify_customer_order_declined(order, user):
@@ -965,7 +1003,25 @@ You can review your order status and attempt payment again on our website:
 Best regards,
 SD Trends Team
 """
-    send_smtp_email(user.email, subject, body)
+    send_smtp_email_async(user.email, subject, body)
+
+
+def notify_customer_order_shipped(order, user):
+    frontend_url = os.environ.get("FRONTEND_URL", "https://sd-trends.netlify.app")
+    subject = f"Your SD Trends Order #{order.id} has been Shipped!"
+    body = f"""Dear {user.name},
+
+Great news! Your Order #{order.id} has been marked as Shipped and is on its way to your address.
+
+You can track your order status on our website:
+{frontend_url}/track-order?order_id={order.id}
+
+Thank you for shopping with SD Trends!
+
+Best regards,
+SD Trends Team
+"""
+    send_smtp_email_async(user.email, subject, body)
 
 
 @app.route("/api/orders", methods=["GET", "POST"])
@@ -1053,6 +1109,8 @@ def update_order_status(order_id):
                 notify_customer_order_verified(order, order.user)
             elif status == "Declined":
                 notify_customer_order_declined(order, order.user)
+            elif status == "Shipped":
+                notify_customer_order_shipped(order, order.user)
         except Exception as ex:
             print("Error sending status transition email:", ex)
 
@@ -1285,7 +1343,7 @@ SD Trends Team
 """
 
     try:
-        if send_smtp_email(user.email, subject, email_body):
+        if send_smtp_email_async(user.email, subject, email_body):
             return jsonify({"message": "Reminder email sent successfully"}), 200
         else:
             return jsonify({"error": "Failed to send email. Check server logs."}), 500
@@ -1449,8 +1507,49 @@ def delete_review(id):
 # ==========================================
 # Aggregated Home Data API (Optimization)
 # ==========================================
+@app.route("/api/layout-data", methods=["GET"])
+def get_layout_data():
+    now = time.time()
+    if "layout_data" in _cache and now - _cache["layout_data"]["time"] < 300:
+        return jsonify(_cache["layout_data"]["data"]), 200
+
+    try:
+        # Full Category hierarchy for Header navigation
+        all_categories = Category.query.all()
+        categories = []
+        for c in all_categories:
+            c_dict = c.to_dict()
+            subs = Subcategory.query.filter_by(category_id=c.id).all()
+            c_dict["subcategories"] = [s.to_dict() for s in subs]
+            categories.append(c_dict)
+
+        settings_records = SiteSetting.query.all()
+        settings = {s.key: s.value for s in settings_records}
+
+        footer_links = [l.to_dict() for l in FooterLink.query.all()]
+        
+        # Promo Banner
+        promo = PromoBanner.query.filter_by(is_active=True).first()
+        promo_data = promo.to_dict() if promo else None
+
+        response_data = {
+            "categories": categories,
+            "settings": settings,
+            "footerLinks": footer_links,
+            "promo": promo_data
+        }
+        _cache["layout_data"] = {"data": response_data, "time": now}
+        return jsonify(response_data), 200
+    except Exception as e:
+        print("Error aggregating layout data:", e)
+        return jsonify({"error": str(e)}), 500
+
 @app.route("/api/home-data", methods=["GET"])
 def get_home_data():
+    now = time.time()
+    if "home_data" in _cache and now - _cache["home_data"]["time"] < 300:
+        return jsonify(_cache["home_data"]["data"]), 200
+
     try:
         # Fetch all required data concurrently (using DB queries which are fast)
         hero = [s.to_dict() for s in HeroSlide.query.order_by(HeroSlide.id).all()]
@@ -1488,24 +1587,21 @@ def get_home_data():
 
         footer_links = [l.to_dict() for l in FooterLink.query.all()]
 
-        return (
-            jsonify(
-                {
-                    "hero": hero,
-                    "services": services,
-                    "banners": banners,
-                    "latest": latest,
-                    "categories": categories,
-                    "bracelet": bracelet_data,
-                    "featured": featured,
-                    "highlights": highlights_data,
-                    "testimonials": testimonials,
-                    "settings": settings,
-                    "footerLinks": footer_links,
-                }
-            ),
-            200,
-        )
+        response_data = {
+            "hero": hero,
+            "services": services,
+            "banners": banners,
+            "latest": latest,
+            "categories": categories,
+            "bracelet": bracelet_data,
+            "featured": featured,
+            "highlights": highlights_data,
+            "testimonials": testimonials,
+            "settings": settings,
+            "footerLinks": footer_links,
+        }
+        _cache["home_data"] = {"data": response_data, "time": now}
+        return jsonify(response_data), 200
     except Exception as e:
         print("Error aggregating home data:", e)
         return jsonify({"error": str(e)}), 500

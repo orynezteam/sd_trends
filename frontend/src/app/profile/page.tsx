@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStore } from '../../context/StoreContext';
-import Header from '../../components/Header/Header';
-import Footer from '../../components/Footer/Footer';
 import { User, MapPin, Mail, Package, LogOut, ChevronRight } from 'lucide-react';
 import styles from './Profile.module.css';
 import { API_BASE_URL, BASE_URL } from '@/config';
@@ -420,11 +418,11 @@ export default function ProfilePage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Header />
+      
       <main style={{ flex: '1', backgroundColor: 'var(--bg-secondary)' }}>
         {user ? renderDashboard() : renderAuthForm()}
       </main>
-      <Footer />
+      
     </div>
   );
 }

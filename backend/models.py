@@ -244,17 +244,17 @@ class Product(db.Model):
     __tablename__ = 'sd_products'
     id = db.Column(db.String(100), primary_key=True)  # Using string ID to match existing slug logic (e.g. ring-solitaire)
     name = db.Column(db.String(255), nullable=False)
-    category = db.Column(db.String(100), nullable=False)
-    subcategory = db.Column(db.String(100), nullable=True)
+    category = db.Column(db.String(100), nullable=False, index=True)
+    subcategory = db.Column(db.String(100), nullable=True, index=True)
     price = db.Column(db.Float, nullable=False)
     original_price = db.Column(db.Float, nullable=True)
     price_range = db.Column(db.String(100), nullable=True)
     custom_badge = db.Column(db.String(50), nullable=True)
     timer = db.Column(db.String(100), nullable=True)
-    is_new = db.Column(db.Boolean, default=False)
-    is_bestseller = db.Column(db.Boolean, default=False)
-    is_featured = db.Column(db.Boolean, default=False)
-    is_latest = db.Column(db.Boolean, default=False)  # For LatestProducts section
+    is_new = db.Column(db.Boolean, default=False, index=True)
+    is_bestseller = db.Column(db.Boolean, default=False, index=True)
+    is_featured = db.Column(db.Boolean, default=False, index=True)
+    is_latest = db.Column(db.Boolean, default=False, index=True)  # For LatestProducts section
     rating = db.Column(db.Float, default=0.0)
     review_count = db.Column(db.Integer, default=0)
     stock = db.Column(db.Integer, default=10)
@@ -266,7 +266,7 @@ class Product(db.Model):
     details_json = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    images = db.relationship('ProductImage', backref='product', lazy=True, cascade="all, delete-orphan")
+    images = db.relationship('ProductImage', backref='product', lazy='selectin', cascade="all, delete-orphan")
 
     def to_dict(self):
         approved_reviews = [r for r in self.reviews if r.status == 'approved']
@@ -333,7 +333,7 @@ class Category(db.Model):
     name = db.Column(db.String(100), nullable=False)
     display_order = db.Column(db.Integer, default=0)
     
-    subcategories = db.relationship('Subcategory', backref='category', lazy=True, cascade="all, delete-orphan")
+    subcategories = db.relationship('Subcategory', backref='category', lazy='selectin', cascade="all, delete-orphan")
 
     def to_dict(self):
         return {
@@ -434,7 +434,7 @@ class ProductReview(db.Model):
     status = db.Column(db.String(20), default='approved') # 'pending', 'approved', 'rejected'
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
-    product = db.relationship('Product', backref=db.backref('reviews', lazy=True, cascade='all, delete-orphan'))
+    product = db.relationship('Product', backref=db.backref('reviews', lazy='selectin', cascade='all, delete-orphan'))
 
     def to_dict(self):
         return {

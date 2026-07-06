@@ -3,8 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { CheckCircle2, XCircle, Clock, ArrowLeft, Home, ShoppingCart } from 'lucide-react';
-import Header from '../../../components/Header/Header';
-import Footer from '../../../components/Footer/Footer';
 import styles from './OrdersStatus.module.css';
 import { API_BASE_URL, BASE_URL } from '@/config';
 
@@ -48,14 +46,14 @@ export default function OrderStatusPage() {
   if (loading) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <Header />
+        
         <main style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className={styles.loading}>
             <Clock size={40} style={{ animation: 'spin 2s linear infinite', marginBottom: '1rem', color: '#ce967e' }} />
             <p>Retrieving your order status details...</p>
           </div>
         </main>
-        <Footer />
+        
         <style jsx global>{`
           @keyframes spin {
             from { transform: rotate(0deg); }
@@ -69,7 +67,7 @@ export default function OrderStatusPage() {
   if (error || !order) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <Header />
+        
         <main style={{ flex: '1', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className={styles.errorState}>
             <XCircle size={60} style={{ color: '#f04438', marginBottom: '1rem' }} />
@@ -83,7 +81,7 @@ export default function OrderStatusPage() {
             </div>
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
@@ -94,7 +92,7 @@ export default function OrderStatusPage() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Header />
+      
       <main style={{ flex: '1', backgroundColor: '#faf8f6', paddingBottom: '4rem' }}>
         <div className={styles.container}>
           <div className={styles.card}>
@@ -219,7 +217,7 @@ export default function OrderStatusPage() {
           </div>
         </div>
       </main>
-      <Footer />
+      
     </div>
   );
 }

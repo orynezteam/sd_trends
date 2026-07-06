@@ -9,8 +9,12 @@ import { Search, Heart, ShoppingCart, User, ChevronDown, Sun, Moon, Menu, X, Tra
 import styles from './Header.module.css';
 import { API_BASE_URL, BASE_URL } from '@/config';
 
+interface HeaderProps {
+  categories?: any[];
+  promo?: any;
+}
 
-export default function Header() {
+export default function Header({ categories: initialCategories = [], promo: initialPromo = null }: HeaderProps) {
   const pathname = usePathname();
   const {
     cart,
@@ -25,22 +29,14 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>(initialCategories);
   const [showCartDropdown, setShowCartDropdown] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileCategoriesOpen, setMobileCategoriesOpen] = useState(false);
-  const [promo, setPromo] = useState<any>(null);
+  const [promo, setPromo] = useState<any>(initialPromo);
 
   const searchRef = useRef(null);
   const cartRef = useRef(null);
-
-  // Fetch Category Hierarchy
-  useEffect(() => {
-    fetch(`${API_BASE_URL}/content/categories/hierarchy`)
-      .then(res => res.json())
-      .then(data => setCategories(data))
-      .catch(err => console.error(err));
-  }, []);
 
   // Debounced/Live search fetch from Flask Backend
   useEffect(() => {
@@ -78,17 +74,7 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Fetch Promo Banner
-  useEffect(() => {
-    fetch(`${API_BASE_URL}/content/promo`)
-      .then(res => res.json())
-      .then(data => {
-        if (data && data.is_active) {
-          setPromo(data);
-        }
-      })
-      .catch(err => console.error("Failed to load promo:", err));
-  }, []);
+  // Promo logic uses initialPromo from props
 
   // Calculate cart metrics
   const cartTotalItems = cart.reduce((total, item) => total + item.quantity, 0);
@@ -110,7 +96,7 @@ export default function Header() {
                   <span className={styles.divider}>|</span>
                 </>
               )}
-              <Link href="#track-order" className={styles.topbarLink}>Track Order</Link>
+              <Link href="/track-order" className={styles.topbarLink}>Track Order</Link>
               <span className={styles.divider}>|</span>
               <Link href="/contact-us" className={`${styles.topbarLink} ${pathname === '/contact-us' ? styles.activeTopbarLink : ''}`}>Contact Us</Link>
               <span className={styles.divider}>|</span>
@@ -163,7 +149,7 @@ export default function Header() {
                       <div key={cat.id} className={styles.megaColumn}>
                         <h3 className={styles.megaTitle}>{cat.name}</h3>
                         <ul className={styles.megaList}>
-                          {cat.subcategories.map((sub: any) => (
+                          {cat.subcategories?.map((sub: any) => (
                             <li key={sub.id}>
                               <Link href={`/shop?subcategory=${encodeURIComponent(sub.name)}`}>
                                 {sub.name}
@@ -416,8 +402,8 @@ export default function Header() {
           </Link>
           <hr className={styles.mobileNavDivider} />
           <Link 
-            href="/shop" 
-            className={styles.mobileNavLink}
+            href="/track-order" 
+            className={`${styles.mobileNavLink} ${pathname === '/track-order' ? styles.mobileNavActive : ''}`}
             onClick={() => setMobileMenuOpen(false)}
           >
             Track Order

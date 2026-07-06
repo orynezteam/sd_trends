@@ -2,8 +2,6 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import Header from '../../components/Header/Header';
-import Footer from '../../components/Footer/Footer';
 import { useStore } from '../../context/StoreContext';
 import { ChevronRight, Check, ShieldCheck, CreditCard, ShoppingBag, CheckCircle, Copy, X } from 'lucide-react';
 import styles from './checkout.module.css';
@@ -175,7 +173,7 @@ export default function CheckoutPage() {
   if (isOrderPlaced) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <Header />
+        
         <main style={{ flex: '1', backgroundColor: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className={styles.successScreen}>
             <div className={styles.successIconWrapper}>
@@ -195,7 +193,7 @@ export default function CheckoutPage() {
             </div>
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
@@ -204,7 +202,7 @@ export default function CheckoutPage() {
   if (cart.length === 0) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-        <Header />
+        
         <main style={{ flex: '1', backgroundColor: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <div className={styles.emptyState}>
             <div className={styles.successIconWrapper} style={{ backgroundColor: '#f9f9f9', color: '#888888' }}>
@@ -219,14 +217,14 @@ export default function CheckoutPage() {
             </Link>
           </div>
         </main>
-        <Footer />
+        
       </div>
     );
   }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <Header />
+      
 
       <main style={{ flex: '1', backgroundColor: '#FFFFFF' }}>
         
@@ -585,7 +583,7 @@ export default function CheckoutPage() {
         </div>
       )}
 
-      <Footer />
+      
     </div>
   );
 }
