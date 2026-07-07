@@ -817,86 +817,15 @@ def get_home_featured_categories():
 import json
 import threading
 
-def send_smtp_email(to_email, subject, body_text):
+def send_email_via_service(to_email, subject, html_content, text_content=None):
     import urllib.request
     import json
     import os
 
-    # 1. Try sending via Brevo HTTP API (HTTP REST over port 443, never blocked by Render)
     brevo_api_key = os.environ.get("BREVO_API_KEY")
+    sender = os.environ.get("MAIL_DEFAULT_SENDER", "noreply@sdtrends.com")
     if brevo_api_key:
-        print("Attempting email transmission via Brevo HTTP API...")
-        
-        # HTML content template
-        html_content = f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8">
-            <style>
-                body {{
-                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                    color: #2c3e50;
-                    background-color: #faf8f6;
-                    padding: 30px;
-                    margin: 0;
-                }}
-                .container {{
-                    max-width: 600px;
-                    margin: 0 auto;
-                    background-color: #ffffff;
-                    border: 1px solid #ebdcd5;
-                    border-radius: 12px;
-                    overflow: hidden;
-                    box-shadow: 0 8px 24px rgba(0,0,0,0.03);
-                }}
-                .header {{
-                    background: linear-gradient(135deg, #1c1b19 0%, #2d1f1f 100%);
-                    color: #ffffff;
-                    padding: 40px 30px;
-                    text-align: center;
-                }}
-                .header h1 {{
-                    margin: 0;
-                    font-size: 26px;
-                    font-weight: 500;
-                    letter-spacing: 3px;
-                    color: #f7e6d4;
-                }}
-                .content {{
-                    padding: 40px 30px;
-                    line-height: 1.7;
-                    font-size: 15px;
-                }}
-                .footer {{
-                    background-color: #fcfbfa;
-                    padding: 24px;
-                    text-align: center;
-                    font-size: 11px;
-                    color: #9e9a95;
-                    border-top: 1px solid #ebdcd5;
-                }}
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header">
-                    <h1>SD TRENDS DESIGN</h1>
-                </div>
-                <div class="content">
-                    {body_text.replace('\n', '<br>')}
-                </div>
-                <div class="footer">
-                    &copy; 2026 SD Trends Luxury Jewelry. All rights reserved.<br>
-                    This email was sent to you as an official order transaction notice.
-                </div>
-            </div>
-        </body>
-        </html>
-        """
-
-        sender = os.environ.get("MAIL_DEFAULT_SENDER", "noreply@sdtrends.com")
-        
+        print(f"Attempting email transmission via Brevo HTTP API to {to_email}...")
         url = "https://api.brevo.com/v3/smtp/email"
         headers = {
             "accept": "application/json",
@@ -909,7 +838,6 @@ def send_smtp_email(to_email, subject, body_text):
             "subject": subject,
             "htmlContent": html_content,
         }
-
         try:
             req = urllib.request.Request(
                 url,
@@ -918,16 +846,87 @@ def send_smtp_email(to_email, subject, body_text):
                 method="POST",
             )
             with urllib.request.urlopen(req) as response:
-                print(f"Successfully sent Brevo email to {to_email}")
+                print(f"Successfully sent email to {to_email} via Brevo API")
                 return True
         except Exception as e:
             print(f"Brevo HTTP exception: {e}")
 
-    # Fallback to local console logging if Brevo fails or API key is missing
+    fallback_body = text_content or html_content
     print(
-        f"--- EMAIL FALLBACK TO {to_email} ---\nSubject: {subject}\nBody:\n{body_text}\n----------------------"
+        f"--- EMAIL FALLBACK TO {to_email} ---\nSubject: {subject}\nBody:\n{fallback_body}\n----------------------"
     )
     return False
+
+
+def send_smtp_email(to_email, subject, body_text):
+    # HTML content template
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <style>
+            body {{
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                color: #2c3e50;
+                background-color: #faf8f6;
+                padding: 30px;
+                margin: 0;
+            }}
+            .container {{
+                max-width: 600px;
+                margin: 0 auto;
+                background-color: #ffffff;
+                border: 1px solid #ebdcd5;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 8px 24px rgba(0,0,0,0.03);
+            }}
+            .header {{
+                background: linear-gradient(135deg, #1c1b19 0%, #2d1f1f 100%);
+                color: #ffffff;
+                padding: 40px 30px;
+                text-align: center;
+            }}
+            .header h1 {{
+                margin: 0;
+                font-size: 26px;
+                font-weight: 500;
+                letter-spacing: 3px;
+                color: #f7e6d4;
+            }}
+            .content {{
+                padding: 40px 30px;
+                line-height: 1.7;
+                font-size: 15px;
+            }}
+            .footer {{
+                background-color: #fcfbfa;
+                padding: 24px;
+                text-align: center;
+                font-size: 11px;
+                color: #9e9a95;
+                border-top: 1px solid #ebdcd5;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <h1>SD TRENDS DESIGN</h1>
+            </div>
+            <div class="content">
+                {body_text.replace('\n', '<br>')}
+            </div>
+            <div class="footer">
+                &copy; 2026 SD Trends Luxury Jewelry. All rights reserved.<br>
+                This email was sent to you as an official order transaction notice.
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    return send_email_via_service(to_email, subject, html_content, text_content=body_text)
 
 def send_smtp_email_async(to_email, subject, body_text):
     # Sends email in a background thread to prevent blocking the request
@@ -938,9 +937,18 @@ def send_smtp_email_async(to_email, subject, body_text):
 
 
 def notify_admin_of_new_order(order, user, items):
-    admin_email = os.environ.get("ADMIN_EMAIL", "karthikrajay.cc@gmail.com")
     frontend_url = os.environ.get("FRONTEND_URL", "https://sd-trends.netlify.app")
 
+    # Fetch admin emails from database where is_admin = True
+    try:
+        admins = User.query.filter_by(is_admin=True).all()
+        admin_emails = [admin.email for admin in admins if admin.email]
+    except Exception as e:
+        print(f"Error querying admin users from DB: {e}")
+        admin_emails = []
+
+    if not admin_emails:
+        admin_emails = [os.environ.get("ADMIN_EMAIL", "karthikrajay.cc@gmail.com")]
 
     items_list_str = ""
     for item in items:
@@ -967,7 +975,8 @@ Items Ordered:
 Please review the payment and update the status in the Admin Dashboard:
 {frontend_url}/admin/orders
 """
-    send_smtp_email_async(admin_email, subject, body)
+    for email in admin_emails:
+        send_smtp_email_async(email, subject, body)
 
 
 def notify_customer_order_verified(order, user):
@@ -1174,43 +1183,10 @@ otp_store = {}
 def send_otp_email(to_email, otp):
     sender = os.environ.get("MAIL_DEFAULT_SENDER", "noreply@sdtrends.com")
     print(f"sender: {sender}")
-
-    # Try Brevo HTTP API (Best for Render free tier, no port blocking)
-    brevo_api_key = os.environ.get("BREVO_API_KEY")
-    if brevo_api_key:
-        import urllib.request
-        import json
-
-        url = "https://api.brevo.com/v3/smtp/email"
-        headers = {
-            "accept": "application/json",
-            "api-key": brevo_api_key,
-            "content-type": "application/json",
-        }
-        data = {
-            "sender": {"name": "SD Trends", "email": sender},
-            "to": [{"email": to_email}],
-            "subject": "Your SD Trends Verification Code",
-            "htmlContent": f"<html><body><p>Your SD Trends Verification Code is: <strong>{otp}</strong></p><p>Please do not share this code with anyone.</p></body></html>",
-        }
-        try:
-            req = urllib.request.Request(
-                url,
-                data=json.dumps(data).encode("utf-8"),
-                headers=headers,
-                method="POST",
-            )
-            with urllib.request.urlopen(req) as response:
-                print(f"Successfully sent OTP via Brevo API to {to_email}")
-                return True
-        except Exception as e:
-            print(f"Failed to send email via Brevo API: {e}")
-            return False
-
-    print(
-        f"--- OTP EMAIL FALLBACK TO {to_email} ---\nSubject: Your SD Trends Verification Code\nCode: {otp}\n----------------------"
-    )
-    return False
+    subject = "Your SD Trends Verification Code"
+    html_content = f"<html><body><p>Your SD Trends Verification Code is: <strong>{otp}</strong></p><p>Please do not share this code with anyone.</p></body></html>"
+    text_content = f"Your SD Trends Verification Code is: {otp}\n\nPlease do not share this code with anyone."
+    return send_email_via_service(to_email, subject, html_content, text_content=text_content)
 
 
 
