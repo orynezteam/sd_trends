@@ -4,9 +4,10 @@ import { API_BASE_URL } from '@/config';
 
 async function fetchShopData() {
   try {
+    const timestamp = Date.now();
     const [catsRes, prodsRes] = await Promise.all([
-      fetch(`${API_BASE_URL}/content/categories/hierarchy`, { cache: 'no-store' }),
-      fetch(`${API_BASE_URL}/products`, { cache: 'no-store' })
+      fetch(`${API_BASE_URL}/content/categories/hierarchy?t=${timestamp}`, { cache: 'no-store' }),
+      fetch(`${API_BASE_URL}/products?t=${timestamp}`, { cache: 'no-store' })
     ]);
     
     const categories = catsRes.ok ? await catsRes.json() : [];

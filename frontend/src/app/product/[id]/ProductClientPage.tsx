@@ -44,6 +44,7 @@ export default function ProductClientPage({ productId }: ProductClientPageProps)
   const [zoomStyle, setZoomStyle] = useState<{backgroundPosition?: string}>({});
 
   const [toastMsg, setToastMsg] = useState('');
+  const [allProducts, setAllProducts] = useState<any[]>([]);
   const [reviews, setReviews] = useState<any[]>([]);
   const [newReview, setNewReview] = useState({ author: '', rating: 5, review_text: '' });
   const [submittingReview, setSubmittingReview] = useState(false);
@@ -93,6 +94,7 @@ export default function ProductClientPage({ productId }: ProductClientPageProps)
         const res = await fetch(`${API_BASE_URL}/products`);
         if (res.ok) {
           const data: Product[] = await res.json();
+          setAllProducts(data);
           const found = data.find(p => p.id === productId);
           if (found) {
             setProduct(found);
@@ -104,6 +106,7 @@ export default function ProductClientPage({ productId }: ProductClientPageProps)
         console.error("Backend fetch failed, searching locally:", err);
       }
 
+      setAllProducts(PRODUCTS);
       const localFound = PRODUCTS.find(p => p.id === productId);
       if (localFound) {
         setProduct(localFound);
@@ -239,6 +242,13 @@ export default function ProductClientPage({ productId }: ProductClientPageProps)
     });
   };
 
+  const colorVariants = allProducts.filter(p => 
+    p.color_group && 
+    product.color_group && 
+    p.color_group.toLowerCase() === product.color_group.toLowerCase() && 
+    p.id !== product.id
+  );
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       
@@ -313,9 +323,9 @@ export default function ProductClientPage({ productId }: ProductClientPageProps)
                       <span className={styles.salePrice}>{product.priceRange}</span>
                     ) : (
                       <>
-                        <span className={styles.salePrice}>${product.price}</span>
+                        <span className={styles.salePrice}>₹{product.price}</span>
                         {discount > 0 && (
-                          <span className={styles.originalPrice}>${product.originalPrice}</span>
+                          <span className={styles.originalPrice}>₹{product.originalPrice}</span>
                         )}
                       </>
                     )}
@@ -340,6 +350,54 @@ export default function ProductClientPage({ productId }: ProductClientPageProps)
                   {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
                 </span>
               </div>
+
+              {/* Color variants selector */}
+              {colorVariants.length > 0 && (
+                <div className={styles.colorVariantsSection} style={{ marginBottom: '20px' }}>
+                  <span className={styles.variantLabel} style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#333', textTransform: 'uppercase', marginBottom: '8px' }}>
+                    Available Colors:
+                  </span>
+                  <div className={styles.colorBadgeGrid} style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                    {/* Current color */}
+                    <span 
+                      className={`${styles.colorBadge} ${styles.colorBadgeActive}`}
+                      style={{
+                        padding: '6px 16px',
+                        border: '2px solid var(--text-primary, #000)',
+                        backgroundColor: '#fff',
+                        color: 'var(--text-primary, #000)',
+                        fontSize: '12px',
+                        fontWeight: 600,
+                        borderRadius: '4px',
+                        cursor: 'default'
+                      }}
+                    >
+                      {product.color || 'Default'}
+                    </span>
+                    {/* Other colors */}
+                    {colorVariants.map(v => (
+                      <Link 
+                        key={v.id} 
+                        href={`/product/${v.id}`} 
+                        className={styles.colorBadge}
+                        style={{
+                          padding: '6px 16px',
+                          border: '1px solid #ddd',
+                          backgroundColor: '#fff',
+                          color: '#555',
+                          fontSize: '12px',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          textDecoration: 'none',
+                          transition: 'all 0.2s ease'
+                        }}
+                      >
+                        {v.color || 'Other'}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <form className={styles.actionForm} onSubmit={handleAddToCartSubmit}>
                 <div className={styles.purchaseActions}>
@@ -428,7 +486,7 @@ export default function ProductClientPage({ productId }: ProductClientPageProps)
                 </div>
                 <div className={styles.deliveryItem}>
                   <Check size={16} className={styles.checkIcon} />
-                  <span>Free Shipping & Returns : On all orders over $200</span>
+                  <span>Free Shipping & Returns : On all orders over ₹999</span>
                 </div>
               </div>
 
@@ -653,7 +711,7 @@ export default function ProductClientPage({ productId }: ProductClientPageProps)
             <span className={styles.stickyName}>{product.name}</span>
           </div>
           <div className={styles.stickyRight}>
-            <span className={styles.stickyPrice}>${product.price}</span>
+            <span className={styles.stickyPrice}>₹{product.price}</span>
             
             <div className={styles.stickyQty}>
               <button 

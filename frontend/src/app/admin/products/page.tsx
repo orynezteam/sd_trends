@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Plus, Search, Edit2 } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2 } from 'lucide-react';
 import styles from './AdminProducts.module.css';
 import { API_BASE_URL, BASE_URL } from '@/config';
 
@@ -120,6 +120,21 @@ export default function AdminProductsPage() {
       
     } catch (err) {
       alert("Network error.");
+    }
+  };
+
+  const handleDeleteProduct = async (product: any) => {
+    if (!confirm(`Are you sure you want to delete "${product.name}"? This cannot be undone.`)) return;
+    try {
+      const res = await fetch(`${API_BASE_URL}/products/${product.id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setProducts(products.filter(p => p.id !== product.id));
+      } else {
+        const data = await res.json();
+        alert(data.error || 'Failed to delete product.');
+      }
+    } catch (err) {
+      alert('Network error deleting product.');
     }
   };
 
@@ -262,10 +277,17 @@ export default function AdminProductsPage() {
                       <span className={`${styles.slider} ${styles.featuredSlider}`}></span>
                     </label>
                   </td>
-                  <td>
+                  <td style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                     <Link href={`/admin/products/${p.id}`} className={styles.editBtn}>
                       <Edit2 size={16} /> Edit
                     </Link>
+                    <button
+                      onClick={() => handleDeleteProduct(p)}
+                      className={styles.deleteBtn}
+                      title="Delete Product"
+                    >
+                      <Trash2 size={16} /> Delete
+                    </button>
                   </td>
                 </tr>
               ))

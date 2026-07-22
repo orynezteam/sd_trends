@@ -52,6 +52,8 @@ export default function NewProductPage() {
     price: '',
     originalPrice: '',
     description: '',
+    color: '',
+    color_group: '',
     isNew: true,
     isBestSeller: false,
     isFeatured: false,
@@ -74,6 +76,12 @@ export default function NewProductPage() {
     } else {
       setFormData(prev => {
         const updated = { ...prev, [name]: value };
+        if (name === 'name') {
+          const oldSlug = prev.name ? prev.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') : '';
+          if (!prev.id || prev.id === oldSlug) {
+            updated.id = value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+          }
+        }
         if (name === 'category') {
           const catObj = dbCategories.find(cat => cat.name.toLowerCase() === value.toLowerCase());
           updated.subcategory = catObj && catObj.subcategories.length > 0 ? catObj.subcategories[0].name : '';
@@ -281,8 +289,13 @@ export default function NewProductPage() {
                 </select>
               </div>
               <div className={styles.formGroup}>
-                <label>Subcategory *</label>
-                <select name="subcategory" value={formData.subcategory} onChange={handleInputChange} required>
+                <label>Subcategory {currentSubcategories.length > 0 ? '*' : '(Optional)'}</label>
+                <select 
+                  name="subcategory" 
+                  value={formData.subcategory} 
+                  onChange={handleInputChange} 
+                  required={currentSubcategories.length > 0}
+                >
                   <option value="">-- Select Subcategory --</option>
                   {currentSubcategories.map((sub: any) => (
                     <option key={sub.id} value={sub.name}>
@@ -290,6 +303,17 @@ export default function NewProductPage() {
                     </option>
                   ))}
                 </select>
+              </div>
+            </div>
+
+            <div className={styles.row}>
+              <div className={styles.formGroup}>
+                <label>Color (e.g. Gold, Silver, Rose Gold)</label>
+                <input type="text" name="color" value={formData.color} onChange={handleInputChange} placeholder="e.g. Rose Gold" />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Color Group ID (to link other color options)</label>
+                <input type="text" name="color_group" value={formData.color_group} onChange={handleInputChange} placeholder="e.g. signature-choker-set" />
               </div>
             </div>
 

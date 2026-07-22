@@ -13,7 +13,7 @@ import { API_BASE_URL } from '@/config';
 
 async function fetchHomeData() {
   try {
-    const res = await fetch(`${API_BASE_URL}/home-data`, {
+    const res = await fetch(`${API_BASE_URL}/home-data?t=${Date.now()}`, {
       cache: 'no-store'
     });
     if (!res.ok) throw new Error('Failed to fetch home data');

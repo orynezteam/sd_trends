@@ -29,7 +29,25 @@ export default function Footer({ settings: initialSettings = {}, footerLinks: in
   const [fetchedLinks, setFetchedLinks] = useState<any[]>([]);
 
   useEffect(() => {
-    // Rely exclusively on layout.tsx props for global data. No fallback fetch.
+    // Live-fetch footer data so admin changes show up immediately
+    Promise.all([
+      fetch(`${API_BASE_URL}/settings?t=${Date.now()}`),
+      fetch(`${API_BASE_URL}/footer-links?t=${Date.now()}`)
+    ]).then(async ([settingsRes, linksRes]) => {
+      if (settingsRes.ok) {
+        const data = await settingsRes.json();
+        setFetchedSettings({
+          footer_about_text: data.footer_about_text || '',
+          footer_address: data.footer_address || '',
+          footer_phone: data.footer_phone || '',
+          footer_email: data.footer_email || '',
+        });
+      }
+      if (linksRes.ok) {
+        const data = await linksRes.json();
+        setFetchedLinks(data);
+      }
+    }).catch(() => {});
   }, []);
 
   const handleSubscribe = async (e: React.FormEvent) => {

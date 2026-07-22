@@ -28,6 +28,8 @@ export interface Product {
   description: string;
   details: ProductDetails;
   stock: number;
+  color?: string;
+  color_group?: string;
 }
 
 export const PRODUCTS: Product[] = [
@@ -37,7 +39,7 @@ export const PRODUCTS: Product[] = [
     "category": "rings",
     "price": 300,
     "originalPrice": 660,
-    "priceRange": "$300 - $660",
+    "priceRange": "₹300 - ₹660",
     "isNew": true,
     "isBestSeller": true,
     "isFeatured": true,
@@ -63,7 +65,7 @@ export const PRODUCTS: Product[] = [
     "category": "rings",
     "price": 250,
     "originalPrice": 256,
-    "priceRange": "$250 - $256",
+    "priceRange": "₹250 - ₹256",
     "isNew": true,
     "isBestSeller": true,
     "isFeatured": true,
@@ -116,7 +118,7 @@ export const PRODUCTS: Product[] = [
     "category": "rings",
     "price": 140,
     "originalPrice": 270,
-    "priceRange": "$140 - $270",
+    "priceRange": "₹140 - ₹270",
     "customBadge": "-5%",
     "isNew": true,
     "isBestSeller": false,

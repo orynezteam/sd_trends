@@ -284,6 +284,26 @@ input:checked + .slider:before {
   background: var(--bg-secondary);
 }
 
+.deleteBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.4rem 0.8rem;
+  background: transparent;
+  border: 1px solid #e53e3e;
+  border-radius: 4px;
+  color: #e53e3e;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.deleteBtn:hover {
+  background: #e53e3e;
+  color: white;
+}
+
 .noResults {
   text-align: center;
   padding: 3rem !important;

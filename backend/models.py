@@ -249,6 +249,8 @@ class Product(db.Model):
     price = db.Column(db.Float, nullable=False)
     original_price = db.Column(db.Float, nullable=True)
     price_range = db.Column(db.String(100), nullable=True)
+    color = db.Column(db.String(100), nullable=True)
+    color_group = db.Column(db.String(100), nullable=True)
     custom_badge = db.Column(db.String(50), nullable=True)
     timer = db.Column(db.String(100), nullable=True)
     is_new = db.Column(db.Boolean, default=False, index=True)
@@ -306,6 +308,8 @@ class Product(db.Model):
             'details': details_obj,
             'images': [img.image_url for img in sorted(self.images, key=lambda x: x.display_order)],
             'image': self.images[0].image_url if self.images else '',
+            'color': self.color,
+            'color_group': self.color_group,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
 

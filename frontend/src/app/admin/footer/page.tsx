@@ -118,11 +118,16 @@ export default function AdminFooterPage() {
       if (res.ok) {
         const data = await res.json();
         if (editingLink) {
+          // PUT returns { link: {...} }
           setLinks(links.map(l => l.id === editingLink.id ? data.link : l));
         } else {
-          setLinks([...links, data.link]);
+          // POST returns the link object directly
+          setLinks([...links, data]);
         }
+        alert('Link saved successfully!');
         setShowLinkModal(false);
+      } else {
+        alert('Failed to save link.');
       }
     } catch (err) {
       alert('Error saving link');

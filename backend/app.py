@@ -170,7 +170,23 @@ def update_product(id):
                 db.session.add(new_img)
         elif hasattr(product, key) and key != "images":
             setattr(product, key, val)
+            
+    # Propagate shared fields to other color variants in the same group
+    if product.color_group:
+        other_variants = Product.query.filter(
+            Product.color_group.ilike(product.color_group),
+            Product.id != product.id
+        ).all()
+        for variant in other_variants:
+            variant.category = product.category
+            variant.subcategory = product.subcategory
+            variant.description = product.description
+            variant.about_text = product.about_text
+            variant.shipping_text = product.shipping_text
+            variant.details_json = product.details_json
+
     db.session.commit()
+    _cache.clear()  # Clear in-memory cache on update
     return jsonify(product.to_dict()), 200
 
 
@@ -179,6 +195,7 @@ def delete_product(id):
     product = Product.query.get_or_404(id)
     db.session.delete(product)
     db.session.commit()
+    _cache.clear()
     return jsonify({"message": "Deleted"}), 200
 
 
@@ -615,6 +632,7 @@ def api_footer_links():
     new_link = FooterLink(**{k: v for k, v in data.items() if hasattr(FooterLink, k)})
     db.session.add(new_link)
     db.session.commit()
+    _cache.clear()
     return jsonify(new_link.to_dict()), 201
 
 
@@ -624,13 +642,15 @@ def update_footer_link(id):
     if request.method == "DELETE":
         db.session.delete(l)
         db.session.commit()
+        _cache.clear()
         return jsonify({"message": "Deleted"}), 200
     data = request.json
     for k, v in data.items():
         if hasattr(l, k):
             setattr(l, k, v)
     db.session.commit()
-    return jsonify(l.to_dict()), 200
+    _cache.clear()
+    return jsonify({"link": l.to_dict()}), 200
 
 
 @app.route("/api/contact-messages", methods=["GET"])
@@ -748,6 +768,15 @@ def add_subcategory(cat_id):
 @app.route("/api/products", methods=["POST"])
 def add_product():
     data = request.json
+    prod_id = data.get("id")
+    if not prod_id:
+        return jsonify({"error": "Product ID (slug) is required"}), 400
+        
+    # Check if a product with this ID already exists
+    existing_p = Product.query.get(prod_id)
+    if existing_p:
+        return jsonify({"error": f"Product ID '{prod_id}' already exists. Please choose a different unique ID."}), 400
+
     new_p = Product(
         **{k: v for k, v in data.items() if hasattr(Product, k) and k != "images"}
     )
@@ -759,6 +788,7 @@ def add_product():
             )
             db.session.add(new_img)
     db.session.commit()
+    _cache.clear()
     return jsonify(new_p.to_dict()), 201
 
 

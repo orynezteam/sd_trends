@@ -134,7 +134,7 @@ export default function NewsletterPage() {
                       </div>
                       <div className={styles.productInfo}>
                         <p className={styles.productName}>{product.name}</p>
-                        <p className={styles.productPrice}>${product.price.toFixed(2)}</p>
+                        <p className={styles.productPrice}>₹{product.price.toFixed(2)}</p>
                       </div>
                     </div>
                   );
@@ -183,7 +183,7 @@ export default function NewsletterPage() {
                               )}
                             </div>
                             <p className={styles.pName}>{p.name}</p>
-                            <p className={styles.pPrice}>${p.price.toFixed(2)}</p>
+                            <p className={styles.pPrice}>₹{p.price.toFixed(2)}</p>
                             <div className={styles.pBtn}>Shop Now</div>
                           </div>
                         )

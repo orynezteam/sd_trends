@@ -39,7 +39,7 @@ export const viewport = {
 
 async function fetchLayoutData() {
   try {
-    const url = `${API_BASE_URL}/layout-data`;
+    const url = `${API_BASE_URL}/layout-data?t=${Date.now()}`;
     console.log("Next.js Server: Fetching layout data from:", url);
     const res = await fetch(url, {
       cache: 'no-store'

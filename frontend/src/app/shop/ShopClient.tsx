@@ -21,8 +21,8 @@ export default function ShopClient({ initialCategories, initialProducts }: { ini
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([]);
   const [sortOption, setSortOption] = useState<string>('default');
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
@@ -48,13 +48,23 @@ export default function ShopClient({ initialCategories, initialProducts }: { ini
 
   useEffect(() => {
     if (categoryParam) {
-      setSelectedCategory(categoryParam.toLowerCase());
-      setExpandedCategories(prev => [...prev, categoryParam.toLowerCase()]);
+      const catLower = categoryParam.toLowerCase();
+      setSelectedCategories([catLower]);
+      setSelectedSubcategories([]);
+      setExpandedCategories(prev => prev.includes(catLower) ? prev : [...prev, catLower]);
     }
     if (subcategoryParam) {
-      setSelectedSubcategory(subcategoryParam);
+      const parentCat = categories.find(c => 
+        c.subcategories?.some((s: any) => s.name.toLowerCase() === subcategoryParam.toLowerCase())
+      );
+      if (parentCat) {
+        const catLower = parentCat.name.toLowerCase();
+        setSelectedCategories(prev => prev.includes(catLower) ? prev : [...prev, catLower]);
+        setExpandedCategories(prev => prev.includes(catLower) ? prev : [...prev, catLower]);
+      }
+      setSelectedSubcategories([subcategoryParam]);
     }
-  }, [categoryParam, subcategoryParam]);
+  }, [categoryParam, subcategoryParam, categories]);
 
   const toggleCategoryExpand = (catId: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -64,15 +74,39 @@ export default function ShopClient({ initialCategories, initialProducts }: { ini
   };
 
   const handleCategorySelect = (catName: string) => {
-    setSelectedCategory(catName.toLowerCase());
-    setSelectedSubcategory(null);
+    if (catName.toLowerCase() === 'all') {
+      setSelectedCategories([]);
+      setSelectedSubcategories([]);
+    } else {
+      const catLower = catName.toLowerCase();
+      setSelectedCategories(prev => {
+        if (prev.includes(catLower)) {
+          const catObj = categories.find(c => c.name.toLowerCase() === catLower);
+          const subNames = catObj?.subcategories?.map((s: any) => s.name) || [];
+          setSelectedSubcategories(prevSubs => prevSubs.filter(sub => !subNames.includes(sub)));
+          return prev.filter(c => c !== catLower);
+        } else {
+          return [...prev, catLower];
+        }
+      });
+    }
     setCurrentPage(1);
   };
 
   const handleSubcategorySelect = (subName: string, parentCatName: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setSelectedCategory(parentCatName.toLowerCase());
-    setSelectedSubcategory(subName);
+    const parentLower = parentCatName.toLowerCase();
+    
+    setSelectedSubcategories(prev => {
+      if (prev.includes(subName)) {
+        return prev.filter(s => s !== subName);
+      } else {
+        setSelectedCategories(prevCats => 
+          prevCats.includes(parentLower) ? prevCats : [...prevCats, parentLower]
+        );
+        return [...prev, subName];
+      }
+    });
     setCurrentPage(1);
   };
 
@@ -90,13 +124,23 @@ export default function ShopClient({ initialCategories, initialProducts }: { ini
     return keywords.some(keyword => name.includes(keyword) || desc.includes(keyword));
   };
 
+  // Find which selected categories have active subcategory filters
+  const activeCategoriesWithSubsFilter = selectedCategories.filter(catName => {
+    const catObj = categories.find(c => c.name.toLowerCase() === catName);
+    return catObj?.subcategories?.some((sub: any) => selectedSubcategories.includes(sub.name));
+  });
+
   // Filter Logic
   let filteredProducts = products.filter(p => {
-    if (selectedCategory !== 'all') {
-      if ((p.category || '').toLowerCase() !== selectedCategory) return false;
-    }
-    if (selectedSubcategory) {
-      if (!matchSubcategory(p, selectedSubcategory)) return false;
+    if (selectedCategories.length > 0) {
+      const pCat = (p.category || '').toLowerCase();
+      
+      const hasMatchedSubcategory = selectedSubcategories.some(sub => matchSubcategory(p, sub));
+      const matchesCategoryWithoutSubsFilter = selectedCategories.includes(pCat) && !activeCategoriesWithSubsFilter.includes(pCat);
+      
+      if (!hasMatchedSubcategory && !matchesCategoryWithoutSubsFilter) {
+        return false;
+      }
     }
     if (p.price > maxPrice) return false;
     return true;
@@ -172,11 +216,11 @@ export default function ShopClient({ initialCategories, initialProducts }: { ini
                         className={`${styles.categoryItemWrapper}`}
                       >
                         <div 
-                          className={`${styles.categoryItem} ${selectedCategory === 'all' ? styles.categoryActive : ''}`}
+                          className={`${styles.categoryItem} ${selectedCategories.length === 0 ? styles.categoryActive : ''}`}
                           onClick={() => handleCategorySelect('all')}
                         >
                           <div className={styles.checkboxWrapper}>
-                            {selectedCategory === 'all' ? (
+                            {selectedCategories.length === 0 ? (
                               <CheckSquare size={18} className={styles.checkedIcon} />
                             ) : (
                               <Square size={18} className={styles.uncheckedIcon} />
@@ -189,7 +233,7 @@ export default function ShopClient({ initialCategories, initialProducts }: { ini
 
                       {categories.map((cat) => {
                         const catKey = cat.name.toLowerCase();
-                        const isActive = selectedCategory === catKey;
+                        const isActive = selectedCategories.includes(catKey);
                         const isExpanded = expandedCategories.includes(catKey);
                         const catProducts = products.filter(p => (p.category || '').toLowerCase() === catKey);
                         
@@ -200,7 +244,7 @@ export default function ShopClient({ initialCategories, initialProducts }: { ini
                               onClick={() => handleCategorySelect(cat.name)}
                             >
                               <div className={styles.checkboxWrapper}>
-                                {isActive && !selectedSubcategory ? (
+                                {isActive ? (
                                   <CheckSquare size={18} className={styles.checkedIcon} />
                                 ) : (
                                   <Square size={18} className={styles.uncheckedIcon} />
@@ -222,7 +266,7 @@ export default function ShopClient({ initialCategories, initialProducts }: { ini
                             {isExpanded && cat.subcategories && (
                               <ul className={styles.subcategoryList}>
                                 {cat.subcategories.map((sub: any) => {
-                                  const isSubActive = selectedSubcategory === sub.name;
+                                  const isSubActive = selectedSubcategories.includes(sub.name);
                                   // Estimate count
                                   const subCount = catProducts.filter(p => matchSubcategory(p, sub.name)).length;
                                   return (
